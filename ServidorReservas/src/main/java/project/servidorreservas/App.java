@@ -1,4 +1,4 @@
-package proyect.servidorreservas;
+package project.servidorreservas;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
