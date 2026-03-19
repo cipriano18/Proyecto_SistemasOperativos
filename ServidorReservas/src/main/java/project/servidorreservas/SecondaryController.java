@@ -1,4 +1,4 @@
-package proyect.servidorreservas;
+package project.servidorreservas;
 
 import java.io.IOException;
 import javafx.fxml.FXML;

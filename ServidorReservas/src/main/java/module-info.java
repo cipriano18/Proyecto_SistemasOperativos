@@ -1,7 +1,7 @@
-module proyect.servidorreservas {
+module project.servidorreservas {
     requires javafx.controls;
     requires javafx.fxml;
-
-    opens proyect.servidorreservas to javafx.fxml;
-    exports proyect.servidorreservas;
+     requires java.sql;
+    opens project.servidorreservas to javafx.fxml;
+    exports project.servidorreservas;
 }
