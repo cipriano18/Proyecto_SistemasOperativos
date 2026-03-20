@@ -14,7 +14,7 @@ public class Validator {
         return value == null || value.trim().isEmpty();
     }
      
-       // validar user_name 
+   // validar user_name 
    public static boolean isValidUsername(String username) {
         if (isEmpty(username)) return false;
         if (username.length() < 4) return false;
@@ -23,7 +23,7 @@ public class Validator {
         return true;
     }
     
-     //validar_password  
+    //validar_password  
     public static boolean isValidPassword(String password) {
         if (isEmpty(password)) return false;
         if (password.length() < 8) return false;
@@ -31,5 +31,40 @@ public class Validator {
         if (!password.matches(".*[0-9].*")) return false;
         return true;
     }
+    
+    // validar cédula/identity card (9-20 caracteres alfanuméricos)
+    public static boolean isValidIdentityCard(String identityCard) {
+        if (isEmpty(identityCard)) return false;
+        return identityCard.matches("^[A-Za-z0-9]{9,20}$");
+    }
 
+    // validar email
+    public static boolean isValidEmail(String email) {
+        if (isEmpty(email)) return false;
+        return email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    }
+    
+    // validar teléfono
+    public static boolean isValidPhone(String phone) {
+        if (isEmpty(phone)) return false;
+        return phone.matches("^[0-9]{8}$");
+    }
+    
+    // validar primer nombre
+    public static boolean isValidFName(String fName) {
+        if (isEmpty(fName)) return false;
+        return fName.matches("^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$"); // solo letras y espacios, 2-50 caracteres
+    }
+
+    // validar primer apellido
+    public static boolean isValidFSurname(String fSurname) {
+        if (isEmpty(fSurname)) return false;
+        return fSurname.matches("^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$");
+    }
+
+    // validar segundo apellido
+    public static boolean isValidMSurname(String mSurname) {
+        if (isEmpty(mSurname)) return false; 
+        return mSurname.matches("^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$");
+    } 
 }

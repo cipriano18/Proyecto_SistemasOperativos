@@ -20,7 +20,7 @@ public class RoleDAO {
     // Obtiene todos los roles
     public static List<Role> getAllRoles() {
         List<Role> roles = new ArrayList<>();
-        String sql = "SELECT id_role, name FROM AUD_Roles";
+        String sql = "SELECT id_role, name FROM AUD_Roles ORDER BY id_role ASC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
