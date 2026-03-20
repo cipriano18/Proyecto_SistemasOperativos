@@ -4,11 +4,15 @@
  */
 package model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author User
  */
-public class Role {
+public class Role implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int idRole;
     private String name;
