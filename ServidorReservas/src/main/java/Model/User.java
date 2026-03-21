@@ -11,6 +11,9 @@ public class User implements Serializable {
     private String password;
     private String status;
 
+    public User() {
+    }
+
     public User(int idUser, int idRole, String username, String password, String status) {
         this.idUser = idUser;
         this.idRole = idRole;
@@ -68,6 +71,8 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{id=" + idUser + ", username=" + username + ", role=" + idRole + ", status=" + status + "}";
+        return "User{" + "idUser=" + idUser + ", idRole=" + idRole + ", username=" + username + ", password=" + password + ", status=" + status + '}';
     }
+
+   
 }

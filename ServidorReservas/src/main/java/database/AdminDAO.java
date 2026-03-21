@@ -57,6 +57,35 @@ public class AdminDAO {
         return null;
     }
 
+    // Obtener administrador por id de usuario
+    public static Admin getAdminByUserId(int idUser) {
+        String sql = "SELECT id_admin, id_user, f_name, m_name, f_surname, m_surname, identity_card "
+                + "FROM AUD_Administrators WHERE id_user = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idUser);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new Admin(
+                        rs.getInt("id_admin"),
+                        rs.getInt("id_user"),
+                        rs.getString("f_name"),
+                        rs.getString("m_name"),
+                        rs.getString("f_surname"),
+                        rs.getString("m_surname"),
+                        rs.getString("identity_card")
+                );
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener administrador por id_user: " + e.getMessage());
+        }
+
+        return null;
+    }
+
     public static boolean insertAdmin(Admin admin) {
         Connection conn = null;
         PreparedStatement psAdmin = null;
@@ -81,14 +110,26 @@ public class AdminDAO {
 
         } catch (SQLException e) {
             System.out.println("Error inserting administrator: " + e.getMessage());
-            try { if (conn != null) conn.rollback(); } catch (SQLException ex) { }
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+            }
             return false;
         } finally {
             try {
-                if (psAdmin != null) psAdmin.close();
-                if (conn != null) conn.setAutoCommit(true);
-                if (conn != null) conn.close();
-            } catch (SQLException e) { }
+                if (psAdmin != null) {
+                    psAdmin.close();
+                }
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+            }
         }
     }
 
@@ -114,7 +155,6 @@ public class AdminDAO {
             return false;
         }
     }
-
     // "Eliminar" administrador (soft delete/inactivar usuario)
     public static boolean softDeleteAdmin(int idAdmin) {
         String sql = "UPDATE AUD_Users SET status = 'I' WHERE id_user = (SELECT id_user FROM AUD_Administrators WHERE id_admin = ?)";

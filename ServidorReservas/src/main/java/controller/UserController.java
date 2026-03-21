@@ -4,8 +4,13 @@
  */
 package controller;
 
+import database.AdminDAO;
+import database.ContactDAO;
 import model.User;
 import database.UserDAO;
+import model.Admin;
+import model.AdminRequest;
+import model.Contact;
 import model.Status;
 import utils.Validator;
 
@@ -60,5 +65,36 @@ public class UserController {
             return "SUCCESS:Usuario actualizado correctamente";
         }
         return "ERROR:No se pudo actualizar el usuario";
+    }
+
+    public static Object login(User user) {
+        if ( !Validator.isValidUsername(user.getUsername())
+            || !Validator.isValidPassword(user.getPassword())) {
+        return "ERROR: Credenciales incorrectas";
+    }
+
+        User loggedUser = UserDAO.validateLogin(user.getUsername(), user.getPassword());
+        System.out.println("Usuario validado: " + loggedUser);
+        if (loggedUser == null) {
+            return "ERROR: Credenciales incorrectas `pipiu";
+        }
+
+        // Si es admin
+        if (loggedUser.getIdRole() == 2) {
+            Admin adminDB = AdminDAO.getAdminByUserId(loggedUser.getIdUser());
+            if (adminDB == null) {
+                return "ERROR: No se encontró el administrador";
+            }
+
+            Contact contactDB = ContactDAO.getContactByAdminId(adminDB.getIdAdmin());
+
+            AdminRequest response = new AdminRequest();
+            response.setUser(loggedUser);
+            response.setAdmin(adminDB);
+            response.setContact(contactDB); 
+            return response;
+        }
+
+        return loggedUser;
     }
 }

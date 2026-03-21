@@ -95,4 +95,36 @@ public class UserDAO {
             return false;
         }
     }
+   
+ public static User validateLogin(String username, String password) {
+
+    String sql = "SELECT id_user, username, `password`, status, id_role "
+               + "FROM AUD_Users "
+               + "WHERE username = ? AND `password` = ? AND status = 'A'";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, username);
+        ps.setString(2, password);
+
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            User user = new User();
+            user.setIdUser(rs.getInt("id_user"));
+            user.setUsername(rs.getString("username"));
+            user.setPassword(rs.getString("password")); 
+            user.setStatus(rs.getString("status"));
+            user.setIdRole(rs.getInt("id_role"));
+
+            return user;
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error en login: " + e.getMessage());
+    }
+
+    return null;
+}
 }

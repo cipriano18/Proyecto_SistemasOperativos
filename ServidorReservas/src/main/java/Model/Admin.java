@@ -14,6 +14,9 @@ public class Admin implements Serializable {
     private String mSurname;
     private String identityCard;
 
+    public Admin() {
+    }
+
     public Admin(int idAdmin, int idUser, String fName, String mName,
             String fSurname, String mSurname, String identityCard) {
         this.idAdmin = idAdmin;
