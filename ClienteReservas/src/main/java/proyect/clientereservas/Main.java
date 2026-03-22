@@ -3,7 +3,7 @@ package proyect.clientereservas;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import proyect.clientereservas.network.SocketManager;
-
+import proyect.clientereservas.service.UserService;
 import java.io.IOException;
 
 public class Main extends Application {
@@ -26,7 +26,12 @@ public class Main extends Application {
         } catch (IOException e) {
             System.out.println("Servidor no disponible: " + e.getMessage());
         }
-
+        try {
+            String respuesta = UserService.getInstance().createUser("testUser", "Test1234");
+            System.out.println("Respuesta del servidor: " + respuesta);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         launch();
     }
 }
