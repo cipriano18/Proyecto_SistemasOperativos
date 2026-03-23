@@ -4,7 +4,7 @@ import model.Admin;
 import model.AdminRequest;
 import model.Contact;
 import model.User;
-import proyect.clientereservas.network.SocketManager;
+import proyect.clientereservas.network.socketManager;
 import java.io.IOException;
 
 public class AdminService {
@@ -23,7 +23,7 @@ public class AdminService {
                               String identityCard,
                               String contactType, String contactValue) throws IOException, ClassNotFoundException {
 
-        var conn = SocketManager.getInstance().getConnection();
+        var conn = socketManager.getInstance().getConnection();
 
         User user = new User(2, username, password, "A"); // rol 2 = Administrador
         Admin admin = new Admin(0, fName, mName, fSurname, mSurname, identityCard);

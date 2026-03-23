@@ -2,16 +2,16 @@ package proyect.clientereservas.network;
 
 import java.io.IOException;
 
-public class SocketManager {
+public class socketManager {
 
-    private static SocketManager instance;
+    private static socketManager instance;
     private ServerConnection connection;
 
-    private SocketManager() {}
+    private socketManager() {}
 
-    public static SocketManager getInstance() {
+    public static socketManager getInstance() {
         if (instance == null) {
-            instance = new SocketManager();
+            instance = new socketManager();
         }
         return instance;
     }

@@ -2,7 +2,7 @@ package proyect.clientereservas;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import proyect.clientereservas.network.SocketManager;
+import proyect.clientereservas.network.socketManager;
 import proyect.clientereservas.util.NavigationManager;
 import java.io.IOException;
 
@@ -11,12 +11,12 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         stage.setTitle("Sistema de Reservas — Auditorio");
-        stage.setResizable(false);
+        stage.setResizable(true);
 
         NavigationManager.getInstance().setStage(stage);
 
         try {
-            SocketManager.getInstance().connect();
+            socketManager.getInstance().connect();
             System.out.println("Conectado al servidor.");
         } catch (IOException e) {
             System.out.println("Servidor no disponible: " + e.getMessage());
@@ -27,7 +27,7 @@ public class Main extends Application {
 
     @Override
     public void stop() {
-        SocketManager.getInstance().disconnect();
+        socketManager.getInstance().disconnect();
     }
 
     public static void main(String[] args) {

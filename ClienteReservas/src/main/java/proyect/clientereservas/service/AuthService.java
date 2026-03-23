@@ -2,7 +2,7 @@ package proyect.clientereservas.service;
 
 import model.AdminRequest;
 import model.User;
-import proyect.clientereservas.network.SocketManager;
+import proyect.clientereservas.network.socketManager;
 import java.io.IOException;
 
 public class AuthService {
@@ -19,7 +19,7 @@ public class AuthService {
 
    
     public String login(String username, String password) throws IOException, ClassNotFoundException {
-        var conn = SocketManager.getInstance().getConnection();
+        var conn = socketManager.getInstance().getConnection();
 
         User user = new User(0, username, password, null);
 

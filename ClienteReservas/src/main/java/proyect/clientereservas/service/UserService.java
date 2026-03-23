@@ -1,7 +1,7 @@
 package proyect.clientereservas.service;
 
 import model.User;
-import proyect.clientereservas.network.SocketManager;
+import proyect.clientereservas.network.socketManager;
 import java.io.*;
 
 public class UserService {
@@ -19,7 +19,7 @@ public class UserService {
     }
 
     public String createUser(String userName, String passWord) throws IOException, ClassNotFoundException {
-        var conn = SocketManager.getInstance().getConnection();
+        var conn = socketManager.getInstance().getConnection();
         User user = new User(3, userName, passWord, "active");
 
         conn.getOutput().writeUTF("CREATE_USER");
@@ -32,7 +32,7 @@ public class UserService {
 
     public User getUser(int idUser) throws IOException, ClassNotFoundException {
         // crear una instancia de socketmanager
-        var conn = SocketManager.getInstance().getConnection();
+        var conn = socketManager.getInstance().getConnection();
         User user = new User(0, null, null, null);
         user.setIdUser(idUser);
 

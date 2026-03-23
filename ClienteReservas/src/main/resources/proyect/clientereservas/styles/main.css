@@ -26,8 +26,14 @@
     -fx-background-color: #001e40;
 }
 
+.hero-title-font {
+    -fx-font-family: 'Tw Cen MT', sans-serif;
+    -fx-font-size: 38px;
+    -fx-font-weight: 700;
+    -fx-wrap-text: true;
+}
 .hero-title {
-    -fx-font-family: 'Playfair Display', serif;
+    -fx-font-family: 'Tw Cen MT', sans-serif;
     -fx-font-size: 38px;
     -fx-font-weight: 700;
     -fx-text-fill: white;
@@ -35,6 +41,7 @@
 }
 
 .hero-subtitle {
+    -fx-font-family: 'Tw Cen MT', sans-serif;
     -fx-font-size: 14px;
     -fx-text-fill: #a7c8ff;
     -fx-wrap-text: true;
