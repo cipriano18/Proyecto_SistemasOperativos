@@ -45,20 +45,23 @@ public class ContactDAO {
     }
 
     // Vincular contacto con cliente
-    public static boolean linkContactToClient(int idClient, Contact contact) {
-        String sql = "INSERT INTO AUD_CXC (id_client, id_contact) VALUES (?, ?)";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+public static boolean insertCXC(int idClient, int idContact) {
 
-            ps.setInt(1, idClient);
-            ps.setInt(2, contact.getIdContact());
-            ps.executeUpdate();
-            return true;
+    String sql = "INSERT INTO AUD_CXC (id_client, id_contact) VALUES (?, ?)";
 
-        } catch (SQLException e) {
-            System.out.println("ERROR al vincular contacto con cliente: " + e.getMessage());
-            return false;
-        }
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, idClient);
+        ps.setInt(2, idContact);
+        ps.executeUpdate();
+        return true;
+
+    } catch (SQLException e) {
+        System.out.println("Error al insertar CXC: " + e.getMessage());
+        return false;
     }
+}
   
     // actualizar un contacto
     public static boolean updateContact(Contact contact) {
