@@ -38,15 +38,15 @@ public class AdminController {
         }
 
         // 2. VALIDACIONES ADMIN
-        if (!Validator.isValidFName(admin.getFName())) {
+        if (!Validator.isValidFName(admin.getfName())) {
             return "ERROR:El campo primer nombre es obligatorio";
         }
 
-        if (!Validator.isValidFSurname(admin.getFSurname())) {
+        if (!Validator.isValidFSurname(admin.getfSurname())) {
             return "ERROR:El campo primer apellido es obligatorio";
         }
 
-        if (!Validator.isValidMSurname(admin.getMSurname())) {
+        if (!Validator.isValidMSurname(admin.getfSurname())) {
             return "ERROR:El campo segundo apellido es obligatorio";
         }
 
@@ -62,6 +62,19 @@ public class AdminController {
         if (Validator.isEmpty(contact.getContactValue())) {
             return "ERROR:Valor de contacto requerido";
         }
+        
+        if ("EMAIL".equals(contact.getType())){
+            if (Validator.isValidEmail(contact.getContactValue())) {
+                return "ERROR: El correo debe tener un formato válido (ejemplo: usuario@dominio.com)";
+            }
+        }
+        
+        if ("PHONE".equals(contact.getType())){
+            if (Validator.isValidPhone(contact.getContactValue())) {
+                return "El número de teléfono debe contener exactamente 8 digitos";
+            }
+        }       
+        
         // 4. CREAR USER
         user.setStatus(Status.ACTIVE.getCode());
 
@@ -151,15 +164,15 @@ public class AdminController {
             }
         }
         // 3. UPDATE ADMIN
-        if (!Validator.isValidFName(admin.getFName())) {
+        if (!Validator.isValidFName(admin.getfName())) {
             return "ERROR:El campo primer nombre es obligatorio";
         }
 
-        if (!Validator.isValidFSurname(admin.getFSurname())) {
+        if (!Validator.isValidFSurname(admin.getfSurname())) {
             return "ERROR:El campo primer apellido es obligatorio";
         }
 
-        if (!Validator.isValidMSurname(admin.getMSurname())) {
+        if (!Validator.isValidMSurname(admin.getmSurname())) {
             return "ERROR:El campo segundo apellido es obligatorio";
         }
 

@@ -97,12 +97,13 @@ public class AdminDAO {
             // Insertar administrador
             String sqlAdmin = "INSERT INTO AUD_Administrators (id_user, f_name, m_name, f_surname, m_surname, identity_card) VALUES (?, ?, ?, ?, ?, ?)";
             psAdmin = conn.prepareStatement(sqlAdmin, PreparedStatement.RETURN_GENERATED_KEYS);
-            psAdmin.setInt(1, admin.getIdUser());   // ya debe venir del User creado
-            psAdmin.setString(2, admin.getFName());
-            psAdmin.setString(3, admin.getMName());
-            psAdmin.setString(4, admin.getFSurname());
-            psAdmin.setString(5, admin.getMSurname());
-            psAdmin.setString(6, admin.getIdentityCard());
+            psAdmin.setInt(1, admin.getIdUser());   
+            psAdmin.setString(2, admin.getfName()); 
+            psAdmin.setString(3, admin.getmName()); 
+            psAdmin.setString(4, admin.getfSurname()); 
+            psAdmin.setString(5, admin.getmSurname()); 
+            psAdmin.setString(6, admin.getIdentityCard()); 
+
             psAdmin.executeUpdate();
 
             conn.commit();
@@ -136,17 +137,17 @@ public class AdminDAO {
     // Actualizar un administrador
     public static boolean updateAdmin(Admin admin) {
         // Validaciones previas
-        if (Validator.isEmpty(admin.getFName()) || Validator.isEmpty(admin.getFSurname())) {
+        if (Validator.isEmpty(admin.getfName()) || Validator.isEmpty(admin.getfSurname())) {
             System.out.println("Error: Nombre y apellido son obligatorios.");
             return false;
         }
 
         String sql = "UPDATE AUD_Administrators SET f_name = ?, m_name = ?, f_surname = ?, m_surname = ? WHERE id_admin = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, admin.getFName());
-            ps.setString(2, admin.getMName());
-            ps.setString(3, admin.getFSurname());
-            ps.setString(4, admin.getMSurname());
+            ps.setString(1, admin.getfName());
+            ps.setString(2, admin.getmName());
+            ps.setString(3, admin.getfSurname());
+            ps.setString(4, admin.getfSurname());
             ps.setInt(5, admin.getIdAdmin());
             ps.executeUpdate();
             return true;
