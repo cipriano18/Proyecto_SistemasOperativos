@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 public class Person {
     protected int idUser;
@@ -63,5 +63,10 @@ public class Person {
 
     public void setIdentityCard(String identityCard) {
         this.identityCard = identityCard;
+    }
+
+    @Override
+    public String toString() {
+        return fName + " " + mName + " " + fSurname + " " + mSurname;
     }
 }

@@ -1,7 +1,7 @@
 package model;
 
 import java.io.Serializable;
-import Model.Person;
+import model.Person;
 
 public class Admin extends Person implements Serializable {
 

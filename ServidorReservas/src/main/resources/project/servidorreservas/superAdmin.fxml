@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.servidorreservas.SuperAdminController"
+            prefHeight="400.0" prefWidth="600.0">
+    <children>
+        <Label layoutX="20" layoutY="20" text="Seleccione el administrador que será super administrador:" />
+
+        <!-- Campos para crear administrador -->
+        <TextField fx:id="usernameField" layoutX="20" layoutY="50" promptText="Usuario"/>
+        <TextField fx:id="passwordField" layoutX="200" layoutY="50" promptText="Contraseña"/>
+        <Button layoutX="400" layoutY="50" text="Crear Admin" onAction="#handleCreateAdmin"/>
+
+        <!-- Lista de administradores -->
+        <ListView fx:id="adminListView" layoutX="20" layoutY="100" prefWidth="560" prefHeight="210"/>
+        <Button layoutX="20" layoutY="330" text="Seleccionar" onAction="#handleSelectAdmin"/>
+    </children>
+</AnchorPane>
+
+
