@@ -96,7 +96,7 @@
             <Region minHeight="16" />
 
             <!-- Botón registro -->
-            <Button onAction="#handleGoToRegister" prefWidth="340" styleClass="btn-secondary" text="Crear cuenta de administrador" />
+            <Button onAction="#handleGoToRegister" prefWidth="340" styleClass="btn-secondary" text="Registrese como cliente" />
 
             <Region VBox.vgrow="ALWAYS" />
 

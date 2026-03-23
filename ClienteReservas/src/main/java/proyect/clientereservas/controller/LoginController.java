@@ -27,7 +27,6 @@ public class LoginController {
         loginButton.setText("Verificando...");
         messageLabel.setText("");
 
-        // Operación en hilo separado para no bloquear la UI
         new Thread(() -> {
             try {
                 String response = AuthService.getInstance().login(username, password);
@@ -37,15 +36,10 @@ public class LoginController {
                     loginButton.setText("Iniciar Sesión");
 
                     if (response.startsWith("SUCCESS")) {
-                        // Navegar al dashboard según rol
-                        if (AuthService.getInstance().isAdmin()) {
-                            NavigationManager.getInstance().navigateTo("dashboard_admin");
-                        } else {
-                            NavigationManager.getInstance().navigateTo("dashboard");
-                        }
+                        navigateByRole(AuthService.getInstance().getCurrentRole());
                     } else {
-                        String errorMsg = response.contains(":") ? response.split(":", 2)[1] : response;
-                        showError(errorMsg);
+                        String msg = response.contains(":") ? response.split(":", 2)[1] : response;
+                        showError(msg.trim());
                     }
                 });
 
@@ -59,6 +53,22 @@ public class LoginController {
         }).start();
     }
 
+    private void navigateByRole(int role) {
+        switch (role) {
+            case 1:
+                NavigationManager.getInstance().navigateTo("dashboard_superadmin");
+                break;
+            case 2:
+                NavigationManager.getInstance().navigateTo("dashboard_admin");
+                break;
+            case 3:
+                NavigationManager.getInstance().navigateTo("dashboard_cliente");
+                break;
+            default:
+                showError("Rol no reconocido.");
+        }
+    }
+
     @FXML
     public void handleGoToRegister() {
         NavigationManager.getInstance().navigateTo("register");
@@ -66,8 +76,8 @@ public class LoginController {
 
     @FXML
     public void handleSupport() {
-        messageLabel.setStyle("-fx-text-fill: #43474f;");
-        messageLabel.setText("Contacte a soporte en: soporte@una.cr");
+        messageLabel.setStyle("-fx-text-fill: #43474f; -fx-font-size:12px;");
+        messageLabel.setText("Soporte: soporte@una.cr");
     }
 
     private void showError(String msg) {

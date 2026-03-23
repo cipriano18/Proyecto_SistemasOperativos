@@ -8,7 +8,7 @@ import java.io.IOException;
 public class AuthService {
 
     private static AuthService instance;
-    private static Object currentSession; // User o AdminRequest seguun el rol
+    private static Object currentSession;
 
     private AuthService() {}
 
@@ -17,7 +17,6 @@ public class AuthService {
         return instance;
     }
 
-   
     public String login(String username, String password) throws IOException, ClassNotFoundException {
         var conn = socketManager.getInstance().getConnection();
 
@@ -31,20 +30,25 @@ public class AuthService {
         String response = conn.getInput().readUTF();
 
         if (response.startsWith("SUCCESS")) {
-            // El servidor manda el objeto de sesión después del SUCCESS
             currentSession = conn.getObjectInput().readObject();
         }
 
         return response;
     }
 
-    public Object getCurrentSession() { return currentSession; }
-
-    public boolean isAdmin() {
-        return currentSession instanceof AdminRequest;
+    public int getCurrentRole() {
+        if (currentSession instanceof AdminRequest) {
+            AdminRequest req = (AdminRequest) currentSession;
+            return req.getUser().getIdRole();
+        }
+        if (currentSession instanceof User) {
+            User user = (User) currentSession;
+            return user.getIdRole();
+        }
+        return -1;
     }
 
+    public Object getCurrentSession() { return currentSession; }
     public boolean isLoggedIn() { return currentSession != null; }
-
     public void logout() { currentSession = null; }
 }
