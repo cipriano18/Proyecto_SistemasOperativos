@@ -5,6 +5,7 @@ module proyect.clientereservas {
     requires java.base;
 
     opens proyect.clientereservas to javafx.fxml;
+    opens proyect.clientereservas.controller to javafx.fxml;
     opens model;
 
     exports proyect.clientereservas;
