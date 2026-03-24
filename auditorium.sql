@@ -15,11 +15,8 @@ CREATE TABLE AUD_Users (
     id_role INT NOT NULL,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    status VARCHAR(1) NOT NULL DEFAULT 'A',
-    FOREIGN KEY (id_role) REFERENCES AUD_Roles(id_role),
-    FOREIGN KEY (status) REFERENCES AUD_Statuses(code)
+    FOREIGN KEY (id_role) REFERENCES AUD_Roles(id_role)
 );
-
 
 CREATE TABLE AUD_Administrators (
     id_admin INT AUTO_INCREMENT PRIMARY KEY,
@@ -72,11 +69,6 @@ CREATE TABLE AUD_CXC (
     FOREIGN KEY (id_contact) REFERENCES AUD_Contacts(id_contact)
 );
 
-CREATE TABLE AUD_Statuses (
-    id_status INT AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(1) NOT NULL UNIQUE,
-    description VARCHAR(25) NOT NULL
-);
 
 INSERT INTO AUD_Roles (name) VALUES 
 ('SuperAdministrador'), 
@@ -89,7 +81,4 @@ INSERT INTO AUD_ClientTypes (name) VALUES
 ('Administrativo'), 
 ('Externo');
 
-INSERT INTO AUD_Statuses (code, description) VALUES
-('A', 'Activo'),
-('I', 'Inactivo');
 
