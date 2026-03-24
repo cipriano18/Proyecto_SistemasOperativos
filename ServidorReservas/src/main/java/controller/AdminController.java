@@ -3,7 +3,6 @@ package controller;
 import model.Admin;
 import model.User;
 import model.Contact;
-import model.Status;
 
 import database.UserDAO;
 import database.AdminDAO;
@@ -62,21 +61,15 @@ public class AdminController {
         if (Validator.isEmpty(contact.getContactValue())) {
             return "ERROR:Valor de contacto requerido";
         }
-        
-        if ("EMAIL".equals(contact.getType())){
-            if (Validator.isValidEmail(contact.getContactValue())) {
-                return "ERROR: El correo debe tener un formato válido (ejemplo: usuario@dominio.com)";
+        if (!Validator.isValidContact(contact.getType(), contact.getContactValue())) {
+            if ("PHONE".equals(contact.getType())) {
+                return "ERROR:El teléfono debe contener exactamente 8 dígitos numéricos";
             }
+            if ("EMAIL".equals(contact.getType())) {
+                return "ERROR:El correo debe tener un formato válido (ejemplo: usuario@dominio.com)";
+            }
+            return "ERROR:Valor de contacto inválido";
         }
-        
-        if ("PHONE".equals(contact.getType())){
-            if (Validator.isValidPhone(contact.getContactValue())) {
-                return "El número de teléfono debe contener exactamente 8 digitos";
-            }
-        }       
-        
-        // 4. CREAR USER
-        user.setStatus(Status.ACTIVE.getCode());
 
         boolean userInserted = UserDAO.insertUser(user);
 
@@ -182,7 +175,6 @@ public class AdminController {
             return "ERROR:No se pudo actualizar el administrador";
         }
 
-        // 4. UPDATE CONTACT (correo / teléfono)
         if (contact != null) {
 
             if (Validator.isEmpty(contact.getType())) {
@@ -191,6 +183,16 @@ public class AdminController {
 
             if (Validator.isEmpty(contact.getContactValue())) {
                 return "ERROR:Valor de contacto requerido";
+            }
+// 4. UPDATE CONTACT (correo / teléfono)
+            if (!Validator.isValidContact(contact.getType(), contact.getContactValue())) {
+                if ("PHONE".equals(contact.getType())) {
+                    return "ERROR:El teléfono debe contener exactamente 8 dígitos numéricos";
+                }
+                if ("EMAIL".equals(contact.getType())) {
+                    return "ERROR:El correo debe tener un formato válido (ejemplo: usuario@dominio.com)";
+                }
+                return "ERROR:Valor de contacto inválido";
             }
 
             boolean contactUpdated = ContactDAO.updateContact(contact);

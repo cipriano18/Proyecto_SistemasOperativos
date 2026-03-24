@@ -1,0 +1,15 @@
+proyect\clientereservas\controller\LoginController.class
+model\AdminRequest.class
+proyect\clientereservas\network\ServerConnection.class
+model\Contact.class
+proyect\clientereservas\Main.class
+proyect\clientereservas\service\AdminService.class
+proyect\clientereservas\controller\RegisterController.class
+proyect\clientereservas\network\SocketManager.class
+proyect\clientereservas\service\UserService.class
+model\Role.class
+module-info.class
+model\User.class
+proyect\clientereservas\service\AuthService.class
+proyect\clientereservas\util\NavigationManager.class
+model\Admin.class

@@ -66,5 +66,26 @@ public class Validator {
     public static boolean isValidMSurname(String mSurname) {
         if (isEmpty(mSurname)) return false; 
         return mSurname.matches("^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$");
-    } 
+    }
+     // Valida el valor de contacto según su tipo
+    // Si tipo es PHONE → solo números, exactamente 8 dígitos
+    // Si tipo es EMAIL → formato válido de correo
+
+    public static boolean isValidContact(String type, String value) {
+        if (isEmpty(type)) {
+            return false;
+        }
+        if (isEmpty(value)) {
+            return false;
+        }
+
+        switch (type.toUpperCase()) {
+            case "PHONE":
+                return isValidPhone(value); 
+            case "EMAIL":
+                return isValidEmail(value); 
+            default:
+                return value.trim().length() >= 2;
+        }
+    }
 }

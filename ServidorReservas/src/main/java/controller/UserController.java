@@ -11,7 +11,6 @@ import database.UserDAO;
 import model.Admin;
 import model.AdminRequest;
 import model.Contact;
-import model.Status;
 import utils.Validator;
 
 /**
@@ -34,7 +33,6 @@ public class UserController {
             return "ERROR:El nombre de usuario ya está en uso";
         }
 
-        user.setStatus(Status.ACTIVE.getCode());
         boolean insertado = UserDAO.insertUser(user);
         if (insertado) {
             return "SUCCESS:Usuario creado correctamente";

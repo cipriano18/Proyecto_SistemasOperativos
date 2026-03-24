@@ -1,4 +1,4 @@
-package project.servidorreservas;
+package controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -148,7 +148,6 @@ public class SuperAdminController {
         newUser.setUsername(username);
         newUser.setPassword(password);
         newUser.setIdRole(ROLE_SUPER_ADMIN);
-        newUser.setStatus("A");
 
         if (!UserDAO.insertUser(newUser)) {
             showAlert(AlertType.ERROR, "Error", "No se pudo crear el usuario.");

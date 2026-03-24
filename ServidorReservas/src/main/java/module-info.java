@@ -5,5 +5,6 @@ module project.servidorreservas {
     requires java.base;
     opens project.servidorreservas to javafx.fxml;
     exports project.servidorreservas;
-    opens model to javafx.base; 
-}
+    opens model to javafx.base;
+    opens controller to javafx.fxml;
+}                                           

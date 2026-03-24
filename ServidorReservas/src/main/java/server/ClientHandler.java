@@ -26,7 +26,6 @@ public class ClientHandler extends Thread {
         this.socket = socket;
         try {
             objectInput  = new ObjectInputStream(socket.getInputStream());
-            objectOutput = new ObjectOutputStream(socket.getOutputStream());
             objectOutput.flush();
             input  = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
@@ -121,7 +120,6 @@ public class ClientHandler extends Thread {
                         System.out.println("Username: " + u.getUsername());
                         System.out.println("Password: " + u.getPassword());
                         System.out.println("Role: " + u.getIdRole());
-                        System.out.println("Status: " + u.getStatus());
 
                         // Ahora sí validamos
                         Object resp = UserController.login(u);

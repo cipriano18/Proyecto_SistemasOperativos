@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="proyect.clientereservas.controller.LoginController"
+      styleClass="root-pane"
+      prefWidth="920" prefHeight="600">
+
+    <!-- PANEL IZQUIERDO -->
+    <VBox styleClass="hero-panel" prefWidth="380" prefHeight="600" spacing="0">
+        <padding><Insets top="40" left="40" right="40" bottom="40"/></padding>
+
+        <!-- Logo -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <VBox styleClass="logo-box" minWidth="38" minHeight="38" alignment="CENTER">
+                <Label text="A" style="-fx-font-size:18px; -fx-font-weight:700; -fx-text-fill:white;"/>
+            </VBox>
+            <Label text="Auditorio UNA" styleClass="logo-text"/>
+        </HBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <!-- Contenido hero -->
+        <VBox spacing="16">
+            <Label text="SISTEMA INSTITUCIONAL" styleClass="hero-badge"/>
+            <Label text="Reserva de Auditorio" styleClass="hero-title" prefWidth="300"/>
+            <Label text="Acceda al sistema de gestión de espacios académicos. Reserve y coordine los auditorios de la institución."
+                   styleClass="hero-subtitle" prefWidth="300" wrapText="true"/>
+        </VBox>
+
+        <Region minHeight="40"/>
+
+        <!-- Footer hero -->
+        <Label text="© 2026 Universidad Nacional" style="-fx-font-size:10px; -fx-text-fill: #537090;"/>
+    </VBox>
+
+    <!-- PANEL DERECHO -->
+    <VBox styleClass="form-panel" HBox.hgrow="ALWAYS" alignment="CENTER">
+        <padding><Insets top="60" left="60" right="60" bottom="40"/></padding>
+        <VBox spacing="0" maxWidth="340" VBox.vgrow="ALWAYS">
+
+            <!-- Header -->
+            <VBox spacing="6">
+                <Label text="Bienvenido de nuevo" styleClass="form-title"/>
+                <Label text="Ingrese sus credenciales para continuar." styleClass="form-subtitle"/>
+            </VBox>
+
+            <Region minHeight="36"/>
+
+            <!-- Username -->
+            <VBox spacing="6">
+                <Label text="USUARIO" styleClass="field-label"/>
+                <TextField fx:id="usernameField" styleClass="text-field"
+                           promptText="nombre.usuario" prefWidth="340"/>
+            </VBox>
+
+            <Region minHeight="16"/>
+
+            <!-- Password -->
+            <VBox spacing="6">
+                <Label text="CONTRASEÑA" styleClass="field-label"/>
+                <PasswordField fx:id="passwordField" styleClass="password-field"
+                               promptText="••••••••" prefWidth="340"/>
+            </VBox>
+
+            <Region minHeight="8"/>
+
+            <!-- Mensaje error -->
+            <Label fx:id="messageLabel" styleClass="msg-error" text="" wrapText="true" prefWidth="340"/>
+
+            <Region minHeight="20"/>
+
+            <!-- Botón login -->
+            <Button fx:id="loginButton" text="Iniciar Sesión" styleClass="btn-primary"
+                    prefWidth="340" onAction="#handleLogin"/>
+
+            <Region minHeight="16"/>
+
+            <!-- Separador -->
+            <HBox alignment="CENTER" spacing="12">
+                <Region HBox.hgrow="ALWAYS" styleClass="divider-line"/>
+                <Label text="o" styleClass="separator-label"/>
+                <Region HBox.hgrow="ALWAYS" styleClass="divider-line"/>
+            </HBox>
+
+            <Region minHeight="16"/>
+
+            <!-- Botón registro -->
+            <Button text="Crear cuenta de administrador" styleClass="btn-secondary"
+                    prefWidth="340" onAction="#handleGoToRegister"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- Footer -->
+            <HBox alignment="CENTER">
+                <Label text="¿Problemas para ingresar? " styleClass="separator-label"/>
+                <Button text="Contactar soporte" styleClass="btn-link" onAction="#handleSupport"/>
+            </HBox>
+
+        </VBox>
+    </VBox>
+</HBox>

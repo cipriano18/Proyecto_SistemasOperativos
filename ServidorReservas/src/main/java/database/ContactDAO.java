@@ -117,4 +117,45 @@ public static boolean insertCXC(int idClient, int idContact) {
 
     return null;
 }
+    // Eliminar contacto de cliente en cascada (CXC + AUD_Contacts)
+    public static boolean deleteContactByClientId(int idClient) {
+        try (Connection conn = DBConnection.getConnection()) {
+
+            // 1. Obtener el id_contact antes de eliminar
+            int idContact = -1;
+            String getContact = "SELECT id_contact FROM AUD_CXC WHERE id_client = ?";
+            try (PreparedStatement ps = conn.prepareStatement(getContact)) {
+                ps.setInt(1, idClient);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    idContact = rs.getInt("id_contact");
+                }
+            }
+
+            if (idContact == -1) {
+                System.out.println("No se encontró contacto para el cliente: " + idClient);
+                return false;
+            }
+
+            // 2. Eliminar de AUD_CXC primero 
+            String deleteCXC = "DELETE FROM AUD_CXC WHERE id_client = ?";
+            try (PreparedStatement ps = conn.prepareStatement(deleteCXC)) {
+                ps.setInt(1, idClient);
+                ps.executeUpdate();
+            }
+
+            // 3. Eliminar de AUD_Contacts 
+            String deleteContact = "DELETE FROM AUD_Contacts WHERE id_contact = ?";
+            try (PreparedStatement ps = conn.prepareStatement(deleteContact)) {
+                ps.setInt(1, idContact);
+                ps.executeUpdate();
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar contacto de cliente: " + e.getMessage());
+            return false;
+        }
+    }
 }

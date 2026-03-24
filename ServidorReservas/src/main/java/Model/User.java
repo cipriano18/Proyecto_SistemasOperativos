@@ -9,24 +9,20 @@ public class User implements Serializable {
     private int idRole;
     private String username;
     private String password;
-    private String status;
-
     public User() {
     }
 
-    public User(int idUser, int idRole, String username, String password, String status) {
+    public User(int idUser, int idRole, String username, String password) {
         this.idUser = idUser;
         this.idRole = idRole;
         this.username = username;
         this.password = password;
-        this.status = status;
     }
 
-    public User(int idRole, String username, String password, String status) {
+    public User(int idRole, String username, String password) {
         this.idRole = idRole;
         this.username = username;
         this.password = password;
-        this.status = status;
     }
 
     public int getIdUser() {
@@ -61,13 +57,6 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     @Override
     public String toString() {
