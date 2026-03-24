@@ -1,0 +1,244 @@
+/* ═══════════════════════════════════════════
+   superAdmin.css  —  Modern Admin Panel Style
+   ═══════════════════════════════════════════ */
+
+.root {
+    -fx-background-color: #f6f9ff;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+/* ─── Section header ─── */
+.section-header {
+    -fx-background-color: #f6f9ff;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #161c22;
+}
+
+/* ─── Cards ─── */
+.card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-color: #e5e9f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(22,28,34,0.07), 24, 0, 0, 4);
+}
+
+.card-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #161c22;
+}
+
+/* ─── Field labels ─── */
+.field-label {
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #6b7280;
+}
+
+/* ─── Text / Password inputs ─── */
+.field-input {
+    -fx-background-color: #f6f9ff;
+    -fx-background-radius: 8;
+    -fx-border-color: #c0c7d3;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 10 40 10 14;
+    -fx-font-size: 13px;
+    -fx-text-fill: #161c22;
+    -fx-prompt-text-fill: #a0aab4;
+}
+
+.field-input:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #005ea1;
+    -fx-effect: dropshadow(gaussian, rgba(0,94,161,0.15), 8, 0, 0, 0);
+}
+
+.field-password {
+    -fx-font-size: 9px;
+    -fx-font-family: "Segoe UI Symbol", "Arial Unicode MS", sans-serif;
+}
+
+.field-password.text-field {
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+/* ─── Eye toggle button ─── */
+.eye-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #9ba3af;
+    -fx-font-size: 14px;
+    -fx-padding: 0 10 0 0;
+    -fx-cursor: hand;
+    -fx-min-width: 32px;
+    -fx-min-height: 32px;
+}
+
+.eye-btn:hover  { -fx-text-fill: #005ea1; }
+.eye-btn.active { -fx-text-fill: #005ea1; }
+
+/* ─── Primary button ─── */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom right, #005ea1, #2178c3);
+    -fx-background-radius: 8;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-padding: 12 20 12 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,94,161,0.30), 12, 0, 0, 3);
+}
+
+.btn-primary:hover   { -fx-background-color: linear-gradient(to bottom right, #0070be, #2d88d8); }
+.btn-primary:pressed { -fx-scale-x: 0.97; -fx-scale-y: 0.97; }
+
+/* ─── Danger button ─── */
+.btn-danger {
+    -fx-background-color: #fff0f0;
+    -fx-background-radius: 8;
+    -fx-text-fill: #ba1a1a;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-padding: 12 22 12 22;
+    -fx-cursor: hand;
+    -fx-border-color: #ffc5c5;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+}
+
+.btn-danger:hover   { -fx-background-color: #ffe0e0; -fx-border-color: #ba1a1a; }
+.btn-danger:pressed { -fx-scale-x: 0.97; -fx-scale-y: 0.97; }
+
+/* ─── Secondary button ─── */
+.btn-secondary {
+    -fx-background-color: #e3e9f1;
+    -fx-background-radius: 8;
+    -fx-text-fill: #005ea1;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-padding: 12 28 12 28;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.btn-secondary:hover   { -fx-background-color: #d2e4ff; }
+.btn-secondary:pressed { -fx-scale-x: 0.97; -fx-scale-y: 0.97; }
+
+/* ─── Table header bar ─── */
+.table-header {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #eef4fc transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-radius: 12 12 0 0;
+}
+
+.table-header-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #161c22;
+}
+
+/* ─── TableView base ─── */
+.admin-table {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.admin-table .column-header-background {
+    -fx-background-color: #dde3eb;
+}
+
+.admin-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.admin-table .column-header .label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #6b7280;
+    -fx-padding: 0 8 0 8;
+}
+
+/* ─── Filas normales ─── */
+.admin-table .table-row-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #f0f4f8 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 4 0 4 0;
+}
+
+.admin-table .table-row-cell:odd {
+    -fx-background-color: #f8fbff;
+}
+
+/* ─── Fila Super Admin resaltada (clase aplicada desde Java) ─── */
+.row-super-admin {
+    -fx-background-color: #fffbe6 !important;
+    -fx-border-color: transparent transparent #f5d87a transparent !important;
+    -fx-border-width: 0 0 1 0 !important;
+}
+
+.row-super-admin .text {
+    -fx-fill: #7a5c00;
+    -fx-font-weight: 700;
+}
+
+/* Mantener el resaltado dorado incluso al seleccionar la fila */
+.row-super-admin:selected {
+    -fx-background-color: #fef3c0 !important;
+}
+
+.row-super-admin:selected .text {
+    -fx-fill: #7a5c00;
+}
+
+/* ─── Celda de rol: etiqueta coloreada ─── */
+.role-badge-super {
+    -fx-background-color: #fde68a;
+    -fx-background-radius: 20;
+    -fx-text-fill: #7a5c00;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-padding: 3 10 3 10;
+}
+
+.role-badge-admin {
+    -fx-background-color: #dbeafe;
+    -fx-background-radius: 20;
+    -fx-text-fill: #1e40af;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-padding: 3 10 3 10;
+}
+
+/* ─── Celdas generales ─── */
+.admin-table .table-cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: #161c22;
+    -fx-padding: 10 8 10 8;
+}
+
+/* ─── Selección normal (filas no super-admin) ─── */
+.admin-table .table-row-cell:selected {
+    -fx-background-color: #eef4fc;
+}
+
+.admin-table .table-row-cell:selected .text {
+    -fx-fill: #005ea1;
+    -fx-font-weight: 700;
+}
+
+/* ─── Footer ─── */
+.action-footer {
+    -fx-background-color: #f6f9ff;
+}

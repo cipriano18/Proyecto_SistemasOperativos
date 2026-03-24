@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -77,6 +79,26 @@ public class UserDAO {
         }
         return null;
     }
+    // Obtiene todos los usuarios que son admin
+    public static List<User> getAllAdminUsers() {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT id_user, id_role, username, password, status FROM AUD_Users WHERE id_role = 2 OR id_role = 1 ORDER BY id_user ASC";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = new User();
+                user.setIdUser(rs.getInt("id_user"));
+                user.setIdRole(rs.getInt("id_role"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setStatus(rs.getString("status"));
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener usuarios administradores: " + e.getMessage());
+        }
+        return users;
+    }
 
     // Actualiza username, password y status de un usuario existente
     public static boolean updateUser(User user) {
@@ -95,36 +117,51 @@ public class UserDAO {
             return false;
         }
     }
-   
- public static User validateLogin(String username, String password) {
-
-    String sql = "SELECT id_user, username, `password`, status, id_role "
-               + "FROM AUD_Users "
-               + "WHERE username = ? AND `password` = ? AND status = 'A'";
-
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-
-        ps.setString(1, username);
-        ps.setString(2, password);
-
-        ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            User user = new User();
-            user.setIdUser(rs.getInt("id_user"));
-            user.setUsername(rs.getString("username"));
-            user.setPassword(rs.getString("password")); 
-            user.setStatus(rs.getString("status"));
-            user.setIdRole(rs.getInt("id_role"));
-
-            return user;
+    
+    // Actualiza el rol de un usuario existente
+    public static boolean updateUserRole(int idUser, int newRole) {
+        String sql = "UPDATE AUD_Users SET id_role = ? WHERE id_user = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, newRole);
+            ps.setInt(2, idUser);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar rol de usuario: " + e.getMessage());
+            return false;
         }
-
-    } catch (SQLException e) {
-        System.out.println("Error en login: " + e.getMessage());
     }
 
-    return null;
-}
+   
+    public static User validateLogin(String username, String password) {
+
+       String sql = "SELECT id_user, username, `password`, status, id_role "
+                  + "FROM AUD_Users "
+                  + "WHERE username = ? AND `password` = ? AND status = 'A'";
+
+       try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+           ps.setString(1, username);
+           ps.setString(2, password);
+
+           ResultSet rs = ps.executeQuery();
+
+           if (rs.next()) {
+               User user = new User();
+               user.setIdUser(rs.getInt("id_user"));
+               user.setUsername(rs.getString("username"));
+               user.setPassword(rs.getString("password")); 
+               user.setStatus(rs.getString("status"));
+               user.setIdRole(rs.getInt("id_role"));
+
+               return user;
+           }
+
+       } catch (SQLException e) {
+           System.out.println("Error en login: " + e.getMessage());
+       }
+
+       return null;
+   }
 }

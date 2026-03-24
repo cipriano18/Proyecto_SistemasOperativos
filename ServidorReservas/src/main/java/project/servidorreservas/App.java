@@ -20,7 +20,7 @@ public class App extends Application {
         serverThread.setDaemon(true);
         serverThread.start();
 
-        scene = new Scene(loadFXML("superAdmin"), 640, 480);
+        scene = new Scene(loadFXML("superAdmin"), 870, 480);
         stage.setScene(scene);
         stage.show();
     }

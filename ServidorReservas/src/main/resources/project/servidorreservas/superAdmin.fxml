@@ -1,25 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.servidorreservas.SuperAdminController"
-            prefHeight="400.0" prefWidth="600.0">
-    <children>
-        <Label layoutX="20" layoutY="20" text="Seleccione el administrador que será super administrador:" />
+<AnchorPane prefHeight="620.0" prefWidth="860.0" stylesheets="@../../styles/superAdmin.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.servidorreservas.SuperAdminController">
 
-        <!-- Campos para crear administrador -->
-        <TextField fx:id="usernameField" layoutX="20" layoutY="50" promptText="Usuario"/>
-        <TextField fx:id="passwordField" layoutX="200" layoutY="50" promptText="Contraseña"/>
-        <Button layoutX="400" layoutY="50" text="Crear Admin" onAction="#handleCreateAdmin"/>
+    <VBox spacing="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
 
-        <!-- Lista de administradores -->
-        <ListView fx:id="adminListView" layoutX="20" layoutY="100" prefWidth="560" prefHeight="210"/>
-        <Button layoutX="20" layoutY="330" text="Seleccionar" onAction="#handleSelectAdmin"/>
-    </children>
+        <!-- ── TOP SECTION HEADER ── -->
+        <VBox spacing="4" styleClass="section-header">
+            <padding><Insets bottom="20" left="36" right="36" top="32" /></padding>
+            <Label styleClass="section-title" text="Seleccione el usuario que será super Administrador" />
+        </VBox>
+
+        <!-- ── MAIN CONTENT ROW ── -->
+        <HBox spacing="20" VBox.vgrow="ALWAYS">
+            <padding><Insets bottom="0" left="36" right="36" top="0" /></padding>
+
+            <!-- LEFT: Create Admin Card -->
+            <VBox minWidth="200" prefHeight="430.0" prefWidth="272.0" spacing="20" styleClass="card">
+                <padding><Insets bottom="28" left="24" right="24" top="28" /></padding>
+
+                <Label styleClass="card-title" text="Nuevo super administrador" />
+
+                <!-- Username -->
+                <VBox spacing="6">
+                    <Label styleClass="field-label" text="USUARIO" />
+                    <TextField fx:id="usernameField" promptText="Nombre de usuario" styleClass="field-input" />
+                </VBox>
+
+                <!-- Password with toggle eye -->
+                <VBox spacing="6">
+                    <Label styleClass="field-label" text="CONTRASEÑA" />
+                    <StackPane styleClass="password-wrapper">
+                        <PasswordField fx:id="passwordField" prefHeight="41.0" prefWidth="190.0" promptText="Contraseña" styleClass="field-input field-password" />
+                        <TextField fx:id="passwordVisible" managed="false" promptText="Contraseña" styleClass="field-input field-password" visible="false" />
+                        <Button fx:id="togglePasswordBtn" onAction="#handleTogglePassword" styleClass="eye-btn" text="○" StackPane.alignment="CENTER_RIGHT" />
+                    </StackPane>
+                </VBox>
+
+                <!-- Create button -->
+                <Button fx:id="createButton" maxWidth="Infinity" onAction="#handleCreateAdmin" prefHeight="42.0" prefWidth="214.0" styleClass="btn-primary" text="Crear super administrador" />
+            </VBox>
+
+            <!-- RIGHT: Admin Table Card -->
+            <VBox spacing="0" styleClass="card" HBox.hgrow="ALWAYS">
+
+                <HBox alignment="CENTER_LEFT" spacing="12" styleClass="table-header">
+                    <padding><Insets bottom="16" left="20" right="20" top="16" /></padding>
+                    <Label styleClass="table-header-title" text="Lista de administradores" HBox.hgrow="ALWAYS" />
+                </HBox>
+
+                <TableView fx:id="adminTable" styleClass="admin-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="idColumn" minWidth="60" prefWidth="70" text="ID" />
+                        <TableColumn fx:id="usernameColumn" minWidth="120" prefWidth="300.0" text="Usuario" />
+                        <TableColumn fx:id="roleColumn" minWidth="100" prefWidth="156.0" text="Rol" />
+                    </columns>
+                </TableView>
+
+            </VBox>
+        </HBox>
+
+        <!-- ── BOTTOM SECTION HEADER ── -->
+        <VBox spacing="4" styleClass="section-header">
+            <padding><Insets bottom="12" left="36" right="36" top="24" /></padding>
+        </VBox>
+
+        <!-- ── BOTTOM ACTION ROW ── -->
+        <HBox alignment="CENTER_LEFT" styleClass="action-footer">
+            <padding><Insets bottom="28" left="36" right="36" top="12" /></padding>
+
+            <Button fx:id="revokeButton" onAction="#handleRevokeAdmin" styleClass="btn-danger" text="✕  Quitar Super Admin" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="selectButton" onAction="#handleSelectAdmin" styleClass="btn-secondary" text="Seleccionar ›" />
+
+        </HBox>
+
+    </VBox>
 </AnchorPane>
-
-
