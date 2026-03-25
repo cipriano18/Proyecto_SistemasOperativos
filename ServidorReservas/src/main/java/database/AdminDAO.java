@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import model.AdminRequest;
+import model.Contact;
+import model.User;
 import utils.Validator;
 
 public class AdminDAO {
@@ -147,7 +150,7 @@ public class AdminDAO {
             ps.setString(1, admin.getfName());
             ps.setString(2, admin.getmName());
             ps.setString(3, admin.getfSurname());
-            ps.setString(4, admin.getfSurname());
+            ps.setString(4, admin.getmSurname());
             ps.setInt(5, admin.getIdAdmin());
             ps.executeUpdate();
             return true;
@@ -156,15 +159,98 @@ public class AdminDAO {
             return false;
         }
     }
-    // "Eliminar" administrador (soft delete/inactivar usuario)
-    public static boolean softDeleteAdmin(int idAdmin) {
-        String sql = "UPDATE AUD_Users SET status = 'I' WHERE id_user = (SELECT id_user FROM AUD_Administrators WHERE id_admin = ?)";
+    // Obtener admin completo con todos sus datos
+     public static AdminRequest getFullAdminById(int idAdmin) {
+        String sql = "SELECT a.id_admin, a.id_user, a.f_name, a.m_name, "
+                + "a.f_surname, a.m_surname, a.identity_card, "
+                + "u.username, u.password, "
+                + "co.id_contact, co.type AS contact_type, co.contact_value "
+                + "FROM AUD_Administrators a "
+                + "INNER JOIN AUD_Users u ON a.id_user = u.id_user "
+                + "LEFT JOIN AUD_CXA cxa ON a.id_admin = cxa.id_admin "
+                + "LEFT JOIN AUD_Contacts co ON cxa.id_contact = co.id_contact "
+                + "WHERE a.id_admin = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idAdmin);
-            ps.executeUpdate();
-            return true;
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+
+                User user = new User(
+                        rs.getInt("id_user"),
+                        2, 
+                        rs.getString("username"),
+                        rs.getString("password")
+                );
+
+                Admin admin = new Admin(
+                        rs.getInt("id_admin"),
+                        rs.getInt("id_user"),
+                        rs.getString("f_name"),
+                        rs.getString("m_name"),
+                        rs.getString("f_surname"),
+                        rs.getString("m_surname"),
+                        rs.getString("identity_card")
+                );
+
+                Contact contact = new Contact();
+                contact.setIdContact(rs.getInt("id_contact"));
+                contact.setType(rs.getString("contact_type"));
+                contact.setContactValue(rs.getString("contact_value"));
+
+                AdminRequest adminRequest = new AdminRequest();
+                adminRequest.setUser(user);
+                adminRequest.setAdmin(admin);
+                adminRequest.setContact(contact);
+                return adminRequest;
+            }
         } catch (SQLException e) {
-            System.out.println("Error al inactivar administrador: " + e.getMessage());
+            System.out.println("Error al obtener admin completo: " + e.getMessage());
+        }
+        return null;
+    }
+
+// Eliminar admin en cascada (CXA + Contacts + Admin + User)
+    public static boolean deleteAdminCascade(int idAdmin) {
+        try (Connection conn = DBConnection.getConnection()) {
+
+            // 1. Obtener id_contact antes de eliminar
+            int idContact = -1;
+            String getContact = "SELECT id_contact FROM AUD_CXA WHERE id_admin = ?";
+            try (PreparedStatement ps = conn.prepareStatement(getContact)) {
+                ps.setInt(1, idAdmin);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    idContact = rs.getInt("id_contact");
+                }
+            }
+
+            // 2. Eliminar CXA 
+            String deleteCXA = "DELETE FROM AUD_CXA WHERE id_admin = ?";
+            try (PreparedStatement ps = conn.prepareStatement(deleteCXA)) {
+                ps.setInt(1, idAdmin);
+                ps.executeUpdate();
+            }
+
+            // 3. Eliminar contacto
+            if (idContact != -1) {
+                String deleteContact = "DELETE FROM AUD_Contacts WHERE id_contact = ?";
+                try (PreparedStatement ps = conn.prepareStatement(deleteContact)) {
+                    ps.setInt(1, idContact);
+                    ps.executeUpdate();
+                }
+            }
+
+            // 4. Eliminar admin
+            String deleteAdmin = "DELETE FROM AUD_Administrators WHERE id_admin = ?";
+            try (PreparedStatement ps = conn.prepareStatement(deleteAdmin)) {
+                ps.setInt(1, idAdmin);
+                ps.executeUpdate();
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar admin en cascada: " + e.getMessage());
             return false;
         }
     }

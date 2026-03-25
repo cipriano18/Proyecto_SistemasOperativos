@@ -80,6 +80,7 @@ public class ClientController {
                 return "ERROR:El número de teléfono debe contener exactamente 8 dígitos";
             }
         }
+        user.setIdRole(3);
         boolean userInserted = UserDAO.insertUser(user);
 
         if (!userInserted) {
@@ -167,7 +168,7 @@ public class ClientController {
                 return "ERROR:No se pudo actualizar el contacto";
             }
         }
-
+        user.setIdRole(3);
         boolean userUpdated = UserDAO.updateUser(user);
         if (!userUpdated) {
             return "ERROR:No se pudo actualizar el usuario";
@@ -200,5 +201,13 @@ public class ClientController {
         }
 
         return "SUCCESS:Cliente eliminado correctamente";
+    }
+   //obtener datos de un cliente 
+    public static ClientRequest getClient(int idClient) {
+        ClientRequest clientRequest = ClientDAO.getFullClientById(idClient);
+        if (clientRequest == null) {
+            System.out.println("ERROR:Cliente no encontrado");
+        }
+        return clientRequest;
     }
 }

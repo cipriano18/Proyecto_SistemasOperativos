@@ -184,7 +184,7 @@ public class AdminController {
             if (Validator.isEmpty(contact.getContactValue())) {
                 return "ERROR:Valor de contacto requerido";
             }
-// 4. UPDATE CONTACT (correo / teléfono)
+            // 4. UPDATE CONTACT (correo / teléfono)
             if (!Validator.isValidContact(contact.getType(), contact.getContactValue())) {
                 if ("PHONE".equals(contact.getType())) {
                     return "ERROR:El teléfono debe contener exactamente 8 dígitos numéricos";
@@ -203,5 +203,31 @@ public class AdminController {
         }
 
         return "SUCCESS:Administrador actualizado correctamente";
+    }
+    // Obtener admin completo por id
+     public static AdminRequest getAdmin(int idAdmin) {
+        AdminRequest adminRequest = AdminDAO.getFullAdminById(idAdmin);
+        if (adminRequest == null) {
+            System.out.println("ERROR:Administrador no encontrado");
+        }
+        return adminRequest;
+    }
+
+    // Eliminar admin en cascada
+    public static String deleteAdmin(int idAdmin, int idUser) {
+
+        // 1. Eliminar CXA + Contacto + Admin
+        boolean adminDeleted = AdminDAO.deleteAdminCascade(idAdmin);
+        if (!adminDeleted) {
+            return "ERROR:No se pudo eliminar el administrador";
+        }
+
+        // 2. Eliminar usuario
+        boolean userDeleted = UserDAO.deleteUser(idUser);
+        if (!userDeleted) {
+            return "ERROR:No se pudo eliminar el usuario";
+        }
+
+        return "SUCCESS:Administrador eliminado correctamente";
     }
 }

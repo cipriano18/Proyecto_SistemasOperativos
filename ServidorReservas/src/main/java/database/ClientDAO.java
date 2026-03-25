@@ -9,20 +9,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import model.Client;
+import model.ClientRequest;
+import model.Contact;
+import model.User;
 
 /**
  *
  * @author Cipriano
  */
 public class ClientDAO {
+
     public static boolean createClient(Client client) {
 
-        String sql = "INSERT INTO AUD_Clients " +
-                     "(id_user, id_type, f_name, m_name, f_surname, m_surname, identity_card) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO AUD_Clients "
+                + "(id_user, id_type, f_name, m_name, f_surname, m_surname, identity_card) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, client.getIdUser());
             ps.setInt(2, client.getIdType());
@@ -94,8 +97,9 @@ public class ClientDAO {
             return false;
         }
     }
+
     // Eliminar cliente
-     public static boolean deleteClientCascade(int idClient) {
+    public static boolean deleteClientCascade(int idClient) {
         String sql = "DELETE FROM AUD_Clients WHERE id_client = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, idClient);
@@ -105,5 +109,53 @@ public class ClientDAO {
             System.out.println("Error al eliminar cliente: " + e.getMessage());
             return false;
         }
+    }
+    // Obtener cliente completo con todos sus datos por id_client
+
+    public static ClientRequest getFullClientById(int idClient) {
+        String sql = "SELECT c.id_client, c.id_user, c.id_type, c.f_name, c.m_name, "
+                + "c.f_surname, c.m_surname, c.identity_card, "
+                + "u.username, u.password, "
+                + "co.id_contact, co.type AS contact_type, co.contact_value "
+                + "FROM AUD_Clients c "
+                + "INNER JOIN AUD_Users u ON c.id_user = u.id_user "
+                + "LEFT JOIN AUD_CXC cxc ON c.id_client = cxc.id_client "
+                + "LEFT JOIN AUD_Contacts co ON cxc.id_contact = co.id_contact "
+                + "WHERE c.id_client = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idClient);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User user = new User(
+                        rs.getInt("id_user"),
+                        3, 
+                        rs.getString("username"),
+                        rs.getString("password")
+                );
+                Client client = new Client(
+                        rs.getInt("id_client"),
+                        rs.getInt("id_user"),
+                        rs.getInt("id_type"),
+                        rs.getString("f_name"),
+                        rs.getString("m_name"),
+                        rs.getString("f_surname"),
+                        rs.getString("m_surname"),
+                        rs.getString("identity_card")
+                );
+                Contact contact = new Contact();
+                contact.setIdContact(rs.getInt("id_contact"));
+                contact.setType(rs.getString("contact_type"));
+                contact.setContactValue(rs.getString("contact_value"));
+
+                ClientRequest clientRequest = new ClientRequest();
+                clientRequest.setUser(user);
+                clientRequest.setClient(client);
+                clientRequest.setContact(contact);
+                return clientRequest;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener cliente completo: " + e.getMessage());
+        }
+        return null;
     }
 }
