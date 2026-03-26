@@ -68,7 +68,11 @@ CREATE TABLE AUD_CXC (
     FOREIGN KEY (id_client) REFERENCES AUD_Clients(id_client),
     FOREIGN KEY (id_contact) REFERENCES AUD_Contacts(id_contact)
 );
-
+CREATE TABLE AUD_Equipment (
+    id_equipment INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    available_quantity INT NOT NULL DEFAULT 0
+);
 
 INSERT INTO AUD_Roles (name) VALUES 
 ('SuperAdministrador'), 
