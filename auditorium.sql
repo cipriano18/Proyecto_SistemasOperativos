@@ -85,4 +85,38 @@ INSERT INTO AUD_ClientTypes (name) VALUES
 ('Administrativo'), 
 ('Externo');
 
+CREATE TABLE AUD_Sections (
+    id_section INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE AUD_Reservations (
+    id_reservation INT AUTO_INCREMENT PRIMARY KEY,
+    id_client INT NOT NULL,
+    id_section INT NOT NULL,
+    reservation_date DATE NOT NULL,
+
+    FOREIGN KEY (id_client) REFERENCES AUD_Clients(id_client),
+    FOREIGN KEY (id_section) REFERENCES AUD_Sections(id_section)
+);
+
+CREATE TABLE AUD_Equipment (
+    id_equipment INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    total_quantity INT NOT NULL
+);
+
+CREATE TABLE AUD_RXE (
+    id_rxe INT AUTO_INCREMENT PRIMARY KEY,
+    id_reservation INT NOT NULL,
+    id_equipment INT NOT NULL,
+    quantity INT NOT NULL,
+
+    FOREIGN KEY (id_reservation) REFERENCES AUD_Reservations(id_reservation),
+    FOREIGN KEY (id_equipment) REFERENCES AUD_Equipment(id_equipment)
+);
+
+INSERT INTO AUD_Equipment (name, available_quantity) VALUES
+('Proyector', 5),
+('Pantallas', 10);
 

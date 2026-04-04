@@ -1,41 +1,38 @@
 package server;
 
 import controller.AdminController;
+import controller.ReservationController;
 import controller.RoleController;
 import controller.UserController;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 import model.AdminRequest;
+import model.EquipmentReservationRequest;
 import model.Role;
+import model.RXE;
 import model.User;
 
 public class ClientHandler extends Thread {
 
     private Socket socket;
-    private DataInputStream input;
-    private DataOutputStream output;
     private ObjectInputStream objectInput;
     private ObjectOutputStream objectOutput;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
         try {
-            objectInput  = new ObjectInputStream(socket.getInputStream());
+            objectOutput = new ObjectOutputStream(socket.getOutputStream());
             objectOutput.flush();
-            input  = new DataInputStream(socket.getInputStream());
-            output = new DataOutputStream(socket.getOutputStream());
+            objectInput = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
-    System.out.println("Error: " + e.getMessage());
-    e.printStackTrace(); 
-}
+            System.out.println("Error al inicializar streams: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    // Retorna la dirección del cliente conectado
     public String getClientAddress() {
         return socket.getInetAddress().toString();
     }
@@ -44,24 +41,32 @@ public class ClientHandler extends Thread {
     public void run() {
         try {
             System.out.println("Hilo iniciado para: " + getClientAddress());
-            while (true) {
-                // 1. Lee comando
-                String command = input.readUTF();
-                System.out.println("Petición de " + getClientAddress() + ": " + command);
 
-                // 2. Lee objeto
+            while (true) {
+                String command = (String) objectInput.readObject();
                 Object obj = objectInput.readObject();
 
-                // 3. Procesa y responde en el mismo hilo
+                System.out.println("\n==============================");
+                System.out.println("Petición recibida de: " + getClientAddress());
+                System.out.println("Comando: " + command);
+                System.out.println("Tipo de objeto: " + (obj != null ? obj.getClass().getName() : "null"));
+                System.out.println("Contenido del objeto: " + obj);
+                System.out.println("==============================\n");
+
                 processRequest(command, obj);
             }
+
         } catch (IOException e) {
             System.out.println("Cliente desconectado: " + getClientAddress());
         } catch (ClassNotFoundException e) {
             System.out.println("Error al leer objeto: " + e.getMessage());
         } finally {
             Server.clients.remove(this);
-            try { socket.close(); } catch (IOException e) {}
+            try {
+                socket.close();
+            } catch (IOException e) {
+                System.out.println("Error al cerrar socket: " + e.getMessage());
+            }
         }
     }
 
@@ -69,78 +74,185 @@ public class ClientHandler extends Thread {
         try {
             switch (command.toUpperCase()) {
 
-                // ── USUARIOS ─────────────────────────────────────────
-                case "CREATE_USER":
-                    output.writeUTF(UserController.createUser((User) obj));
-                    output.flush();
-                    break;
+                case "CREATE_USER": {
+                    User user = (User) obj;
 
-                case "UPDATE_USER":
-                    output.writeUTF(UserController.updateUser((User) obj));
-                    output.flush();
-                    break;
+                    System.out.println("---- CREATE_USER ----");
+                    System.out.println("IdUser: " + user.getIdUser());
+                    System.out.println("IdRole: " + user.getIdRole());
+                    System.out.println("Username: " + user.getUsername());
+                    System.out.println("Password: " + user.getPassword());
 
-                case "GET_USER":
-                    User found = UserController.getUser(((User) obj).getIdUser());
+                    String resp = UserController.createUser(user);
+                    System.out.println("Respuesta: " + resp);
+
+                    objectOutput.writeObject(resp);
+                    objectOutput.flush();
+                    break;
+                }
+
+                case "UPDATE_USER": {
+                    User user = (User) obj;
+
+                    System.out.println("---- UPDATE_USER ----");
+                    System.out.println("IdUser: " + user.getIdUser());
+                    System.out.println("IdRole: " + user.getIdRole());
+                    System.out.println("Username: " + user.getUsername());
+                    System.out.println("Password: " + user.getPassword());
+
+                    String resp = UserController.updateUser(user);
+                    System.out.println("Respuesta: " + resp);
+
+                    objectOutput.writeObject(resp);
+                    objectOutput.flush();
+                    break;
+                }
+
+                case "GET_USER": {
+                    User req = (User) obj;
+
+                    System.out.println("---- GET_USER ----");
+                    System.out.println("IdUser solicitado: " + req.getIdUser());
+
+                    User found = UserController.getUser(req.getIdUser());
+
+                    System.out.println("Usuario encontrado: " + found);
+
                     objectOutput.writeObject(found);
                     objectOutput.flush();
                     break;
+                }
 
-                // ── ROLES ─────────────────────────────────────────────
-                case "GET_ROLES":
+                case "GET_ROLES": {
+                    System.out.println("---- GET_ROLES ----");
+
                     List<Role> roles = RoleController.getAllRoles();
+
+                    System.out.println("Cantidad de roles enviados: " + roles.size());
+                    System.out.println("Roles: " + roles);
+
                     objectOutput.writeObject(roles);
                     objectOutput.flush();
                     break;
+                }
 
-                case "GET_ROLE":
-                    Role role = RoleController.getRole(((Role) obj).getIdRole());
+                case "GET_ROLE": {
+                    Role req = (Role) obj;
+
+                    System.out.println("---- GET_ROLE ----");
+                    System.out.println("IdRole solicitado: " + req.getIdRole());
+
+                    Role role = RoleController.getRole(req.getIdRole());
+
+                    System.out.println("Rol encontrado: " + role);
+
                     objectOutput.writeObject(role);
                     objectOutput.flush();
                     break;
+                }
 
-                // ── ADMINISTRADORES ───────────────────────────────────
-                case "CREATE_ADMIN":
-                    output.writeUTF(AdminController.createAdmin((AdminRequest) obj));
-                    System.out.print("hola " + AdminRequest.class);
-                    System.out.println("Objeto recibido: " + obj);
-                    output.flush();
-                    break;
-                case "UPDATE_ADMIN":
-                    output.writeUTF(AdminController.updateAdmin((AdminRequest) obj));
-                    System.out.println("UPDATE_ADMIN recibido: " + obj);
-                    output.flush();
-                    break;
-                case "LOGIN":
+                case "CREATE_ADMIN": {
+                    AdminRequest adminRequest = (AdminRequest) obj;
 
+                    System.out.println("---- CREATE_ADMIN ----");
+                    System.out.println("Objeto recibido: " + adminRequest);
+
+                    String resp = AdminController.createAdmin(adminRequest);
+                    System.out.println("Respuesta: " + resp);
+
+                    objectOutput.writeObject(resp);
+                    objectOutput.flush();
+                    break;
+                }
+
+                case "UPDATE_ADMIN": {
+                    AdminRequest adminRequest = (AdminRequest) obj;
+
+                    System.out.println("---- UPDATE_ADMIN ----");
+                    System.out.println("Objeto recibido: " + adminRequest);
+
+                    String resp = AdminController.updateAdmin(adminRequest);
+                    System.out.println("Respuesta: " + resp);
+
+                    objectOutput.writeObject(resp);
+                    objectOutput.flush();
+                    break;
+                }
+
+                case "CREATE_EQUIPMENT_RESERVATION": {
+                    EquipmentReservationRequest request = (EquipmentReservationRequest) obj;
+
+                    System.out.println("---- CREATE_EQUIPMENT_RESERVATION ----");
+
+                    if (request.getReservation() != null) {
+                        System.out.println("Reserva:");
+                        System.out.println("  IdClient: " + request.getReservation().getIdClient());
+                        System.out.println("  IdSection: " + request.getReservation().getIdSection());
+                        System.out.println("  ReservationDate: " + request.getReservation().getReservationDate());
+                    } else {
+                        System.out.println("Reserva: null");
+                    }
+
+                    if (request.getEquipmentList() != null) {
+                        System.out.println("Equipos recibidos: " + request.getEquipmentList().size());
+                        for (RXE item : request.getEquipmentList()) {
+                            System.out.println("  --- Equipo ---");
+                            System.out.println("  IdRXE: " + item.getIdRxe());
+                            System.out.println("  IdReservation: " + item.getIdReservation());
+                            System.out.println("  IdEquipment: " + item.getIdEquipment());
+                            System.out.println("  Quantity: " + item.getQuantity());
+                        }
+                    } else {
+                        System.out.println("Lista de equipos: null");
+                    }
+
+                    String resp = ReservationController.createEquipmentReservation(request);
+                    System.out.println("Respuesta: " + resp);
+
+                    objectOutput.writeObject(resp);
+                    objectOutput.flush();
+                    break;
+                }
+
+                case "LOGIN": {
                     if (obj instanceof User) {
                         User u = (User) obj;
 
-                        System.out.println("=== OBJETO LOGIN RECIBIDO ===");
+                        System.out.println("---- LOGIN ----");
                         System.out.println("Username: " + u.getUsername());
                         System.out.println("Password: " + u.getPassword());
-                        System.out.println("Role: " + u.getIdRole());
+                        System.out.println("IdRole: " + u.getIdRole());
 
-                        // Ahora sí validamos
                         Object resp = UserController.login(u);
-                      System.out.println("objet: " +resp.toString());
+
+                        System.out.println("Respuesta login: " + resp);
+
                         if (resp instanceof String) {
-                            output.writeUTF((String) resp);
-                            output.flush();
+                            objectOutput.writeObject(resp);
+                            objectOutput.flush();
                         } else {
-                            output.writeUTF("SUCCESS:Login correcto");
-                            output.flush();
+                            objectOutput.writeObject("SUCCESS:Login correcto");
+                            objectOutput.flush();
+
                             objectOutput.writeObject(resp);
                             objectOutput.flush();
                         }
                     }
                     break;
-                default:
-                    output.writeUTF("ERROR:Comando no reconocido");
-                    output.flush();
+                }
+
+                default: {
+                    System.out.println("---- COMANDO NO RECONOCIDO ----");
+                    System.out.println("Comando recibido: " + command);
+
+                    objectOutput.writeObject("ERROR:Comando no reconocido");
+                    objectOutput.flush();
+                    break;
+                }
             }
         } catch (IOException e) {
             System.out.println("Error al responder: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

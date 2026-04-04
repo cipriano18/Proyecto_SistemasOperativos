@@ -23,7 +23,7 @@ public class EquipmentController {
             return "ERROR:El nombre del equipo es obligatorio";
         }
 
-        if (equipment.getAvailableQuantity() < 0) {
+        if (equipment.getTotalQuantity() < 0) {
             return "ERROR:La cantidad no puede ser negativa";
         }
 

@@ -61,7 +61,7 @@ public class EquipmentDAO {
         String sql = "INSERT INTO AUD_Equipment (name, available_quantity) VALUES (?, ?)";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, equipment.getName());
-            ps.setInt(2, equipment.getAvailableQuantity());
+            ps.setInt(2, equipment.getTotalQuantity());
             int rows = ps.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
@@ -74,7 +74,7 @@ public class EquipmentDAO {
         String sql = "UPDATE AUD_Equipment SET name = ?, available_quantity = ? WHERE id_equipment = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, equipment.getName());
-            ps.setInt(2, equipment.getAvailableQuantity());
+            ps.setInt(2, equipment.getTotalQuantity());
             ps.setInt(3, equipment.getIdEquipment());
             int rows = ps.executeUpdate();
             return rows > 0;

@@ -15,20 +15,15 @@ public class Equipment implements Serializable {
     private static final long serialVersionUID = 1L;
     private int idEquipment;
     private String name;
-    private int availableQuantity; 
+    private int totalQuantity;
 
     public Equipment() {
     }
 
-    public Equipment(int idEquipment, String name, int availableQuantity) {
+    public Equipment(int idEquipment, String name, int totalQuantity) {
         this.idEquipment = idEquipment;
         this.name = name;
-        this.availableQuantity = availableQuantity;
-    }
-
-    public Equipment(String name, int availableQuantity) {
-        this.name = name;
-        this.availableQuantity = availableQuantity;
+        this.totalQuantity = totalQuantity;
     }
 
     public int getIdEquipment() {
@@ -47,16 +42,11 @@ public class Equipment implements Serializable {
         this.name = name;
     }
 
-    public int getAvailableQuantity() {
-        return availableQuantity;
+    public int getTotalQuantity() {
+        return totalQuantity;
     }
 
-    public void setAvailableQuantity(int availableQuantity) {
-        this.availableQuantity = availableQuantity;
-    }
-
-    @Override
-    public String toString() {
-        return "Equipment{" + "idEquipment=" + idEquipment + ", name=" + name + ", availableQuantity=" + availableQuantity + '}';
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
     }
 }
