@@ -7,9 +7,11 @@ package controller;
 import database.ClientDAO;
 import database.ContactDAO;
 import database.UserDAO;
+import java.util.List;
 import model.Client;
 import model.ClientRequest;
 import model.Contact;
+import model.Response;
 import model.User;
 import utils.Validator;
 
@@ -20,166 +22,143 @@ import utils.Validator;
 public class ClientController {
 
 // Crear cliente completo (User + Client + Contact + CXC)
-    public static String createClient(ClientRequest clientRequest) {
+    public static Response createClient(ClientRequest clientRequest) {
+
+        System.out.println("DEBUG - Iniciando createClient");
+
+        List<String> errors = Validator.validateClientRequest(clientRequest);
+        if (!errors.isEmpty()) {
+            return new Response(false, String.join(" | ", errors), null);
+        }
 
         User user = clientRequest.getUser();
         Client client = clientRequest.getClient();
         Contact contact = clientRequest.getContact();
 
-        System.out.println("DEBUG - Iniciando createClient");
-
-        if (!Validator.isValidUsername(user.getUsername())) {
-            return "ERROR:Nombre de usuario inválido";
-        }
-
-        if (!Validator.isValidPassword(user.getPassword())) {
-            return "ERROR:Contraseña inválida";
-        }
-
-        // Verificar si ya existe
         if (UserDAO.getUserByUsername(user.getUsername()) != null) {
-            return "ERROR:El nombre de usuario ya está en uso";
+            return new Response(false, "El nombre de usuario ya está en uso", null);
         }
 
-        if (!Validator.isValidFName(client.getfName())) {
-            return "ERROR:El campo primer nombre es obligatorio";
-        }
-
-        if (!Validator.isValidFSurname(client.getfSurname())) {
-            return "ERROR:El campo primer apellido es obligatorio";
-        }
-
-        if (!Validator.isValidMSurname(client.getmSurname())) {
-            return "ERROR:El campo segundo apellido es obligatorio";
-        }
-
-        if (!Validator.isValidIdentityCard(client.getIdentityCard())) {
-            return "ERROR:Cédula inválida";
-        }
-
-        if (client.getIdType() <= 0) {
-            return "ERROR:Tipo de cliente inválido";
-        }
-
-        if (Validator.isEmpty(contact.getType())) {
-            return "ERROR:Tipo de contacto requerido";
-        }
-
-        if (Validator.isEmpty(contact.getContactValue())) {
-            return "ERROR:Valor de contacto requerido";
-        }
-
-        if ("EMAIL".equals(contact.getType())) {
-            if (!Validator.isValidEmail(contact.getContactValue())) {
-                return "ERROR:El correo debe tener un formato válido (ejemplo: usuario@dominio.com)";
-            }
-        }
-
-        if ("PHONE".equals(contact.getType())) {
-            if (!Validator.isValidPhone(contact.getContactValue())) {
-                return "ERROR:El número de teléfono debe contener exactamente 8 dígitos";
-            }
-        }
         user.setIdRole(3);
         boolean userInserted = UserDAO.insertUser(user);
 
         if (!userInserted) {
-            return "ERROR:No se pudo crear el usuario";
+            return new Response(false, "No se pudo crear el usuario", null);
         }
 
-        // Obtener usuario creado
         User createdUser = UserDAO.getUserByUsername(user.getUsername());
-
         if (createdUser == null) {
-            return "ERROR:No se pudo recuperar el usuario creado";
+            return new Response(false, "No se pudo recuperar el usuario creado", null);
         }
-
-        System.out.println("DEBUG - createdUser ID: " + createdUser.getIdUser());
 
         client.setIdUser(createdUser.getIdUser());
 
         boolean clientInserted = ClientDAO.createClient(client);
-
         if (!clientInserted) {
-            return "ERROR:No se pudo crear el cliente";
+            return new Response(false, "No se pudo crear el cliente", null);
         }
 
-        // Obtener cliente correctamente
         Client createdClient = ClientDAO.getClientByUserId(createdUser.getIdUser());
-
         if (createdClient == null) {
-            return "ERROR:No se pudo recuperar el cliente creado";
+            return new Response(false, "No se pudo recuperar el cliente creado", null);
         }
-
-        System.out.println("DEBUG - createdClient ID: " + createdClient.getIdClient());
 
         int idContact = ContactDAO.insertContact(contact);
-
         if (idContact == -1) {
-            return "ERROR:No se pudo crear el contacto";
+            return new Response(false, "No se pudo crear el contacto", null);
         }
-
-        System.out.println("DEBUG - idContact: " + idContact);
 
         boolean linked = ContactDAO.insertCXC(createdClient.getIdClient(), idContact);
-
         if (!linked) {
-            return "ERROR:No se pudo vincular el contacto al cliente";
+            return new Response(false, "No se pudo vincular el contacto al cliente", null);
         }
 
-        return "SUCCESS:Cliente creado correctamente";
+        // armar objeto completo de respuesta
+        ClientRequest responseData = new ClientRequest();
+        responseData.setUser(createdUser);
+        responseData.setClient(createdClient);
+        responseData.setContact(contact);
+
+        return new Response(true, "Cliente creado correctamente", responseData);
     }
-        //actualizar un cliente existente
-    public static String updateClient(ClientRequest clientRequest) {
+
+// Actualizar cliente existente
+    public static Response updateClient(ClientRequest clientRequest) {
+
+        System.out.println("DEBUG - Iniciando updateClient");
+
+        if (clientRequest == null) {
+            return new Response(false, "La solicitud del cliente es obligatoria", null);
+        }
+
         User user = clientRequest.getUser();
         Client client = clientRequest.getClient();
         Contact contact = clientRequest.getContact();
 
+        if (user == null) {
+            return new Response(false, "El usuario es obligatorio", null);
+        }
+
+        if (client == null) {
+            return new Response(false, "El cliente es obligatorio", null);
+        }
+
         if (!Validator.isValidFName(client.getfName())) {
-            return "ERROR:El campo primer nombre es obligatorio";
+            return new Response(false, "El campo primer nombre es obligatorio", null);
         }
+
         if (!Validator.isValidFSurname(client.getfSurname())) {
-            return "ERROR:El campo primer apellido es obligatorio";
+            return new Response(false, "El campo primer apellido es obligatorio", null);
         }
+
         if (!Validator.isValidMSurname(client.getmSurname())) {
-            return "ERROR:El campo segundo apellido es obligatorio";
+            return new Response(false, "El campo segundo apellido es obligatorio", null);
         }
+
         if (!Validator.isValidIdentityCard(client.getIdentityCard())) {
-            return "ERROR:Cédula inválida";
+            return new Response(false, "Cédula inválida", null);
         }
 
         if (!Validator.isValidUsername(user.getUsername())) {
-            return "ERROR:Nombre de usuario inválido";
+            return new Response(false, "Nombre de usuario inválido", null);
         }
 
         if (contact != null) {
             if (!Validator.isValidContact(contact.getType(), contact.getContactValue())) {
-                if ("PHONE".equals(contact.getType())) {
-                    return "ERROR:El teléfono debe contener exactamente 8 dígitos numéricos";
+                if ("PHONE".equalsIgnoreCase(contact.getType())) {
+                    return new Response(false, "El teléfono debe contener exactamente 8 dígitos numéricos", null);
                 }
-                if ("EMAIL".equals(contact.getType())) {
-                    return "ERROR:El correo debe tener un formato válido (ejemplo: usuario@dominio.com)";
+                if ("EMAIL".equalsIgnoreCase(contact.getType())) {
+                    return new Response(false, "El correo debe tener un formato válido (ejemplo: usuario@dominio.com)", null);
                 }
-                return "ERROR:Valor de contacto inválido";
+                return new Response(false, "Valor de contacto inválido", null);
             }
 
             boolean contactUpdated = ContactDAO.updateContact(contact);
             if (!contactUpdated) {
-                return "ERROR:No se pudo actualizar el contacto";
+                return new Response(false, "No se pudo actualizar el contacto", null);
             }
         }
+
         user.setIdRole(3);
         boolean userUpdated = UserDAO.updateUser(user);
         if (!userUpdated) {
-            return "ERROR:No se pudo actualizar el usuario";
-        }
-        boolean clientUpdated = ClientDAO.updateClient(client);
-        if (!clientUpdated) {
-            return "ERROR:No se pudo actualizar el cliente";
+            return new Response(false, "No se pudo actualizar el usuario", null);
         }
 
-        return "SUCCESS:Cliente actualizado correctamente";
+        boolean clientUpdated = ClientDAO.updateClient(client);
+        if (!clientUpdated) {
+            return new Response(false, "No se pudo actualizar el cliente", null);
+        }
+
+        ClientRequest responseData = new ClientRequest();
+        responseData.setUser(user);
+        responseData.setClient(client);
+        responseData.setContact(contact);
+
+        return new Response(true, "Cliente actualizado correctamente", responseData);
     }
+
     public static String deleteClient(int idClient, int idUser) {
 
         // 1. Eliminar contacto (CXC + AUD_Contacts)
@@ -202,7 +181,8 @@ public class ClientController {
 
         return "SUCCESS:Cliente eliminado correctamente";
     }
-   //obtener datos de un cliente 
+    //obtener datos de un cliente 
+
     public static ClientRequest getClient(int idClient) {
         ClientRequest clientRequest = ClientDAO.getFullClientById(idClient);
         if (clientRequest == null) {

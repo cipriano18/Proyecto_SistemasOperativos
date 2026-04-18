@@ -113,24 +113,25 @@ public class ReservationDAO {
             }
         }
     }
-     private static int getAvailableEquipmentQuantity(Connection conn, int idEquipment, java.sql.Date reservationDate, int idSection) {
+    private static int getAvailableEquipmentQuantity(Connection conn, int idEquipment, java.sql.Date reservationDate, int idSection) {
 
-    String sql = "SELECT "
-            + "e.available_quantity - COALESCE(SUM(rxe.quantity), 0) AS available_quantity "
+    String sql = "SELECT e.available_quantity - COALESCE(("
+            + "    SELECT SUM(rxe.quantity) "
+            + "    FROM AUD_RXE rxe "
+            + "    INNER JOIN AUD_Reservations r "
+            + "        ON rxe.id_reservation = r.id_reservation "
+            + "    WHERE rxe.id_equipment = ? "
+            + "      AND r.reservation_date = ? "
+            + "      AND r.id_section = ?"
+            + "), 0) AS available_quantity "
             + "FROM AUD_Equipment e "
-            + "LEFT JOIN AUD_RXE rxe "
-            + "ON e.id_equipment = rxe.id_equipment "
-            + "LEFT JOIN AUD_Reservations r "
-            + "ON rxe.id_reservation = r.id_reservation "
-            + "AND r.reservation_date = ? "
-            + "AND r.id_section = ? "
-            + "WHERE e.id_equipment = ? "
-            + "GROUP BY e.id_equipment, e.available_quantity";
+            + "WHERE e.id_equipment = ?";
 
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setDate(1, reservationDate);
-        ps.setInt(2, idSection);
-        ps.setInt(3, idEquipment);
+        ps.setInt(1, idEquipment);
+        ps.setDate(2, reservationDate);
+        ps.setInt(3, idSection);
+        ps.setInt(4, idEquipment);
 
         ResultSet rs = ps.executeQuery();
 
@@ -140,6 +141,7 @@ public class ReservationDAO {
 
     } catch (SQLException e) {
         System.out.println("Error al obtener disponibilidad del equipo: " + e.getMessage());
+        e.printStackTrace();
     }
 
     return 0;

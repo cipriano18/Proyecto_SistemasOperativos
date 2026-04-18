@@ -10,6 +10,10 @@ public class Client extends Person implements Serializable {
     private int idClient;
     private int idType;
 
+    public Client(int idUser, String fName, String mName, String fSurname, String mSurname, String identityCard) {
+        super(idUser, fName, mName, fSurname, mSurname, identityCard);
+    }
+
     public Client(int idClient, int idUser, int idType, String fName, String mName,
                   String fSurname, String mSurname, String identityCard) {
         super(idUser, fName, mName, fSurname, mSurname, identityCard);
