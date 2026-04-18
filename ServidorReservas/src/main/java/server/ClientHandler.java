@@ -1,12 +1,14 @@
 package server;
 
 import controller.ClientController;
+import controller.UserController;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import model.ClientRequest;
 import model.Response;
+import model.User;
 
 public class ClientHandler extends Thread {
 
@@ -63,48 +65,83 @@ public class ClientHandler extends Thread {
         }
     }
 
-   private void processRequest(String command, Object obj) {
-    try {
-        switch (command.toUpperCase()) {
+    private void processRequest(String command, Object obj) {
+        try {
+            switch (command.toUpperCase()) {
 
-            case "CREATE_CLIENT": {
-                ClientRequest request = (ClientRequest) obj;
+                case "CREATE_CLIENT": {
+                    ClientRequest request = (ClientRequest) obj;
 
-                System.out.println("---- CREATE_CLIENT ----");
-                System.out.println("Objeto recibido: " + request);
+                    System.out.println("---- CREATE_CLIENT ----");
+                    System.out.println("Objeto recibido: " + request);
 
-                Response resp = ClientController.createClient(request);
+                    Response resp = ClientController.createClient(request);
 
-                System.out.println("Success: " + resp.isSuccess());
-                System.out.println("Mensaje: " + resp.getMessage());
-                System.out.println("Data: " + resp.getData());
+                    System.out.println("Success: " + resp.isSuccess());
+                    System.out.println("Mensaje: " + resp.getMessage());
+                    System.out.println("Data: " + resp.getData());
 
-                objectOutput.writeObject(resp);
-                objectOutput.flush();
-                break;
+                    objectOutput.writeObject(resp);
+                    objectOutput.flush();
+                    break;
+                }
+                case "UPDATE_CLIENT": {
+                    ClientRequest request = (ClientRequest) obj;
+
+                    System.out.println("---- UPDATE_CLIENT ----");
+                    System.out.println("Objeto recibido: " + request);
+
+                    Response resp = ClientController.updateClient(request);
+
+                    System.out.println("Success: " + resp.isSuccess());
+                    System.out.println("Mensaje: " + resp.getMessage());
+                    System.out.println("Data: " + resp.getData());
+
+                    objectOutput.writeObject(resp);
+                    objectOutput.flush();
+                    break;
+                }
+
+                case "LOGIN": {
+                    User user = (User) obj;
+
+                    System.out.println("---- LOGIN ----");
+                    System.out.println("Username: " + user.getUsername());
+                    System.out.println("Password: " + user.getPassword());
+                    System.out.println("IdRole recibido: " + user.getIdRole());
+
+                    Response resp = UserController.login(user);
+
+                    System.out.println("Success: " + resp.isSuccess());
+                    System.out.println("Mensaje: " + resp.getMessage());
+                    System.out.println("Data: " + resp.getData());
+
+                    objectOutput.writeObject(resp);
+                    objectOutput.flush();
+                    break;
+                }
+
+                default: {
+                    objectOutput.writeObject(
+                            new Response(false, "Comando no reconocido", null)
+                    );
+                    objectOutput.flush();
+                    break;
+                }
             }
+        } catch (Exception e) {
+            System.out.println("Error procesando petición: " + e.getMessage());
+            e.printStackTrace();
 
-            default: {
+            try {
                 objectOutput.writeObject(
-                        new Response(false, "Comando no reconocido", null)
+                        new Response(false, "Error interno del servidor: " + e.getMessage(), null)
                 );
                 objectOutput.flush();
-                break;
+            } catch (IOException ex) {
+                System.out.println("No se pudo enviar respuesta de error al cliente");
+                ex.printStackTrace();
             }
         }
-    } catch (Exception e) {
-        System.out.println("Error procesando petición: " + e.getMessage());
-        e.printStackTrace();
-
-        try {
-            objectOutput.writeObject(
-                    new Response(false, "Error interno del servidor: " + e.getMessage(), null)
-            );
-            objectOutput.flush();
-        } catch (IOException ex) {
-            System.out.println("No se pudo enviar respuesta de error al cliente");
-            ex.printStackTrace();
-        }
     }
-}
 }

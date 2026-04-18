@@ -158,4 +158,30 @@ public static boolean insertCXC(int idClient, int idContact) {
             return false;
         }
     }
+    public static Contact getContactByClientId(int idClient) {
+
+    String sql = "SELECT c.* FROM AUD_Contacts c " +
+                 "INNER JOIN AUD_CXC x ON c.id_contact = x.id_contact " +
+                 "WHERE x.id_client = ?";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, idClient);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            Contact contact = new Contact();
+            contact.setIdContact(rs.getInt("id_contact"));
+            contact.setType(rs.getString("type"));
+            contact.setContactValue(rs.getString("contact_value"));
+            return contact;
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error obteniendo contacto del cliente: " + e.getMessage());
+    }
+
+    return null;
+}
 }
