@@ -6,6 +6,7 @@ package controller;
 
 import database.ClientDAO;
 import database.ContactDAO;
+import database.ReservationDAO;
 import database.UserDAO;
 import java.util.List;
 import model.Client;
@@ -21,7 +22,66 @@ import utils.Validator;
  */
 public class ClientController {
 
-// Crear cliente completo (User + Client + Contact + CXC)
+    //obtener datos de un cliente 
+    public static ClientRequest getClient(int idClient) {
+        ClientRequest clientRequest = ClientDAO.getFullClientById(idClient);
+        if (clientRequest == null) {
+            System.out.println("ERROR:Cliente no encontrado");
+        }
+        return clientRequest;
+    }
+
+    public static Response deleteClient(ClientRequest clientRequest) {
+
+        System.out.println("DEBUG - Iniciando deleteClient");
+
+        if (clientRequest == null) {
+            return new Response(false, "La solicitud del cliente es obligatoria", null);
+        }
+
+        User user = clientRequest.getUser();
+        Client client = clientRequest.getClient();
+
+        if (user == null) {
+            return new Response(false, "El usuario es obligatorio", null);
+        }
+
+        if (client == null) {
+            return new Response(false, "El cliente es obligatorio", null);
+        }
+
+        if (client.getIdClient() <= 0) {
+            return new Response(false, "El id del cliente es inválido", null);
+        }
+
+        if (user.getIdUser() <= 0) {
+            return new Response(false, "El id del usuario es inválido", null);
+        }
+
+        boolean reservationsDeleted = ReservationDAO.deleteReservationsByClientId(client.getIdClient());
+        if (!reservationsDeleted) {
+            return new Response(false, "No se pudieron eliminar las reservas del cliente", null);
+        }
+
+        boolean contactDeleted = ContactDAO.deleteContactByClientId(client.getIdClient());
+        if (!contactDeleted) {
+            return new Response(false, "No se pudo eliminar el contacto del cliente", null);
+        }
+
+        boolean clientDeleted = ClientDAO.deleteClientCascade(client.getIdClient());
+        if (!clientDeleted) {
+            return new Response(false, "No se pudo eliminar el cliente", null);
+        }
+
+        boolean userDeleted = UserDAO.deleteUser(user.getIdUser());
+        if (!userDeleted) {
+            return new Response(false, "No se pudo eliminar el usuario", null);
+        }
+
+        return new Response(true, "Cliente eliminado correctamente", clientRequest);
+    }
+
+    // Crear cliente completo (User + Client + Contact + CXC)
     public static Response createClient(ClientRequest clientRequest) {
 
         System.out.println("DEBUG - Iniciando createClient");
@@ -82,7 +142,7 @@ public class ClientController {
         return new Response(true, "Cliente creado correctamente", responseData);
     }
 
-// Actualizar cliente existente
+    // Actualizar cliente existente
     public static Response updateClient(ClientRequest clientRequest) {
 
         System.out.println("DEBUG - Iniciando updateClient");
@@ -157,37 +217,5 @@ public class ClientController {
         responseData.setContact(contact);
 
         return new Response(true, "Cliente actualizado correctamente", responseData);
-    }
-
-    public static String deleteClient(int idClient, int idUser) {
-
-        // 1. Eliminar contacto (CXC + AUD_Contacts)
-        boolean contactDeleted = ContactDAO.deleteContactByClientId(idClient);
-        if (!contactDeleted) {
-            return "ERROR:No se pudo eliminar el contacto del cliente";
-        }
-
-        // 2. Eliminar cliente
-        boolean clientDeleted = ClientDAO.deleteClientCascade(idClient);
-        if (!clientDeleted) {
-            return "ERROR:No se pudo eliminar el cliente";
-        }
-
-        // 3. Eliminar usuario
-        boolean userDeleted = UserDAO.deleteUser(idUser);
-        if (!userDeleted) {
-            return "ERROR:No se pudo eliminar el usuario";
-        }
-
-        return "SUCCESS:Cliente eliminado correctamente";
-    }
-    //obtener datos de un cliente 
-
-    public static ClientRequest getClient(int idClient) {
-        ClientRequest clientRequest = ClientDAO.getFullClientById(idClient);
-        if (clientRequest == null) {
-            System.out.println("ERROR:Cliente no encontrado");
-        }
-        return clientRequest;
     }
 }

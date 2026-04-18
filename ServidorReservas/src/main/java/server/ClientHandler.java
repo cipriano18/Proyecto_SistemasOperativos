@@ -85,6 +85,7 @@ public class ClientHandler extends Thread {
                     objectOutput.flush();
                     break;
                 }
+
                 case "UPDATE_CLIENT": {
                     ClientRequest request = (ClientRequest) obj;
 
@@ -92,6 +93,23 @@ public class ClientHandler extends Thread {
                     System.out.println("Objeto recibido: " + request);
 
                     Response resp = ClientController.updateClient(request);
+
+                    System.out.println("Success: " + resp.isSuccess());
+                    System.out.println("Mensaje: " + resp.getMessage());
+                    System.out.println("Data: " + resp.getData());
+
+                    objectOutput.writeObject(resp);
+                    objectOutput.flush();
+                    break;
+                }
+
+                case "DELETE_CLIENT": {
+                    ClientRequest request = (ClientRequest) obj;
+
+                    System.out.println("---- DELETE_CLIENT ----");
+                    System.out.println("Objeto recibido: " + request);
+
+                    Response resp = ClientController.deleteClient(request);
 
                     System.out.println("Success: " + resp.isSuccess());
                     System.out.println("Mensaje: " + resp.getMessage());

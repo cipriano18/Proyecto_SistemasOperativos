@@ -146,4 +146,36 @@ public class ReservationDAO {
 
     return 0;
 }
+    public static boolean deleteReservationsByClientId(int idClient) {
+
+    String deleteRXESql = "DELETE FROM AUD_RXE " +
+                          "WHERE id_reservation IN (" +
+                          "    SELECT id_reservation FROM AUD_Reservations WHERE id_client = ?" +
+                          ")";
+
+    String deleteReservationsSql = "DELETE FROM AUD_Reservations WHERE id_client = ?";
+
+    try (Connection conn = DBConnection.getConnection()) {
+        conn.setAutoCommit(false);
+
+        // 1. Eliminar detalles RXE de las reservas del cliente
+        try (PreparedStatement psDeleteRXE = conn.prepareStatement(deleteRXESql)) {
+            psDeleteRXE.setInt(1, idClient);
+            psDeleteRXE.executeUpdate();
+        }
+
+        // 2. Eliminar reservas del cliente
+        try (PreparedStatement psDeleteReservations = conn.prepareStatement(deleteReservationsSql)) {
+            psDeleteReservations.setInt(1, idClient);
+            psDeleteReservations.executeUpdate();
+        }
+
+        conn.commit();
+        return true;
+
+    } catch (SQLException e) {
+        System.out.println("Error al eliminar reservas del cliente: " + e.getMessage());
+        return false;
+    }
+}
 }
