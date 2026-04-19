@@ -15,20 +15,21 @@ import java.util.List;
  * @author Cipriano
  */
 public class ReservationController {
-      public static String createEquipmentReservation(EquipmentReservationRequest equipmentReservation) {
+    public static String createEquipmentReservation(EquipmentReservationRequest request) {
 
-        if (equipmentReservation == null) {
+        if (request == null) {
             return "ERROR:La solicitud de reserva es obligatoria";
         }
 
-        Reservation reservation = equipmentReservation.getReservation();
-        List<RXE> equipmentList = equipmentReservation.getEquipmentList();
+        Reservation reservation = request.getReservation();
+        List<RXE> equipmentList = request.getEquipmentList();
+        int idClient = request.getIdClient();
 
         if (reservation == null) {
             return "ERROR:La reserva es obligatoria";
         }
 
-        if (reservation.getIdClient() <= 0) {
+        if (idClient <= 0) {
             return "ERROR:El cliente es obligatorio";
         }
 
@@ -54,12 +55,12 @@ public class ReservationController {
             }
         }
 
-        boolean created = ReservationDAO.createEquipmentReservation(reservation, equipmentList);
+        boolean created = ReservationDAO.createEquipmentReservation(reservation, idClient, equipmentList);
 
         if (!created) {
-            return "ERROR:No se pudo crear la reservación de equipo";
+            return "ERROR:No se pudo crear la reservación";
         }
 
-        return "SUCCESS:Reservación de equipo creada correctamente";
+        return "SUCCESS:Reservación creada correctamente";
     }
 }

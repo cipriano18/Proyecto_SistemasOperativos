@@ -214,18 +214,15 @@ public class AdminController {
     }
 
     // Eliminar admin en cascada
-    public static String deleteAdmin(int idAdmin, int idUser) {
-
-        // 1. Eliminar CXA + Contacto + Admin
-        boolean adminDeleted = AdminDAO.deleteAdminCascade(idAdmin);
-        if (!adminDeleted) {
-            return "ERROR:No se pudo eliminar el administrador";
+    public static String deleteAdmin(int idAdmin) {
+        if (idAdmin <= 0) {
+            return "ERROR:El id del administrador es inválido";
         }
 
-        // 2. Eliminar usuario
-        boolean userDeleted = UserDAO.deleteUser(idUser);
-        if (!userDeleted) {
-            return "ERROR:No se pudo eliminar el usuario";
+        boolean adminDeleted = AdminDAO.deleteAdminCascade(idAdmin);
+
+        if (!adminDeleted) {
+            return "ERROR:No se pudo eliminar el administrador";
         }
 
         return "SUCCESS:Administrador eliminado correctamente";
