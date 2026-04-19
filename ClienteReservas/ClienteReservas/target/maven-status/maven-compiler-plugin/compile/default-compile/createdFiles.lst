@@ -1,12 +1,14 @@
 controller\login_screen_controller.class
 model\Client.class
+utils\Animations.class
 model\Contact.class
 network\ServerConnection.class
 model\Person.class
-com\auditorio\clientereservas\App.class
 model\ClientRequest.class
-controller\register_screen_controller.class
 model\Response.class
 model\User.class
 network\SocketManager.class
+com\auditorio\clientereservas\App.class
+controller\home_screen_controller.class
+controller\register_screen_controller.class
 model\Admin.class
