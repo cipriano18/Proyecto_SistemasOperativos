@@ -3,6 +3,7 @@ package controller;
 import model.Admin;
 import model.User;
 import model.Contact;
+import model.Response;
 
 import database.UserDAO;
 import database.AdminDAO;
@@ -13,75 +14,107 @@ import utils.Validator;
 
 public class AdminController {
 
+    // Obtener admin completo por id
+    public static Response getAdmin(int idAdmin) {
+        if (idAdmin <= 0) {
+            return new Response(false, "El id del administrador es inválido", null);
+        }
+
+        AdminRequest adminRequest = AdminDAO.getFullAdminById(idAdmin);
+
+        if (adminRequest == null) {
+            return new Response(false, "Administrador no encontrado", null);
+        }
+
+        return new Response(true, "Administrador obtenido correctamente", adminRequest);
+    }
+
     // Crear administrador completo (User + Admin + Contact + CXA)
-    public static String createAdmin(AdminRequest adminRequest) {
+    public static Response createAdmin(AdminRequest adminRequest) {
+
+        System.out.println("DEBUG - Iniciando createAdmin");
+
+        if (adminRequest == null) {
+            return new Response(false, "La solicitud del administrador es obligatoria", null);
+        }
 
         User user = adminRequest.getUser();
         Admin admin = adminRequest.getAdmin();
         Contact contact = adminRequest.getContact();
 
-        System.out.println("DEBUG - Iniciando createAdmin");
+        if (user == null) {
+            return new Response(false, "El usuario es obligatorio", null);
+        }
+
+        if (admin == null) {
+            return new Response(false, "El administrador es obligatorio", null);
+        }
+
+        if (contact == null) {
+            return new Response(false, "El contacto es obligatorio", null);
+        }
 
         // 1. VALIDACIONES USER
         if (!Validator.isValidUsername(user.getUsername())) {
-            return "ERROR:Nombre de usuario inválido";
+            return new Response(false, "Nombre de usuario inválido", null);
         }
 
         if (!Validator.isValidPassword(user.getPassword())) {
-            return "ERROR:Contraseña inválida";
+            return new Response(false, "Contraseña inválida", null);
         }
 
-        // Verificar si ya existe
         if (UserDAO.getUserByUsername(user.getUsername()) != null) {
-            return "ERROR:El nombre de usuario ya está en uso";
+            return new Response(false, "El nombre de usuario ya está en uso", null);
         }
 
         // 2. VALIDACIONES ADMIN
         if (!Validator.isValidFName(admin.getfName())) {
-            return "ERROR:El campo primer nombre es obligatorio";
+            return new Response(false, "El campo primer nombre es obligatorio", null);
         }
 
         if (!Validator.isValidFSurname(admin.getfSurname())) {
-            return "ERROR:El campo primer apellido es obligatorio";
+            return new Response(false, "El campo primer apellido es obligatorio", null);
         }
 
-        if (!Validator.isValidMSurname(admin.getfSurname())) {
-            return "ERROR:El campo segundo apellido es obligatorio";
+        if (!Validator.isValidMSurname(admin.getmSurname())) {
+            return new Response(false, "El campo segundo apellido es obligatorio", null);
         }
 
         if (!Validator.isValidIdentityCard(admin.getIdentityCard())) {
-            return "ERROR:Cédula inválida";
+            return new Response(false, "Cédula inválida", null);
         }
 
         // 3. VALIDACIONES CONTACTO
         if (Validator.isEmpty(contact.getType())) {
-            return "ERROR:Tipo de contacto requerido";
+            return new Response(false, "Tipo de contacto requerido", null);
         }
 
         if (Validator.isEmpty(contact.getContactValue())) {
-            return "ERROR:Valor de contacto requerido";
-        }
-        if (!Validator.isValidContact(contact.getType(), contact.getContactValue())) {
-            if ("PHONE".equals(contact.getType())) {
-                return "ERROR:El teléfono debe contener exactamente 8 dígitos numéricos";
-            }
-            if ("EMAIL".equals(contact.getType())) {
-                return "ERROR:El correo debe tener un formato válido (ejemplo: usuario@dominio.com)";
-            }
-            return "ERROR:Valor de contacto inválido";
+            return new Response(false, "Valor de contacto requerido", null);
         }
 
+        if (!Validator.isValidContact(contact.getType(), contact.getContactValue())) {
+            if ("PHONE".equalsIgnoreCase(contact.getType())) {
+                return new Response(false, "El teléfono debe contener exactamente 8 dígitos numéricos", null);
+            }
+            if ("EMAIL".equalsIgnoreCase(contact.getType())) {
+                return new Response(false, "El correo debe tener un formato válido (ejemplo: usuario@dominio.com)", null);
+            }
+            return new Response(false, "Valor de contacto inválido", null);
+        }
+
+        // 4. CREAR USER
+        user.setIdRole(2); // Administrador
         boolean userInserted = UserDAO.insertUser(user);
 
         if (!userInserted) {
-            return "ERROR:No se pudo crear el usuario";
+            return new Response(false, "No se pudo crear el usuario", null);
         }
 
-        // Obtener usuario creado
         User createdUser = UserDAO.getUserByUsername(user.getUsername());
 
         if (createdUser == null) {
-            return "ERROR:No se pudo recuperar el usuario creado";
+            return new Response(false, "No se pudo recuperar el usuario creado", null);
         }
 
         System.out.println("DEBUG - createdUser ID: " + createdUser.getIdUser());
@@ -92,14 +125,13 @@ public class AdminController {
         boolean adminInserted = AdminDAO.insertAdmin(admin);
 
         if (!adminInserted) {
-            return "ERROR:No se pudo crear el administrador";
+            return new Response(false, "No se pudo crear el administrador", null);
         }
 
-        // Obtener admin correctamente (por id_user)
         Admin createdAdmin = AdminDAO.getAdminByUserId(createdUser.getIdUser());
 
         if (createdAdmin == null) {
-            return "ERROR:No se pudo recuperar el administrador creado";
+            return new Response(false, "No se pudo recuperar el administrador creado", null);
         }
 
         System.out.println("DEBUG - createdAdmin ID: " + createdAdmin.getIdAdmin());
@@ -108,8 +140,10 @@ public class AdminController {
         int idContact = ContactDAO.insertContact(contact);
 
         if (idContact == -1) {
-            return "ERROR:No se pudo crear el contacto";
+            return new Response(false, "No se pudo crear el contacto", null);
         }
+
+        contact.setIdContact(idContact);
 
         System.out.println("DEBUG - idContact: " + idContact);
 
@@ -117,114 +151,133 @@ public class AdminController {
         boolean linked = ContactDAO.insertCXA(createdAdmin.getIdAdmin(), idContact);
 
         if (!linked) {
-            return "ERROR:No se pudo vincular el contacto al administrador";
+            return new Response(false, "No se pudo vincular el contacto al administrador", null);
         }
 
-        return "SUCCESS:Administrador creado correctamente";
+        // 8. ARMAR RESPUESTA
+        AdminRequest responseData = new AdminRequest();
+        responseData.setUser(createdUser);
+        responseData.setAdmin(createdAdmin);
+        responseData.setContact(contact);
+
+        return new Response(true, "Administrador creado correctamente", responseData);
     }
 
-    public static String updateAdmin(AdminRequest adminRequest) {
+    // Actualizar administrador existente
+    public static Response updateAdmin(AdminRequest adminRequest) {
+
+        System.out.println("DEBUG - Iniciando updateAdmin");
+
+        if (adminRequest == null) {
+            return new Response(false, "La solicitud del administrador es obligatoria", null);
+        }
 
         User user = adminRequest.getUser();
         Admin admin = adminRequest.getAdmin();
         Contact contact = adminRequest.getContact();
 
-        System.out.println("DEBUG - Iniciando updateAdmin");
+        if (user == null) {
+            return new Response(false, "El usuario es obligatorio", null);
+        }
 
-        //  VALIDAR EXISTENCIA
+        if (admin == null) {
+            return new Response(false, "El administrador es obligatorio", null);
+        }
+
         Admin existingAdmin = AdminDAO.getAdminById(admin.getIdAdmin());
-
         if (existingAdmin == null) {
-            return "ERROR:Administrador no encontrado";
+            return new Response(false, "Administrador no encontrado", null);
         }
-        if (user != null) {
 
-            if (!Validator.isValidUsername(user.getUsername())) {
-                return "ERROR:Nombre de usuario inválido";
-            }
-
-            //  VALIDAR DUPLICADO (
-            User existingUser = UserDAO.getUserByUsername(user.getUsername());
-
-            if (existingUser != null && existingUser.getIdUser() != user.getIdUser()) {
-                return "ERROR:El nombre de usuario ya está en uso";
-            }
-
-            boolean userUpdated = UserDAO.updateUser(user);
-
-            if (!userUpdated) {
-                return "ERROR:No se pudo actualizar el usuario";
-            }
+        if (!Validator.isValidUsername(user.getUsername())) {
+            return new Response(false, "Nombre de usuario inválido", null);
         }
-        // 3. UPDATE ADMIN
+
+        User existingUser = UserDAO.getUserByUsername(user.getUsername());
+        if (existingUser != null && existingUser.getIdUser() != user.getIdUser()) {
+            return new Response(false, "El nombre de usuario ya está en uso", null);
+        }
+
         if (!Validator.isValidFName(admin.getfName())) {
-            return "ERROR:El campo primer nombre es obligatorio";
+            return new Response(false, "El campo primer nombre es obligatorio", null);
         }
 
         if (!Validator.isValidFSurname(admin.getfSurname())) {
-            return "ERROR:El campo primer apellido es obligatorio";
+            return new Response(false, "El campo primer apellido es obligatorio", null);
         }
 
         if (!Validator.isValidMSurname(admin.getmSurname())) {
-            return "ERROR:El campo segundo apellido es obligatorio";
+            return new Response(false, "El campo segundo apellido es obligatorio", null);
         }
 
-        boolean adminUpdated = AdminDAO.updateAdmin(admin);
-
-        if (!adminUpdated) {
-            return "ERROR:No se pudo actualizar el administrador";
+        if (!Validator.isValidIdentityCard(admin.getIdentityCard())) {
+            return new Response(false, "Cédula inválida", null);
         }
 
         if (contact != null) {
-
             if (Validator.isEmpty(contact.getType())) {
-                return "ERROR:Tipo de contacto requerido";
+                return new Response(false, "Tipo de contacto requerido", null);
             }
 
             if (Validator.isEmpty(contact.getContactValue())) {
-                return "ERROR:Valor de contacto requerido";
+                return new Response(false, "Valor de contacto requerido", null);
             }
-            // 4. UPDATE CONTACT (correo / teléfono)
+
             if (!Validator.isValidContact(contact.getType(), contact.getContactValue())) {
-                if ("PHONE".equals(contact.getType())) {
-                    return "ERROR:El teléfono debe contener exactamente 8 dígitos numéricos";
+                if ("PHONE".equalsIgnoreCase(contact.getType())) {
+                    return new Response(false, "El teléfono debe contener exactamente 8 dígitos numéricos", null);
                 }
-                if ("EMAIL".equals(contact.getType())) {
-                    return "ERROR:El correo debe tener un formato válido (ejemplo: usuario@dominio.com)";
+                if ("EMAIL".equalsIgnoreCase(contact.getType())) {
+                    return new Response(false, "El correo debe tener un formato válido (ejemplo: usuario@dominio.com)", null);
                 }
-                return "ERROR:Valor de contacto inválido";
+                return new Response(false, "Valor de contacto inválido", null);
             }
+        }
 
+        user.setIdRole(2);
+
+        boolean userUpdated = UserDAO.updateUser(user);
+        if (!userUpdated) {
+            return new Response(false, "No se pudo actualizar el usuario", null);
+        }
+
+        boolean adminUpdated = AdminDAO.updateAdmin(admin);
+        if (!adminUpdated) {
+            return new Response(false, "No se pudo actualizar el administrador", null);
+        }
+
+        if (contact != null) {
             boolean contactUpdated = ContactDAO.updateContact(contact);
-
             if (!contactUpdated) {
-                return "ERROR:No se pudo actualizar el contacto";
+                return new Response(false, "No se pudo actualizar el contacto", null);
             }
         }
 
-        return "SUCCESS:Administrador actualizado correctamente";
-    }
-    // Obtener admin completo por id
-     public static AdminRequest getAdmin(int idAdmin) {
-        AdminRequest adminRequest = AdminDAO.getFullAdminById(idAdmin);
-        if (adminRequest == null) {
-            System.out.println("ERROR:Administrador no encontrado");
-        }
-        return adminRequest;
+        AdminRequest responseData = new AdminRequest();
+        responseData.setUser(user);
+        responseData.setAdmin(admin);
+        responseData.setContact(contact);
+
+        return new Response(true, "Administrador actualizado correctamente", responseData);
     }
 
-    // Eliminar admin en cascada
-    public static String deleteAdmin(int idAdmin) {
+    // Eliminar admin completo en cascada
+    public static Response deleteAdmin(int idAdmin) {
         if (idAdmin <= 0) {
-            return "ERROR:El id del administrador es inválido";
+            return new Response(false, "El id del administrador es inválido", null);
+        }
+
+        AdminRequest existingAdmin = AdminDAO.getFullAdminById(idAdmin);
+        if (existingAdmin == null) {
+            return new Response(false, "Administrador no encontrado", null);
         }
 
         boolean adminDeleted = AdminDAO.deleteAdminCascade(idAdmin);
 
         if (!adminDeleted) {
-            return "ERROR:No se pudo eliminar el administrador";
+            return new Response(false, "No se pudo eliminar el administrador", null);
         }
 
-        return "SUCCESS:Administrador eliminado correctamente";
+        return new Response(true, "Administrador eliminado correctamente", existingAdmin);
     }
 }
