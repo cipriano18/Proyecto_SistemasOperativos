@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package utils;
 
 import java.util.ArrayList;
@@ -11,10 +7,6 @@ import model.ClientRequest;
 import model.Contact;
 import model.User;
 
-/**
- *
- * @author User
- */
 public class Validator {
 
     public static boolean isEmpty(String value) {
@@ -22,53 +14,83 @@ public class Validator {
     }
 
     public static boolean isValidUsername(String username) {
-        if (isEmpty(username)) return false;
-        if (username.length() < 4) return false;
-        if (username.length() > 50) return false;
+        if (isEmpty(username)) {
+            return false;
+        }
+        if (username.length() < 4) {
+            return false;
+        }
+        if (username.length() > 50) {
+            return false;
+        }
         return username.matches("[a-zA-Z0-9_]+");
     }
 
     public static boolean isValidPassword(String password) {
-        if (isEmpty(password)) return false;
-        if (password.length() < 8) return false;
-        if (!password.matches(".*[A-Z].*")) return false;
-        if (!password.matches(".*[0-9].*")) return false;
+        if (isEmpty(password)) {
+            return false;
+        }
+        if (password.length() < 8) {
+            return false;
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            return false;
+        }
+        if (!password.matches(".*[0-9].*")) {
+            return false;
+        }
         return true;
     }
 
     public static boolean isValidIdentityCard(String identityCard) {
-        if (isEmpty(identityCard)) return false;
+        if (isEmpty(identityCard)) {
+            return false;
+        }
         return identityCard.matches("^[A-Za-z0-9]{9,20}$");
     }
 
     public static boolean isValidEmail(String email) {
-        if (isEmpty(email)) return false;
+        if (isEmpty(email)) {
+            return false;
+        }
         return email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     }
 
     public static boolean isValidPhone(String phone) {
-        if (isEmpty(phone)) return false;
+        if (isEmpty(phone)) {
+            return false;
+        }
         return phone.matches("^[0-9]{8}$");
     }
 
     public static boolean isValidFName(String fName) {
-        if (isEmpty(fName)) return false;
+        if (isEmpty(fName)) {
+            return false;
+        }
         return fName.matches("^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$");
     }
 
     public static boolean isValidFSurname(String fSurname) {
-        if (isEmpty(fSurname)) return false;
+        if (isEmpty(fSurname)) {
+            return false;
+        }
         return fSurname.matches("^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$");
     }
 
     public static boolean isValidMSurname(String mSurname) {
-        if (isEmpty(mSurname)) return false;
+        if (isEmpty(mSurname)) {
+            return false;
+        }
         return mSurname.matches("^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$");
     }
 
     public static boolean isValidContact(String type, String value) {
-        if (isEmpty(type)) return false;
-        if (isEmpty(value)) return false;
+        if (isEmpty(type)) {
+            return false;
+        }
+        if (isEmpty(value)) {
+            return false;
+        }
 
         switch (type.toUpperCase()) {
             case "PHONE":
@@ -133,10 +155,6 @@ public class Validator {
                 errors.add("La cédula es obligatoria");
             } else if (!isValidIdentityCard(client.getIdentityCard())) {
                 errors.add("La cédula es inválida");
-            }
-
-            if (client.getIdType() <= 0) {
-                errors.add("El tipo de cliente es obligatorio");
             }
         }
 

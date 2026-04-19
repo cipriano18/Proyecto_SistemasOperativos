@@ -19,21 +19,20 @@ import model.User;
  */
 public class ClientDAO {
 
+    //Funcion para crear un cliente
     public static boolean createClient(Client client) {
 
         String sql = "INSERT INTO AUD_Clients "
-                + "(id_user, id_type, f_name, m_name, f_surname, m_surname, identity_card) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                + "(id_user, f_name, m_name, f_surname, m_surname, identity_card) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, client.getIdUser());
-            ps.setInt(2, client.getIdType());
-            ps.setString(3, client.getfName());
-            ps.setString(4, client.getmName());
-            ps.setString(5, client.getfSurname());
-            ps.setString(6, client.getmSurname());
-            ps.setString(7, client.getIdentityCard());
+            ps.setString(2, client.getfName());
+            ps.setString(3, client.getmName());
+            ps.setString(4, client.getfSurname());
+            ps.setString(5, client.getmSurname());
+            ps.setString(6, client.getIdentityCard());
 
             ps.executeUpdate();
             return true;
@@ -47,8 +46,7 @@ public class ClientDAO {
     public static Client getClientByUserId(int idUser) {
 
         Client client = null;
-
-        String sql = "SELECT id_client, id_user, id_type, f_name, m_name, f_surname, m_surname, identity_card "
+        String sql = "SELECT id_client, id_user, f_name, m_name, f_surname, m_surname, identity_card "
                 + "FROM AUD_Clients WHERE id_user = ?";
 
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -61,7 +59,6 @@ public class ClientDAO {
                 client = new Client(
                         rs.getInt("id_client"),
                         rs.getInt("id_user"),
-                        rs.getInt("id_type"),
                         rs.getString("f_name"),
                         rs.getString("m_name"),
                         rs.getString("f_surname"),
@@ -73,25 +70,26 @@ public class ClientDAO {
         } catch (SQLException e) {
             System.out.println("Error al buscar cliente por id_user: " + e.getMessage());
         }
-
         return client;
     }
 
     public static boolean updateClient(Client client) {
         String sql = "UPDATE AUD_Clients SET "
-                + "id_type = ?, f_name = ?, m_name = ?, "
-                + "f_surname = ?, m_surname = ?, identity_card = ? "
+                + "f_name = ?, m_name = ?, f_surname = ?, m_surname = ?, identity_card = ? "
                 + "WHERE id_client = ?";
+
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, client.getIdType());
-            ps.setString(2, client.getfName());
-            ps.setString(3, client.getmName());
-            ps.setString(4, client.getfSurname());
-            ps.setString(5, client.getmSurname());
-            ps.setString(6, client.getIdentityCard());
-            ps.setInt(7, client.getIdClient());
+
+            ps.setString(1, client.getfName());
+            ps.setString(2, client.getmName());
+            ps.setString(3, client.getfSurname());
+            ps.setString(4, client.getmSurname());
+            ps.setString(5, client.getIdentityCard());
+            ps.setInt(6, client.getIdClient());
+
             int rows = ps.executeUpdate();
             return rows > 0;
+
         } catch (SQLException e) {
             System.out.println("Error al actualizar cliente: " + e.getMessage());
             return false;
@@ -113,7 +111,7 @@ public class ClientDAO {
     // Obtener cliente completo con todos sus datos por id_client
 
     public static ClientRequest getFullClientById(int idClient) {
-        String sql = "SELECT c.id_client, c.id_user, c.id_type, c.f_name, c.m_name, "
+        String sql = "SELECT c.id_client, c.id_user, c.f_name, c.m_name, "
                 + "c.f_surname, c.m_surname, c.identity_card, "
                 + "u.username, u.password, "
                 + "co.id_contact, co.type AS contact_type, co.contact_value "
@@ -122,26 +120,30 @@ public class ClientDAO {
                 + "LEFT JOIN AUD_CXC cxc ON c.id_client = cxc.id_client "
                 + "LEFT JOIN AUD_Contacts co ON cxc.id_contact = co.id_contact "
                 + "WHERE c.id_client = ?";
+
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, idClient);
             ResultSet rs = ps.executeQuery();
+
             if (rs.next()) {
                 User user = new User(
                         rs.getInt("id_user"),
-                        3, 
+                        3,
                         rs.getString("username"),
                         rs.getString("password")
                 );
+
                 Client client = new Client(
                         rs.getInt("id_client"),
                         rs.getInt("id_user"),
-                        rs.getInt("id_type"),
                         rs.getString("f_name"),
                         rs.getString("m_name"),
                         rs.getString("f_surname"),
                         rs.getString("m_surname"),
                         rs.getString("identity_card")
                 );
+
                 Contact contact = new Contact();
                 contact.setIdContact(rs.getInt("id_contact"));
                 contact.setType(rs.getString("contact_type"));
@@ -151,11 +153,14 @@ public class ClientDAO {
                 clientRequest.setUser(user);
                 clientRequest.setClient(client);
                 clientRequest.setContact(contact);
+
                 return clientRequest;
             }
+
         } catch (SQLException e) {
             System.out.println("Error al obtener cliente completo: " + e.getMessage());
         }
+
         return null;
     }
 }
