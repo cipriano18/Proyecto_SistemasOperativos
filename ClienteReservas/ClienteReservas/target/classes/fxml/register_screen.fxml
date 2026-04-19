@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox minWidth="840.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.register_screen_controller">
+   <children>
+      <HBox minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" styleClass="root-pane" stylesheets="@../styles/main.css" />
+   </children>
+</VBox>
