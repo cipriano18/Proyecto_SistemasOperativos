@@ -18,6 +18,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import model.ClientRequest;
+import model.Response;
+import service.AuthService;
 import utils.Animations;
 
 public class login_screen_controller implements Initializable {
@@ -55,10 +58,10 @@ public class login_screen_controller implements Initializable {
         anim.breathOpacity(img_logo, 80, 1, 0.65, 1.0);
         anim.appear(vb_info, 100, 2, 0);
         anim.appear(vb_right, 100, 1, 0);
-        anim.typeWriter(lbl_title,400,50);
+        anim.typeWriter(lbl_title, 400, 50);
         anim.typeWriter(lbl_audInfo, 200, 30);
-        anim.typeWriter(lbl_welcome,400,50);
-        
+        anim.typeWriter(lbl_welcome, 400, 50);
+
     }
 
     @FXML
@@ -70,11 +73,19 @@ public class login_screen_controller implements Initializable {
             showError("Por favor complete todos los campos.");
             return;
         }
-        
-        App.setRoot("home_screen");
-        
-    }
 
+        Response resp = AuthService.login(username, password);
+
+        if (resp.isSuccess()) {
+            if (resp.getData() instanceof ClientRequest) {
+                ClientRequest data = (ClientRequest) resp.getData();
+                if (data.getUser().getIdRole() == 3) {
+                    App.setRoot("home_screen");
+                }
+            }
+        }
+
+    }
 
     private void showError(String msg) {
         messageLabel.setStyle("-fx-text-fill: #ba1a1a; -fx-font-weight:600; -fx-font-size:12px;");
