@@ -12,4 +12,5 @@ network\SocketManager.class
 com\auditorio\clientereservas\App.class
 controller\home_screen_controller.class
 controller\register_screen_controller.class
+service\RegisterClient.class
 model\Admin.class

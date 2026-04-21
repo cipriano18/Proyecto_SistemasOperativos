@@ -19,6 +19,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import model.Client;
+import model.ClientRequest;
+import model.Contact;
+import model.Response;
+import model.User;
+import service.RegisterClient;
 import utils.Animations;
 
 /**
@@ -140,7 +146,53 @@ public class register_screen_controller implements Initializable {
     }
 
     @FXML
-    private void RegisterUser(ActionEvent event) {
+    private void RegisterUser(ActionEvent event) throws IOException {
+        clearMessages();
+
+        String fName = tf_first_name.getText().trim();
+        String mName = tf_second_name.getText().trim();
+        String fSurname = tf_first_surname.getText().trim();
+        String mSurname = tf_second_surname.getText().trim();
+        String idCard = tf_id_card.getText().trim();
+        String contactValue = tf_contact.getText().trim();
+        String username = tf_user.getText().trim();
+        String password = tf_pass.getText().trim();
+
+        if (fName.isEmpty()) { showError(msg_name, "Ingrese el primer nombre."); return; }
+        if (fSurname.isEmpty()) { showError(msg_surname, "Ingrese el primer apellido."); return; }
+        if (mSurname.isEmpty()) { showError(msg_Sec_surname, "Ingrese el segundo apellido."); return; }
+        if (idCard.isEmpty()) { showError(msg_card, "Ingrese la cédula."); return; }
+        if (contactValue.isEmpty()) { showError(msg_contact, "Ingrese el contacto."); return; }
+        if (username.isEmpty()) { showError(msg_user, "Ingrese el usuario."); return; }
+        if (password.isEmpty()) { showError(msg_pass, "Ingrese la contraseña."); return; }
+
+        User user = new User(3, username, password);
+        Client client = new Client(0, fName, mName, fSurname, mSurname, idCard);
+        Contact contact = new Contact(contactType, contactValue);
+        ClientRequest request = new ClientRequest(user, client, contact);
+
+        Response resp = RegisterClient.register(request);
+
+        if (resp.isSuccess()) {
+            App.setRoot("login_screen");
+        } else {
+            showError(msg_user, resp.getMessage());
+        }
+    }
+
+    private void showError(Label label, String msg) {
+        label.setStyle("-fx-text-fill: #ba1a1a; -fx-font-weight:600; -fx-font-size:12px;");
+        label.setText(msg);
+    }
+
+    private void clearMessages() {
+        msg_name.setText("");
+        msg_surname.setText("");
+        msg_Sec_surname.setText("");
+        msg_card.setText("");
+        msg_contact.setText("");
+        msg_user.setText("");
+        msg_pass.setText("");
     }
 
 }
