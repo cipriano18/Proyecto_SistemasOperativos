@@ -21,6 +21,7 @@ import javafx.scene.layout.VBox;
 import model.ClientRequest;
 import model.Response;
 import service.AuthService;
+import session.Session;
 import utils.Animations;
 
 public class login_screen_controller implements Initializable {
@@ -80,6 +81,7 @@ public class login_screen_controller implements Initializable {
             if (resp.getData() instanceof ClientRequest) {
                 ClientRequest data = (ClientRequest) resp.getData();
                 if (data.getUser().getIdRole() == 3) {
+                    Session.getInstance().setClient(data);
                     App.setRoot("home_screen");
                 }
             }
