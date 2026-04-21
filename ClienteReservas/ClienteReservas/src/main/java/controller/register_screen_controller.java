@@ -145,6 +145,12 @@ public class register_screen_controller implements Initializable {
         contactType = "PHONE";
     }
 
+    private static final String NAME_REGEX = "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$";
+    private static final String ID_CARD_REGEX = "^[A-Za-z0-9]{9,20}$";
+    private static final String USERNAME_REGEX = "[a-zA-Z0-9_]+";
+    private static final String EMAIL_REGEX = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+    private static final String PHONE_REGEX = "^[0-9]{8}$";
+
     @FXML
     private void RegisterUser(ActionEvent event) throws IOException {
         clearMessages();
@@ -158,13 +164,53 @@ public class register_screen_controller implements Initializable {
         String username = tf_user.getText().trim();
         String password = tf_pass.getText().trim();
 
-        if (fName.isEmpty()) { showError(msg_name, "Ingrese el primer nombre."); return; }
-        if (fSurname.isEmpty()) { showError(msg_surname, "Ingrese el primer apellido."); return; }
-        if (mSurname.isEmpty()) { showError(msg_Sec_surname, "Ingrese el segundo apellido."); return; }
-        if (idCard.isEmpty()) { showError(msg_card, "Ingrese la cédula."); return; }
-        if (contactValue.isEmpty()) { showError(msg_contact, "Ingrese el contacto."); return; }
-        if (username.isEmpty()) { showError(msg_user, "Ingrese el usuario."); return; }
-        if (password.isEmpty()) { showError(msg_pass, "Ingrese la contraseña."); return; }
+        boolean hasErrors = false;
+
+        if (fName.isEmpty()) {
+            showError(msg_name, "El primer nombre es obligatorio"); hasErrors = true;
+        } else if (!fName.matches(NAME_REGEX)) {
+            showError(msg_name, "El primer nombre es inválido"); hasErrors = true;
+        }
+
+        if (fSurname.isEmpty()) {
+            showError(msg_surname, "El primer apellido es obligatorio"); hasErrors = true;
+        } else if (!fSurname.matches(NAME_REGEX)) {
+            showError(msg_surname, "El primer apellido es inválido"); hasErrors = true;
+        }
+
+        if (mSurname.isEmpty()) {
+            showError(msg_Sec_surname, "El segundo apellido es obligatorio"); hasErrors = true;
+        } else if (!mSurname.matches(NAME_REGEX)) {
+            showError(msg_Sec_surname, "El segundo apellido es inválido"); hasErrors = true;
+        }
+
+        if (idCard.isEmpty()) {
+            showError(msg_card, "La cédula es obligatoria"); hasErrors = true;
+        } else if (!idCard.matches(ID_CARD_REGEX)) {
+            showError(msg_card, "La cédula es inválida"); hasErrors = true;
+        }
+
+        if (contactValue.isEmpty()) {
+            showError(msg_contact, "El valor del contacto es obligatorio"); hasErrors = true;
+        } else if ("PHONE".equals(contactType) && !contactValue.matches(PHONE_REGEX)) {
+            showError(msg_contact, "El teléfono debe contener exactamente 8 dígitos"); hasErrors = true;
+        } else if ("EMAIL".equals(contactType) && !contactValue.matches(EMAIL_REGEX)) {
+            showError(msg_contact, "El correo debe tener un formato válido"); hasErrors = true;
+        }
+
+        if (username.isEmpty()) {
+            showError(msg_user, "El nombre de usuario es obligatorio"); hasErrors = true;
+        } else if (username.length() < 4 || username.length() > 50 || !username.matches(USERNAME_REGEX)) {
+            showError(msg_user, "El nombre de usuario es inválido"); hasErrors = true;
+        }
+
+        if (password.isEmpty()) {
+            showError(msg_pass, "La contraseña es obligatoria"); hasErrors = true;
+        } else if (password.length() < 8 || !password.matches(".*[A-Z].*") || !password.matches(".*[0-9].*")) {
+            showError(msg_pass, "La contraseña es inválida"); hasErrors = true;
+        }
+
+        if (hasErrors) return;
 
         User user = new User(3, username, password);
         Client client = new Client(0, fName, mName, fSurname, mSurname, idCard);
@@ -176,8 +222,35 @@ public class register_screen_controller implements Initializable {
         if (resp.isSuccess()) {
             App.setRoot("login_screen");
         } else {
-            showError(msg_user, resp.getMessage());
+            routeServerError(resp.getMessage());
         }
+    }
+
+    private void routeServerError(String msg) {
+        if (msg == null) {
+            showError(msg_user, "Error desconocido");
+            return;
+        }
+        String low = msg.toLowerCase();
+        Label target;
+        if (low.contains("nombre de usuario") || low.contains("ya está en uso")) {
+            target = msg_user;
+        } else if (low.contains("contraseña")) {
+            target = msg_pass;
+        } else if (low.contains("primer nombre")) {
+            target = msg_name;
+        } else if (low.contains("primer apellido")) {
+            target = msg_surname;
+        } else if (low.contains("segundo apellido")) {
+            target = msg_Sec_surname;
+        } else if (low.contains("cédula")) {
+            target = msg_card;
+        } else if (low.contains("contacto") || low.contains("teléfono") || low.contains("correo")) {
+            target = msg_contact;
+        } else {
+            target = msg_user;
+        }
+        showError(target, msg);
     }
 
     private void showError(Label label, String msg) {
