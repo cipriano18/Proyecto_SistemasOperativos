@@ -3,14 +3,17 @@ model\Client.class
 utils\Animations.class
 model\Contact.class
 service\AuthService.class
+service\ClientProfileService.class
 network\ServerConnection.class
 model\Person.class
 model\ClientRequest.class
 model\Response.class
 model\User.class
 network\SocketManager.class
+session\Session.class
 com\auditorio\clientereservas\App.class
 controller\home_screen_controller.class
+controller\profile_screen_controller.class
 controller\register_screen_controller.class
 service\RegisterClient.class
 model\Admin.class

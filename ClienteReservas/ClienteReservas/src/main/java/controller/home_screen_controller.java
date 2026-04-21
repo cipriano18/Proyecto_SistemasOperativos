@@ -4,9 +4,17 @@
  */
 package controller;
 
+import com.auditorio.clientereservas.App;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import model.ClientRequest;
+import session.Session;
 
 /**
  * FXML Controller class
@@ -15,12 +23,31 @@ import javafx.fxml.Initializable;
  */
 public class home_screen_controller implements Initializable {
 
+    @FXML
+    private Label lbl_welcome;
+    @FXML
+    private Button btn_profile;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-    
+        ClientRequest session = Session.getInstance().getClient();
+        if (session == null) {
+            try {
+                App.setRoot("login_screen");
+            } catch (IOException ignored) {
+            }
+            return;
+        }
+        if (lbl_welcome != null && session.getClient() != null) {
+            lbl_welcome.setText("Hola, " + session.getClient().getfName());
+        }
+    }
+
+    @FXML
+    private void GoToProfile(ActionEvent event) throws IOException {
+        App.setRoot("profile_screen");
+    }
 }

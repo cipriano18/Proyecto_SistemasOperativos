@@ -1,7 +1,9 @@
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Admin.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Client.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Contact.java
+C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\ClientProfileService.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Response.java
+C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\profile_screen_controller.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\register_screen_controller.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\AuthService.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\ClientRequest.java
@@ -10,6 +12,7 @@ C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Pr
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Person.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\User.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\network\ServerConnection.java
+C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\session\Session.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\home_screen_controller.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\login_screen_controller.java
 C:\Users\Usuario\Documents\Jose UNA\l ciclo 2026\sistemas operativos\proyecto\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\network\SocketManager.java
