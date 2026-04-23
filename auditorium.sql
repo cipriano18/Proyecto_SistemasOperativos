@@ -95,6 +95,30 @@ CREATE TABLE AUD_RXE (
     UNIQUE (id_reservation, id_equipment)
 );
 
+-- Tablas nuevas para reservas temporales
+CREATE TABLE AUD_ReservationDrafts (
+    id_draft INT AUTO_INCREMENT PRIMARY KEY,
+    id_client INT NOT NULL,
+    id_section INT NOT NULL,
+    reservation_date DATE NOT NULL,
+    created_at DATETIME NOT NULL,
+    expires_at DATETIME NOT NULL,
+
+    FOREIGN KEY (id_client) REFERENCES AUD_Clients(id_client) ON DELETE CASCADE,
+    FOREIGN KEY (id_section) REFERENCES AUD_Sections(id_section) ON DELETE CASCADE
+);
+
+CREATE TABLE AUD_RDXE (
+    id_rdxe INT AUTO_INCREMENT PRIMARY KEY,
+    id_draft INT NOT NULL,
+    id_equipment INT NOT NULL,
+    quantity INT NOT NULL,
+
+    FOREIGN KEY (id_draft) REFERENCES AUD_ReservationDrafts(id_draft) ON DELETE CASCADE,
+    FOREIGN KEY (id_equipment) REFERENCES AUD_Equipment(id_equipment),
+    UNIQUE (id_draft, id_equipment)
+);
+
 INSERT INTO AUD_Roles (name) VALUES 
 ('SuperAdministrador'),
 ('Administrador'),
