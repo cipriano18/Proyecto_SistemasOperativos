@@ -120,3 +120,19 @@
     -fx-font-weight: 700;
     -fx-text-fill: #5A5A5E;
 }
+
+
+.btn-section{
+    -fx-background-color: white;
+    -fx-background-radius: 0px;
+}
+
+.btn-section:hover {
+    -fx-background-color: #e8e5e5;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.btn-section:pressed {
+    -fx-background-color: #dcdcdc;
+}

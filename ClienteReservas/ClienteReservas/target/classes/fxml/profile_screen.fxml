@@ -212,19 +212,19 @@
                                     <VBox>
                                        <children>
                                           <Label styleClass="field-label" text="Nombre" />
-                                          <Label fx:id="lbl_card_name" styleClass="form-card" text="Makin David Artavia Zuniga" />
+                                          <Label fx:id="lbl_card_name" styleClass="form-card" />
                                        </children>
                                     </VBox>
                                     <VBox>
                                        <children>
                                           <Label styleClass="field-label" text="Cédula" />
-                                          <Label fx:id="lbl_card_ced" styleClass="form-card" text="604880338" />
+                                          <Label fx:id="lbl_card_ced" styleClass="form-card" />
                                        </children>
                                     </VBox>
                                     <VBox>
                                        <children>
                                           <Label styleClass="field-label" text="Contacto" />
-                                          <Label fx:id="lbl_card_contact" styleClass="form-card" text="makin.artavia.zuniga@est.una.ac.cr" VBox.vgrow="ALWAYS">
+                                          <Label fx:id="lbl_card_contact" styleClass="form-card" VBox.vgrow="ALWAYS">
                                              <VBox.margin>
                                                 <Insets />
                                              </VBox.margin>

@@ -98,3 +98,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-text-fill: #1E7A34;
     -fx-font-weight: 600;
 }
+
+.btn-title {
+    -fx-font-family: 'Tw Cen MT', sans-serif;
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-wrap-text: true;
+}

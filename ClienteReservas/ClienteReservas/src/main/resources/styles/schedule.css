@@ -1,0 +1,106 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 22 abr. 2026, 20:07:26
+    Author     : Alvaro Artavia
+*/
+
+.text-field {
+    -fx-background-color: #F2F2F3;
+    -fx-background-radius: 10px;
+    -fx-border-color: #E0E0E3;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 3px 12px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #1C1C1E;
+    -fx-prompt-text-fill: #8A8A8F;
+}
+
+.text-field:focused {
+    -fx-background-color: white;
+    -fx-border-color: #C8102E;
+    -fx-border-width: 2px;
+}
+
+.choice-box {
+    -fx-background-color: #F2F2F3;
+    -fx-background-radius: 10px;
+    -fx-border-color: #E0E0E3;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 3px 12px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #1C1C1E;
+}
+
+.choice-box .arrow {
+    -fx-background-color: #8A8A8F;
+}
+
+.choice-box .label {
+    -fx-text-fill: #1C1C1E;
+}
+
+.choice-box:hover {
+    -fx-border-color: #C8102E; /* rojo UNA */
+}
+
+.choice-box:focused {
+    -fx-border-color: #C8102E;
+    -fx-border-width: 2px;
+}
+
+.context-menu {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-border-color: #E0E0E3;
+    -fx-border-radius: 10px;
+}
+
+.menu-item:focused {
+    -fx-background-color: #FFE5E9;
+}
+
+/* ===== BOTÓN PRIMARIO ===== */
+.btn-primary {
+    -fx-background-color: #C8102E;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-background-radius: 10px;
+    -fx-padding: 3px 12px;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #9E0F24;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #6F0A18;
+}
+
+/* ===== BOTÓN SECUNDARIO (INVERSO) ===== */
+.btn-secondary {
+    -fx-background-color: white;
+    -fx-text-fill: #C8102E;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-background-radius: 10px;
+    -fx-border-color: #C8102E;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 3px 12px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #FFE5E9;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #F8CCD3;
+}
