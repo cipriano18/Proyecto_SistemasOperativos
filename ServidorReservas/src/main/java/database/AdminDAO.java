@@ -88,6 +88,34 @@ public class AdminDAO {
 
         return null;
     }
+    // Obtener administrador por Cedula
+    public static Admin getAdminByIdentityCard(String identityCard) {
+        String sql = "SELECT id_admin, id_user, f_name, m_name, f_surname, m_surname, identity_card "
+                + "FROM AUD_Administrators WHERE identity_card = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, identityCard);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new Admin(
+                        rs.getInt("id_admin"),
+                        rs.getInt("id_user"),
+                        rs.getString("f_name"),
+                        rs.getString("m_name"),
+                        rs.getString("f_surname"),
+                        rs.getString("m_surname"),
+                        rs.getString("identity_card")
+                );
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al buscar administrador por cédula: " + e.getMessage());
+        }
+
+        return null;
+    }
 
     public static boolean insertAdmin(Admin admin) {
         Connection conn = null;

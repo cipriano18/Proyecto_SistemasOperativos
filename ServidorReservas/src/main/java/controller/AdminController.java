@@ -84,6 +84,9 @@ public class AdminController {
             return new Response(false, "Cédula inválida", null);
         }
 
+        if (AdminDAO.getAdminByIdentityCard(admin.getIdentityCard()) != null) {
+            return new Response(false, "La cédula ya está registrada como administrador", null);
+        }
         // 3. VALIDACIONES CONTACTO
         if (Validator.isEmpty(contact.getType())) {
             return new Response(false, "Tipo de contacto requerido", null);

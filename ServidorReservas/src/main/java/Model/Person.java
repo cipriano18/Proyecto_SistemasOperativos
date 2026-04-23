@@ -11,6 +11,9 @@ public class Person implements Serializable {
     protected String mSurname;
     protected String identityCard;
 
+    public Person() {
+    }
+
     public Person(int idUser, String fName, String mName, String fSurname, String mSurname, String identityCard) {
         this.idUser = idUser;
         this.fName = fName;

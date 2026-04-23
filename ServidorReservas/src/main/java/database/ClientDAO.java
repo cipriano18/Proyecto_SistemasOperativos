@@ -163,4 +163,33 @@ public class ClientDAO {
 
         return null;
     }
+      public static Client getClientByIdentityCard(String identityCard) {
+
+    String sql = "SELECT id_client, id_user, f_name, m_name, f_surname, m_surname, identity_card "
+            + "FROM AUD_Clients WHERE identity_card = ?";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, identityCard);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            Client client = new Client();
+            client.setIdClient(rs.getInt("id_client"));
+            client.setIdUser(rs.getInt("id_user"));
+            client.setfName(rs.getString("f_name"));
+            client.setmName(rs.getString("m_name"));
+            client.setfSurname(rs.getString("f_surname"));
+            client.setmSurname(rs.getString("m_surname"));
+            client.setIdentityCard(rs.getString("identity_card"));
+            return client;
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error al buscar cliente por cédula: " + e.getMessage());
+    }
+
+    return null;
+}
 }

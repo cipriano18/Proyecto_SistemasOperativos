@@ -8,7 +8,8 @@ public class Client extends Person implements Serializable {
 
     private int idClient;
 
-   
+    public Client() {
+    }
 
     public Client(int idUser, String fName, String mName, String fSurname, String mSurname, String identityCard) {
         super(idUser, fName, mName, fSurname, mSurname, identityCard);
