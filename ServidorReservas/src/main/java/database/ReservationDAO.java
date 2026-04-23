@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import model.CalendarBlock;
 
 /**
  *
@@ -28,6 +29,36 @@ public class ReservationDAO {
         return equipmentSemaphores.computeIfAbsent(idEquipment, key -> new Semaphore(1, true));
     }
 
+    public static List<CalendarBlock> getReservedBlocksByMonth(int month, int year) {
+
+        List<CalendarBlock> blocks = new ArrayList<>();
+
+        String sql = "SELECT reservation_date, id_section "
+                + "FROM AUD_Reservations "
+                + "WHERE MONTH(reservation_date) = ? AND YEAR(reservation_date) = ? "
+                + "ORDER BY reservation_date, id_section";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                CalendarBlock block = new CalendarBlock();
+                block.setReservationDate(rs.getDate("reservation_date"));
+                block.setIdSection(rs.getInt("id_section"));
+                block.setStatus("RESERVED");
+                blocks.add(block);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener reservaciones del calendario: " + e.getMessage());
+        }
+
+        return blocks;
+    }
     public static boolean createEquipmentReservation(Reservation reservation, int idClient, List<RXE> equipmentList) {
 
         String insertReservationSql = "INSERT INTO AUD_Reservations (id_section, reservation_date) VALUES (?, ?)";

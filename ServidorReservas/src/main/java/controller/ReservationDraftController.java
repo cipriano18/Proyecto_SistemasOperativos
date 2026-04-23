@@ -2,18 +2,40 @@ package controller;
 
 import database.EquipmentReservationDraftDAO;
 import database.ReservationDAO;
+import java.util.ArrayList;
+import java.util.List;
+import model.CalendarBlock;
 import model.EquipmentReservationDraft;
 import model.EquipmentReservationDraftRequest;
 import model.Response;
 import model.RXE;
 import model.Reservation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ReservationDraftController {
 
+    public static Response getCalendarBlocks(int month, int year) {
+
+        if (month <= 0 || month > 12) {
+            return new Response(false, "El mes es inválido", null);
+        }
+
+        if (year <= 0) {
+            return new Response(false, "El año es inválido", null);
+        }
+
+        List<CalendarBlock> result = new ArrayList<>();
+
+        List<CalendarBlock> reserved = ReservationDAO.getReservedBlocksByMonth(month, year);
+        List<CalendarBlock> blocked = EquipmentReservationDraftDAO.getBlockedDraftsByMonth(month, year);
+
+        result.addAll(reserved);
+        result.addAll(blocked);
+
+        return new Response(true, "Calendario obtenido correctamente", result);
+    }
+
     public static Response startEquipmentDraft(EquipmentReservationDraftRequest request) {
+
         if (request == null) {
             return new Response(false, "La solicitud de la reserva temporal es obligatoria", null);
         }
@@ -40,15 +62,18 @@ public class ReservationDraftController {
         EquipmentReservationDraft draft = EquipmentReservationDraftDAO.createDraft(idClient, reservation);
 
         if (draft == null) {
-            return new Response(false,
-                    "Ya existe una reserva en proceso para esa fecha y seccion, espere un momento e intentalo de nuevo.",
-                    null);
+            return new Response(
+                    false,
+                    "Ya existe una reserva en proceso para esa fecha y sección, espere un momento e inténtelo de nuevo.",
+                    null
+            );
         }
 
         return new Response(true, "Reserva temporal creada correctamente", draft);
     }
 
     public static Response updateEquipmentDraft(EquipmentReservationDraftRequest request) {
+
         if (request == null) {
             return new Response(false, "La solicitud de actualización es obligatoria", null);
         }
@@ -97,6 +122,7 @@ public class ReservationDraftController {
     }
 
     public static Response getEquipmentDraftById(int idDraft) {
+
         if (idDraft <= 0) {
             return new Response(false, "El id del draft es obligatorio", null);
         }
@@ -111,6 +137,7 @@ public class ReservationDraftController {
     }
 
     public static Response getEquipmentDraftByClientId(int idClient) {
+
         if (idClient <= 0) {
             return new Response(false, "El cliente es obligatorio", null);
         }
@@ -125,8 +152,9 @@ public class ReservationDraftController {
     }
 
     public static Response discardEquipmentDraft(int idDraft, int idClient) {
+
         if (idDraft <= 0) {
-            return new Response(false, "El id de la reserva temporal es obligatoria", null);
+            return new Response(false, "El id de la reserva temporal es obligatorio", null);
         }
 
         if (idClient <= 0) {
@@ -153,8 +181,9 @@ public class ReservationDraftController {
     }
 
     public static Response confirmEquipmentDraft(int idDraft, int idClient) {
+
         if (idDraft <= 0) {
-            return new Response(false, "El id de la reserva temporal es obligatoria", null);
+            return new Response(false, "El id de la reserva temporal es obligatorio", null);
         }
 
         if (idClient <= 0) {
@@ -175,14 +204,14 @@ public class ReservationDraftController {
             return new Response(false, "Debe seleccionar al menos un equipo", null);
         }
 
-        boolean created = ReservationDAO.createEquipmentReservation(
+        Response reservationResponse = ReservationController.createEquipmentReservation(
                 draft.getReservation(),
                 draft.getIdClient(),
                 draft.getEquipmentList()
         );
 
-        if (!created) {
-            return new Response(false, "No se pudo confirmar la reservación", null);
+        if (!reservationResponse.isSuccess()) {
+            return reservationResponse;
         }
 
         EquipmentReservationDraftDAO.deleteDraft(idDraft);

@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 import server.Server;
+import service.ReservationDraftCleanupService;
 
 public class App extends Application {
 
@@ -19,6 +20,9 @@ public class App extends Application {
         Thread serverThread = new Thread(() -> Server.startServer());
         serverThread.setDaemon(true);
         serverThread.start();
+
+        // Arranca el servicio de limpieza de drafts
+        ReservationDraftCleanupService.start();
 
         scene = new Scene(loadFXML("superAdmin"), 870, 480);
         stage.setScene(scene);

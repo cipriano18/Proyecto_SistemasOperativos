@@ -4,63 +4,60 @@
  */
 package controller;
 
-import model.EquipmentReservationRequest;
 import model.RXE;
 import model.Reservation;
 import database.ReservationDAO;
 import java.util.List;
+import model.Response;
 
 /**
  *
  * @author Cipriano
  */
 public class ReservationController {
-    public static String createEquipmentReservation(EquipmentReservationRequest request) {
 
-        if (request == null) {
-            return "ERROR:La solicitud de reserva es obligatoria";
-        }
-
-        Reservation reservation = request.getReservation();
-        List<RXE> equipmentList = request.getEquipmentList();
-        int idClient = request.getIdClient();
+    public static Response createEquipmentReservation(Reservation reservation, int idClient, List<RXE> equipmentList) {
 
         if (reservation == null) {
-            return "ERROR:La reserva es obligatoria";
+            return new Response(false, "La reserva es obligatoria", null);
         }
 
         if (idClient <= 0) {
-            return "ERROR:El cliente es obligatorio";
+            return new Response(false, "El cliente es obligatorio", null);
         }
 
         if (reservation.getIdSection() <= 0) {
-            return "ERROR:La sección es obligatoria";
+            return new Response(false, "La sección es obligatoria", null);
         }
 
         if (reservation.getReservationDate() == null) {
-            return "ERROR:La fecha de reserva es obligatoria";
+            return new Response(false, "La fecha de reserva es obligatoria", null);
         }
 
         if (equipmentList == null || equipmentList.isEmpty()) {
-            return "ERROR:Debe seleccionar al menos un equipo";
+            return new Response(false, "Debe seleccionar al menos un equipo", null);
         }
 
         for (RXE item : equipmentList) {
+            if (item == null) {
+                return new Response(false, "Hay equipos inválidos en la lista", null);
+            }
+
             if (item.getIdEquipment() <= 0) {
-                return "ERROR:Equipo inválido";
+                return new Response(false, "Equipo inválido", null);
             }
 
             if (item.getQuantity() <= 0) {
-                return "ERROR:La cantidad debe ser mayor que cero";
+                return new Response(false, "La cantidad debe ser mayor que cero", null);
             }
         }
 
         boolean created = ReservationDAO.createEquipmentReservation(reservation, idClient, equipmentList);
 
         if (!created) {
-            return "ERROR:No se pudo crear la reservación";
+            return new Response(false, "No se pudo crear la reservación", null);
         }
 
-        return "SUCCESS:Reservación creada correctamente";
+        return new Response(true, "Reservación creada correctamente", null);
     }
 }

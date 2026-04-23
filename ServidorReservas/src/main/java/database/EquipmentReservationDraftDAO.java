@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import model.CalendarBlock;
 
 public class EquipmentReservationDraftDAO {
 
@@ -22,6 +23,40 @@ public class EquipmentReservationDraftDAO {
         return reservationSemaphores.computeIfAbsent(key, k -> new Semaphore(1, true));
     }
 
+    public static List<CalendarBlock> getBlockedDraftsByMonth(int month, int year) {
+
+        cleanupExpiredDrafts();
+
+        List<CalendarBlock> blocks = new ArrayList<>();
+
+        String sql = "SELECT reservation_date, id_section "
+                + "FROM AUD_ReservationDrafts "
+                + "WHERE MONTH(reservation_date) = ? AND YEAR(reservation_date) = ? "
+                + "AND expires_at > NOW() "
+                + "ORDER BY reservation_date, id_section";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                CalendarBlock block = new CalendarBlock();
+                block.setReservationDate(rs.getDate("reservation_date"));
+                block.setIdSection(rs.getInt("id_section"));
+                block.setStatus("BLOCKED");
+                blocks.add(block);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener drafts bloqueados del calendario: " + e.getMessage());
+        }
+
+        return blocks;
+    }
+
     public static EquipmentReservationDraft createDraft(int idClient, Reservation reservation) {
         if (reservation == null || reservation.getReservationDate() == null || reservation.getIdSection() <= 0) {
             return null;
@@ -29,8 +64,8 @@ public class EquipmentReservationDraftDAO {
 
         Semaphore semaphore = getReservationSemaphore(reservation.getReservationDate(), reservation.getIdSection());
 
-        String insertDraftSql = "INSERT INTO AUD_ReservationDrafts " +
-                "(id_client, id_section, reservation_date, created_at, expires_at) VALUES (?, ?, ?, ?, ?)";
+        String insertDraftSql = "INSERT INTO AUD_ReservationDrafts "
+                + "(id_client, id_section, reservation_date, created_at, expires_at) VALUES (?, ?, ?, ?, ?)";
 
         try {
             semaphore.acquire();
@@ -50,8 +85,7 @@ public class EquipmentReservationDraftDAO {
             Timestamp createdAt = new Timestamp(now);
             Timestamp expiresAt = new Timestamp(now + TTL_MILLIS);
 
-            try (Connection conn = DBConnection.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(insertDraftSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(insertDraftSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
                 ps.setInt(1, idClient);
                 ps.setInt(2, reservation.getIdSection());
@@ -117,9 +151,7 @@ public class EquipmentReservationDraftDAO {
                 return false;
             }
 
-            try (Connection conn = DBConnection.getConnection();
-                 PreparedStatement psDelete = conn.prepareStatement(deleteDetailsSql);
-                 PreparedStatement psInsert = conn.prepareStatement(insertDetailSql)) {
+            try (Connection conn = DBConnection.getConnection(); PreparedStatement psDelete = conn.prepareStatement(deleteDetailsSql); PreparedStatement psInsert = conn.prepareStatement(insertDetailSql)) {
 
                 conn.setAutoCommit(false);
 
@@ -134,7 +166,7 @@ public class EquipmentReservationDraftDAO {
                     psInsert.setInt(3, item.getQuantity());
                     psInsert.executeUpdate();
                 }
-
+                System.out.println("Si actualiza la tabla aduRdxe");
                 conn.commit();
                 return true;
             }
@@ -157,11 +189,10 @@ public class EquipmentReservationDraftDAO {
 
         cleanupExpiredDrafts();
 
-        String sql = "SELECT id_draft, id_client, id_section, reservation_date, created_at, expires_at " +
-                "FROM AUD_ReservationDrafts WHERE id_draft = ?";
+        String sql = "SELECT id_draft, id_client, id_section, reservation_date, created_at, expires_at "
+                + "FROM AUD_ReservationDrafts WHERE id_draft = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, idDraft);
 
@@ -183,11 +214,10 @@ public class EquipmentReservationDraftDAO {
     public static EquipmentReservationDraft getDraftByClientId(int idClient) {
         cleanupExpiredDrafts();
 
-        String sql = "SELECT id_draft, id_client, id_section, reservation_date, created_at, expires_at " +
-                "FROM AUD_ReservationDrafts WHERE id_client = ? ORDER BY created_at DESC LIMIT 1";
+        String sql = "SELECT id_draft, id_client, id_section, reservation_date, created_at, expires_at "
+                + "FROM AUD_ReservationDrafts WHERE id_client = ? ORDER BY created_at DESC LIMIT 1";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, idClient);
 
@@ -209,11 +239,10 @@ public class EquipmentReservationDraftDAO {
     public static EquipmentReservationDraft getDraftBySectionAndDate(Date reservationDate, int idSection) {
         cleanupExpiredDrafts();
 
-        String sql = "SELECT id_draft, id_client, id_section, reservation_date, created_at, expires_at " +
-                "FROM AUD_ReservationDrafts WHERE reservation_date = ? AND id_section = ? LIMIT 1";
+        String sql = "SELECT id_draft, id_client, id_section, reservation_date, created_at, expires_at "
+                + "FROM AUD_ReservationDrafts WHERE reservation_date = ? AND id_section = ? LIMIT 1";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setDate(1, reservationDate);
             ps.setInt(2, idSection);
@@ -240,8 +269,7 @@ public class EquipmentReservationDraftDAO {
 
         String sql = "DELETE FROM AUD_ReservationDrafts WHERE id_draft = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, idDraft);
             return ps.executeUpdate() > 0;
@@ -255,8 +283,7 @@ public class EquipmentReservationDraftDAO {
     public static void cleanupExpiredDrafts() {
         String sql = "DELETE FROM AUD_ReservationDrafts WHERE expires_at <= NOW()";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.executeUpdate();
 
@@ -301,4 +328,52 @@ public class EquipmentReservationDraftDAO {
 
         return equipmentList;
     }
+
+    public static int cleanupExpiredDraftsAndCount() {
+
+        String sql = "DELETE FROM AUD_ReservationDrafts WHERE expires_at <= NOW()";
+        System.out.println("entro en delete ");
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            int deleted = ps.executeUpdate();
+
+            if (deleted > 0) {
+                System.out.println("🗑 Se eliminaron " + deleted + " drafts expirados");
+            } else {
+                System.out.println("ℹ️ No hay drafts expirados");
+            }
+
+            return deleted;
+
+        } catch (SQLException e) {
+            System.out.println("Error al limpiar drafts expirados: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public static List<CalendarBlock> getExpiredDraftBlocks() {
+
+        List<CalendarBlock> blocks = new ArrayList<>();
+
+        String sql = "SELECT reservation_date, id_section "
+                + "FROM AUD_ReservationDrafts "
+                + "WHERE expires_at <= NOW()";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                CalendarBlock block = new CalendarBlock();
+                block.setReservationDate(rs.getDate("reservation_date"));
+                block.setIdSection(rs.getInt("id_section"));
+                block.setStatus("AVAILABLE");
+                blocks.add(block);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener drafts expirados: " + e.getMessage());
+        }
+
+        return blocks;
+    }
+
 }
