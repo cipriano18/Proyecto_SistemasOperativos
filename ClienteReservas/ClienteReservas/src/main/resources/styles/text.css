@@ -60,6 +60,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-text-fill: #5A5A5E;
 }
 
+/* ===== ID CARD ===== */
+.form-card {
+    -fx-font-size: 12px;
+    -fx-text-fill: #5A5A5E;
+}
 /* ===== LABELS ===== */
 .field-label {
     -fx-font-size: 11px;

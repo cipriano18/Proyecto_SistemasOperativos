@@ -9,11 +9,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import model.Client;
 import model.ClientRequest;
 import model.Contact;
@@ -21,6 +24,7 @@ import model.Response;
 import model.User;
 import service.ClientProfileService;
 import session.Session;
+import utils.Animations;
 
 public class profile_screen_controller implements Initializable {
 
@@ -49,9 +53,44 @@ public class profile_screen_controller implements Initializable {
     private static final String EMAIL_REGEX = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
     private static final String PHONE_REGEX = "^[0-9]{8}$";
     private static final String USERNAME_REGEX = "[a-zA-Z0-9_]+";
+    @FXML
+    private Button btn_goback;
+    @FXML
+    private VBox vb_info;
+    @FXML
+    private HBox hb_id_card;
+    @FXML
+    private Label lbl_card_name;
+    @FXML
+    private Label lbl_card_ced;
+    @FXML
+    private Label lbl_card_contact;
+    @FXML
+    private Label lbl_form1;
+    @FXML
+    private VBox vb_form1;
+    @FXML
+    private Label lbl_form2;
+    @FXML
+    private HBox hb_form2;
+    @FXML
+    private VBox vb_title3;
+    @FXML
+    private HBox hb_form3;
+    @FXML
+    private Button btn_save;
+    @FXML
+    private Button btn_delete;
+    @FXML
+    private Label lbl_profile_info;
+    @FXML
+    private Label lbl_sis;
+    @FXML
+    private Label lbl_title;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
         ClientRequest session = Session.getInstance().getClient();
         if (session == null) {
             try {
@@ -64,7 +103,11 @@ public class profile_screen_controller implements Initializable {
         Client c = session.getClient();
         User u = session.getUser();
         Contact ct = session.getContact();
-
+        
+        lbl_card_name.setText(nullSafe(c.getfName()) + nullSafe(c.getmName()) + nullSafe(c.getfSurname()) + nullSafe(c.getmSurname()));
+        lbl_card_ced.setText(nullSafe(c.getIdentityCard()));
+        lbl_card_contact.setText(nullSafe(ct.getContactValue()));
+        
         tf_first_name.setText(nullSafe(c.getfName()));
         tf_second_name.setText(nullSafe(c.getmName()));
         tf_first_surname.setText(nullSafe(c.getfSurname()));
@@ -86,6 +129,27 @@ public class profile_screen_controller implements Initializable {
                 tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
             }
         }
+        
+        //Animations
+        Animations anim = new Animations();
+        anim.appear(hb_id_card, 100, 1, 0);
+        anim.moveNode(hb_id_card, 0, 70, true, false);
+        anim.typeWriter(lbl_profile_info, 200, 30);
+        anim.appear(lbl_sis, 100, 1, 0);
+        anim.appear(lbl_title, 100, 1, 0);
+        //form1
+        Animations anim1 = new Animations();
+        anim1.appear(lbl_form1, 100, 2, 100);
+        anim1.appear(vb_form1, 100, 2, 100);
+        //form2
+        Animations anim2 = new Animations();
+        anim2.appear(lbl_form2, 100, 2, 900);
+        anim2.appear(hb_form2, 100, 2, 900);
+        //form3
+        Animations anim3 = new Animations();
+        anim3.appear(vb_title3, 100, 2, 1800);
+        anim3.appear(hb_form3, 100, 2, 1800);
+
     }
 
     private String nullSafe(String s) {
@@ -220,7 +284,7 @@ public class profile_screen_controller implements Initializable {
 
         if (resp.isSuccess()) {
             Session.getInstance().clear();
-            App.setRoot("login_screen");
+            App.setRoot("profile_screen");
         } else {
             showError(msg_global, resp.getMessage() == null ? "No se pudo eliminar la cuenta" : resp.getMessage());
         }
