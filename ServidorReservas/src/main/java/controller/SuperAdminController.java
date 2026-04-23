@@ -94,20 +94,27 @@ public class SuperAdminController {
     @FXML
     private void handleTogglePassword() {
         showingPassword = !showingPassword;
+
         if (showingPassword) {
             passwordVisible.setText(passwordField.getText());
-            passwordVisible.setVisible(true);  passwordVisible.setManaged(true);
-            passwordField.setVisible(false);   passwordField.setManaged(false);
+
+            passwordVisible.setVisible(true);
+            passwordField.setVisible(false);
+
             togglePasswordBtn.setText(ICON_HIDE);
             togglePasswordBtn.getStyleClass().add("active");
+
             passwordVisible.requestFocus();
             passwordVisible.positionCaret(passwordVisible.getText().length());
         } else {
             passwordField.setText(passwordVisible.getText());
-            passwordField.setVisible(true);   passwordField.setManaged(true);
-            passwordVisible.setVisible(false); passwordVisible.setManaged(false);
+
+            passwordField.setVisible(true);
+            passwordVisible.setVisible(false);
+
             togglePasswordBtn.setText(ICON_SHOW);
             togglePasswordBtn.getStyleClass().remove("active");
+
             passwordField.requestFocus();
             passwordField.positionCaret(passwordField.getText().length());
         }
