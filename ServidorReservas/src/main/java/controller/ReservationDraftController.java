@@ -7,6 +7,7 @@ import java.util.List;
 import model.CalendarBlock;
 import model.EquipmentReservationDraft;
 import model.EquipmentReservationDraftRequest;
+import model.EquipmentReservationRequest;
 import model.Response;
 import model.RXE;
 import model.Reservation;
@@ -204,11 +205,13 @@ public class ReservationDraftController {
             return new Response(false, "Debe seleccionar al menos un equipo", null);
         }
 
-        Response reservationResponse = ReservationController.createEquipmentReservation(
+        EquipmentReservationRequest request = new EquipmentReservationRequest(
                 draft.getReservation(),
                 draft.getIdClient(),
                 draft.getEquipmentList()
         );
+
+        Response reservationResponse = ReservationController.createEquipmentReservation(request);
 
         if (!reservationResponse.isSuccess()) {
             return reservationResponse;
