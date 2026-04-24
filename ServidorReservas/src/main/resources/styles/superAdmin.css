@@ -319,3 +319,7 @@
 .action-footer {
     -fx-background-color: #f6f9ff;
 }
+
+.locked-section {
+    -fx-opacity: 0.45;
+}

@@ -27,17 +27,34 @@
           AnchorPane.topAnchor="0">
 
         <!-- ── TOP SECTION HEADER ── -->
-        <VBox spacing="4" styleClass="section-header">
+        <VBox spacing="12" styleClass="section-header">
             <padding>
-                <Insets bottom="20" left="36" right="36" top="32" />
+                <Insets bottom="20" left="36" right="36" top="24" />
             </padding>
 
-            <Label styleClass="section-title"
+            <!-- BOTÓN ARRIBA DERECHA -->
+            <HBox alignment="CENTER_RIGHT" spacing="12">
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Button fx:id="serverButton"
+                        onAction="#handleToggleServer"
+                        prefHeight="42.0"
+                        prefWidth="180.0"
+                        styleClass="btn-primary"
+                        text="Prender servidor" />
+            </HBox>
+
+            <!-- TEXTO BLOQUEABLE -->
+            <Label fx:id="sectionTitleLabel"
+                   styleClass="section-title"
                    text="Seleccione el usuario que será super Administrador" />
         </VBox>
 
-        <!-- ── MAIN CONTENT ROW ── -->
-        <HBox spacing="20" VBox.vgrow="ALWAYS">
+        <!-- ── MAIN CONTENT BLOQUEABLE ── -->
+        <HBox fx:id="adminContent"
+              spacing="20"
+              VBox.vgrow="ALWAYS">
+
             <padding>
                 <Insets bottom="0" left="36" right="36" top="0" />
             </padding>
@@ -94,13 +111,14 @@
                         maxWidth="Infinity"
                         onAction="#handleCreateAdmin"
                         prefHeight="42.0"
-                        prefWidth="214.0"
                         styleClass="btn-primary"
                         text="Crear super administrador" />
             </VBox>
 
             <!-- RIGHT: Admin Table Card -->
-            <VBox spacing="0" styleClass="card" HBox.hgrow="ALWAYS">
+            <VBox spacing="0"
+                  styleClass="card"
+                  HBox.hgrow="ALWAYS">
 
                 <HBox alignment="CENTER_LEFT"
                       spacing="12"
@@ -155,7 +173,7 @@
             <Button fx:id="revokeButton"
                     onAction="#handleRevokeAdmin"
                     styleClass="btn-danger"
-                    text="✕  Quitar Super Admin" />
+                    text="Quitar Super Admin" />
 
             <Region HBox.hgrow="ALWAYS" />
 

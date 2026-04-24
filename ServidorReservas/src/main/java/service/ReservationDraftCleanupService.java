@@ -9,8 +9,15 @@ import model.CalendarBlock;
 public class ReservationDraftCleanupService {
 
     private static Timer timer;
+    private static boolean running = false;
 
     public static void start() {
+        if (running) {
+            System.out.println("El servicio de limpieza de drafts ya está iniciado.");
+            return;
+        }
+
+        running = true;
         timer = new Timer(true);
 
         System.out.println("Servicio de limpieza de drafts iniciado...");
@@ -40,5 +47,26 @@ public class ReservationDraftCleanupService {
                 }
             }
         }, 0, 15000);
+    }
+
+    public static void stop() {
+        if (!running) {
+            System.out.println("El servicio de limpieza de drafts ya está detenido.");
+            return;
+        }
+
+        running = false;
+
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+            timer = null;
+        }
+
+        System.out.println("Servicio de limpieza de drafts detenido.");
+    }
+
+    public static boolean isRunning() {
+        return running;
     }
 }
