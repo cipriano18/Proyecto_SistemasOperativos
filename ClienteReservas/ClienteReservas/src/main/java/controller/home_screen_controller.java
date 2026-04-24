@@ -82,15 +82,17 @@ public class home_screen_controller implements Initializable {
     }
 
     @FXML
-    private void GoToDevices(ActionEvent event) {
-    }
-
-    @FXML
-    private void GoToSchedule(ActionEvent event) throws IOException {
+    private void GoToDevices(ActionEvent event) throws IOException {
         App.setRoot("device_schedule_screen");
     }
 
     @FXML
-    private void GoToLogin(ActionEvent event) {
+    private void GoToSchedule(ActionEvent event) throws IOException {
+        
+    }
+
+    @FXML
+    private void GoToLogin(ActionEvent event) throws IOException {
+        App.setRoot("login_screen");
     }
 }

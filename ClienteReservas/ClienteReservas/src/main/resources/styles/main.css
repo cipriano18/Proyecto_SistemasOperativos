@@ -136,3 +136,25 @@
 .btn-section:pressed {
     -fx-background-color: #dcdcdc;
 }
+
+/* ===== tipos de botones ===== */
+.section-available {
+    -fx-background-color: white;
+    -fx-text-fill: #1a1a1a;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.section-reserved {
+    -fx-background-color: #FFE69C;
+    -fx-text-fill: #664D03;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.section-blocked {
+    -fx-background-color: white;
+    -fx-text-fill: #666666;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}

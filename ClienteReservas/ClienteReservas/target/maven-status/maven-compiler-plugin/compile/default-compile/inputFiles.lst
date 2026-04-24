@@ -5,6 +5,7 @@ C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteRese
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Admin.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\Animations.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\ClientRequest.java
+C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\DayCard.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\network\ServerConnection.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Contact.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\session\Session.java
@@ -13,8 +14,11 @@ C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteRese
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Response.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\com\auditorio\clientereservas\App.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\login_screen_controller.java
+C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\CalendarBlock.java
+C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\CalendarConstants.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\AuthService.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\home_screen_controller.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Client.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\User.java
 C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\network\SocketManager.java
+C:\Users\Alvaro Artavia\Documents\GitHub\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\CalendarBuilder.java

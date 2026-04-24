@@ -16,7 +16,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("device_schedule_screen"), 940, 600);
+        scene = new Scene(loadFXML("login_screen"), 940, 600);
         stage.setScene(scene);
         stage.setTitle("Reserva de auditorio UNA");
         stage.show();
