@@ -90,8 +90,15 @@ CREATE TABLE AUD_RXE (
     id_reservation INT NOT NULL,
     id_equipment INT NOT NULL,
     quantity INT NOT NULL,
-    FOREIGN KEY (id_reservation) REFERENCES AUD_Reservations(id_reservation) ON DELETE CASCADE,
-    FOREIGN KEY (id_equipment) REFERENCES AUD_Equipment(id_equipment),
+
+    FOREIGN KEY (id_reservation) 
+        REFERENCES AUD_Reservations(id_reservation) 
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_equipment) 
+        REFERENCES AUD_Equipment(id_equipment) 
+        ON DELETE CASCADE,
+
     UNIQUE (id_reservation, id_equipment)
 );
 
@@ -114,8 +121,14 @@ CREATE TABLE AUD_RDXE (
     id_equipment INT NOT NULL,
     quantity INT NOT NULL,
 
-    FOREIGN KEY (id_draft) REFERENCES AUD_ReservationDrafts(id_draft) ON DELETE CASCADE,
-    FOREIGN KEY (id_equipment) REFERENCES AUD_Equipment(id_equipment),
+    FOREIGN KEY (id_draft) 
+        REFERENCES AUD_ReservationDrafts(id_draft) 
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_equipment) 
+        REFERENCES AUD_Equipment(id_equipment) 
+        ON DELETE CASCADE,
+
     UNIQUE (id_draft, id_equipment)
 );
 

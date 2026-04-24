@@ -7,6 +7,7 @@ package controller;
 import database.EquipmentDAO;
 import java.util.List;
 import model.Equipment;
+import model.Response;
 import utils.Validator;
 
 /**
@@ -15,42 +16,119 @@ import utils.Validator;
  */
 public class EquipmentController {
 
-    // Crear equipo
-    public static String createEquipment(Equipment equipment) {
+// Crear equipo
+    public static Response createEquipment(Equipment equipment) {
 
-        // Validaciones
+        if (equipment == null) {
+            return new Response(false, "El equipo es obligatorio", null);
+        }
+
         if (Validator.isEmpty(equipment.getName())) {
-            return "ERROR:El nombre del equipo es obligatorio";
+            return new Response(false, "El nombre del equipo es obligatorio", null);
         }
 
         if (equipment.getTotalQuantity() < 0) {
-            return "ERROR:La cantidad no puede ser negativa";
+            return new Response(false, "La cantidad no puede ser negativa", null);
         }
 
-        // Verificar si ya existe
         if (EquipmentDAO.getEquipmentByName(equipment.getName()) != null) {
-            return "ERROR:Ya existe un equipo con ese nombre";
+            return new Response(false, "Ya existe un equipo con ese nombre", null);
         }
 
         boolean created = EquipmentDAO.createEquipment(equipment);
+
         if (!created) {
-            return "ERROR:No se pudo crear el equipo";
+            return new Response(false, "No se pudo crear el equipo", null);
         }
 
-        return "SUCCESS:Equipo creado correctamente";
+        return new Response(true, "Equipo creado correctamente", null);
     }
 
-    // Obtener equipo por nombre
-    public static Equipment getEquipment(String name) {
+// Obtener equipo por nombre
+    public static Response getEquipment(String name) {
+
+        if (Validator.isEmpty(name)) {
+            return new Response(false, "El nombre del equipo es obligatorio", null);
+        }
+
         Equipment equipment = EquipmentDAO.getEquipmentByName(name);
+
         if (equipment == null) {
-            System.out.println("ERROR:Equipo no encontrado");
+            return new Response(false, "Equipo no encontrado", null);
         }
-        return equipment;
+
+        return new Response(true, "Equipo encontrado", equipment);
     }
 
-    // Obtener todos los equipos
-    public static List<Equipment> getAllEquipment() {
-        return EquipmentDAO.getAllEquipment();
+// Obtener todos los equipos
+    public static Response getAllEquipment() {
+        List<Equipment> equipmentList = EquipmentDAO.getAllEquipment();
+
+        return new Response(true, "Equipos obtenidos correctamente", equipmentList);
+    }
+
+// Actualizar equipo
+    public static Response updateEquipment(Equipment equipment) {
+
+        if (equipment == null) {
+            return new Response(false, "El equipo es obligatorio", null);
+        }
+
+        if (equipment.getIdEquipment() <= 0) {
+            return new Response(false, "El id del equipo es obligatorio", null);
+        }
+
+        if (Validator.isEmpty(equipment.getName())) {
+            return new Response(false, "El nombre del equipo es obligatorio", null);
+        }
+
+        if (equipment.getTotalQuantity() < 0) {
+            return new Response(false, "La cantidad no puede ser negativa", null);
+        }
+
+        Equipment existing = EquipmentDAO.getEquipmentById(equipment.getIdEquipment());
+
+        if (existing == null) {
+            return new Response(false, "El equipo no existe", null);
+        }
+
+        Equipment byName = EquipmentDAO.getEquipmentByName(equipment.getName());
+
+        if (byName != null && byName.getIdEquipment() != equipment.getIdEquipment()) {
+            return new Response(false, "Ya existe otro equipo con ese nombre", null);
+        }
+
+        boolean updated = EquipmentDAO.updateEquipment(equipment);
+
+        if (!updated) {
+            return new Response(false, "No se pudo actualizar el equipo", null);
+        }
+
+        return new Response(true, "Equipo actualizado correctamente", null);
+    }
+
+    public static Response deleteEquipment(Equipment equipment) {
+
+        if (equipment == null) {
+            return new Response(false, "El equipo es obligatorio", null);
+        }
+
+        if (equipment.getIdEquipment() <= 0) {
+            return new Response(false, "El id del equipo es obligatorio", null);
+        }
+
+        Equipment existing = EquipmentDAO.getEquipmentById(equipment.getIdEquipment());
+
+        if (existing == null) {
+            return new Response(false, "El equipo no existe", null);
+        }
+
+        boolean deleted = EquipmentDAO.deleteEquipment(equipment.getIdEquipment());
+
+        if (!deleted) {
+            return new Response(false, "No se pudo eliminar el equipo", null);
+        }
+
+        return new Response(true, "Equipo eliminado correctamente", null);
     }
 }

@@ -30,14 +30,31 @@ public class ReservationDAO {
         return equipmentSemaphores.computeIfAbsent(idEquipment, key -> new Semaphore(1, true));
     }
     // Obtener los bloques reservados por mes y año para mostrarlos en el calendario
-    public static List<CalendarBlock> getReservedBlocksByMonth(int month, int year) {
+      public static List<CalendarBlock> getReservedBlocksByMonth(int month, int year) {
 
         List<CalendarBlock> blocks = new ArrayList<>();
 
-        String sql = "SELECT reservation_date, id_section "
-                + "FROM AUD_Reservations "
-                + "WHERE MONTH(reservation_date) = ? AND YEAR(reservation_date) = ? "
-                + "ORDER BY reservation_date, id_section";
+        String sql =
+            "SELECT r.reservation_date, r.id_section " +
+            "FROM AUD_Reservations r " +
+            "WHERE MONTH(r.reservation_date) = ? AND YEAR(r.reservation_date) = ? " +
+            "GROUP BY r.reservation_date, r.id_section " +
+            "HAVING NOT EXISTS ( " +
+            "    SELECT 1 " +
+            "    FROM AUD_Equipment e " +
+            "    WHERE ( " +
+            "        e.available_quantity - COALESCE(( " +
+            "            SELECT SUM(rxe.quantity) " +
+            "            FROM AUD_RXE rxe " +
+            "            INNER JOIN AUD_Reservations r2 " +
+            "                ON rxe.id_reservation = r2.id_reservation " +
+            "            WHERE rxe.id_equipment = e.id_equipment " +
+            "              AND r2.reservation_date = r.reservation_date " +
+            "              AND r2.id_section = r.id_section " +
+            "        ), 0) " +
+            "    ) > 0 " +
+            ") " +
+            "ORDER BY r.reservation_date, r.id_section";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -51,7 +68,7 @@ public class ReservationDAO {
                 CalendarBlock block = new CalendarBlock();
                 block.setReservationDate(rs.getDate("reservation_date"));
                 block.setIdSection(rs.getInt("id_section"));
-                block.setStatus("RESERVED");
+                block.setStatus("RESERVED"); 
                 blocks.add(block);
             }
 
@@ -467,4 +484,5 @@ public class ReservationDAO {
             return false;
         }
     }
+    
 }

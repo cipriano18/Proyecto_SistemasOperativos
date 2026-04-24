@@ -17,7 +17,7 @@ import model.Equipment;
  * @author Cipriano
  */
 public class EquipmentDAO {
-    
+
     // Obtener todos los equipos
     public static List<Equipment> getAllEquipment() {
         List<Equipment> list = new ArrayList<>();
@@ -36,8 +36,8 @@ public class EquipmentDAO {
         }
         return list;
     }
-    
-        // Obtener equipo por nombre
+
+    // Obtener equipo por nombre
     public static Equipment getEquipmentByName(String name) {
         String sql = "SELECT id_equipment, name, available_quantity FROM AUD_Equipment WHERE name = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -56,6 +56,35 @@ public class EquipmentDAO {
         return null;
     }
 
+    public static Equipment getEquipmentById(int idEquipment) {
+
+        String sql = "SELECT id_equipment, name, available_quantity FROM AUD_Equipment WHERE id_equipment = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idEquipment);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+                    Equipment equipment = new Equipment();
+
+                    equipment.setIdEquipment(rs.getInt("id_equipment"));
+                    equipment.setName(rs.getString("name"));
+                    equipment.setTotalQuantity(rs.getInt("available_quantity"));
+
+                    return equipment;
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener equipo por id: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     // Crear equipo
     public static boolean createEquipment(Equipment equipment) {
         String sql = "INSERT INTO AUD_Equipment (name, available_quantity) VALUES (?, ?)";
@@ -69,6 +98,7 @@ public class EquipmentDAO {
             return false;
         }
     }
+
     // Actualizar equipo
     public static boolean updateEquipment(Equipment equipment) {
         String sql = "UPDATE AUD_Equipment SET name = ?, available_quantity = ? WHERE id_equipment = ?";
@@ -80,6 +110,22 @@ public class EquipmentDAO {
             return rows > 0;
         } catch (SQLException e) {
             System.out.println("Error al actualizar equipo: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean deleteEquipment(int idEquipment) {
+
+        String sql = "DELETE FROM AUD_Equipment WHERE id_equipment = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idEquipment);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

@@ -8,6 +8,7 @@ import model.Response;
 import server.handlers.ClientRequestHandler;
 import server.handlers.UserRequestHandler;
 import server.handlers.ConnectionRequestHandler;
+import server.handlers.EquipmentRequestHandler;
 import server.handlers.ReservationDraftRequestHandler;
 public class ClientHandler extends Thread {
 
@@ -120,6 +121,13 @@ public class ClientHandler extends Thread {
                 case "CONFIRM_EQUIPMENT_DRAFT":
                 case "GET_CALENDAR_BLOCKS":
                     resp = ReservationDraftRequestHandler.handle(command, obj);
+                    break;
+                case "CREATE_EQUIPMENT":
+                case "UPDATE_EQUIPMENT":
+                case "GET_EQUIPMENT":
+                case "GET_ALL_EQUIPMENT":
+                case "DELETE_EQUIPMENT":
+                    resp = EquipmentRequestHandler.handle(command, obj);
                     break;
                 case "LOGIN":
                     resp = UserRequestHandler.handle(command, obj);
