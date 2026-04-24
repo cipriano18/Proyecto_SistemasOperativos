@@ -135,20 +135,6 @@ En otras palabras, no es un broadcast global a todos los sockets, sino un broadc
 
 La notificacion viaja como un `Response` cuyo `data` contiene un `CalendarBlock`. Para frontend, lo importante es leer la fecha, la seccion y el estado del bloque para repintar el calendario.
 
-Ejemplo conceptual:
-
-```json
-{
-  "success": true,
-  "message": "RESERVATION_UPDATED",
-  "data": {
-    "reservationDate": "2026-04-23",
-    "idSection": 2,
-    "status": "RESERVED"
-  }
-}
-```
-
 ### Base De Datos
 La base de datos se define en `auditorium.sql` y contiene la estructura principal para usuarios, clientes, administradores, equipos, reservas y tablas asociadas al calendario y a los drafts temporales. El esquema ha evolucionado junto con la API, por lo que conviene revisar siempre la version actual del archivo antes de recrear la base desde cero.
 
