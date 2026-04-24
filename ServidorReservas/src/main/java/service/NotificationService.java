@@ -45,7 +45,6 @@ public class NotificationService {
                 }
             }
         }
-
         System.out.println("Total notificados: " + totalNotificados);
         System.out.println("=============================================\n");
     }

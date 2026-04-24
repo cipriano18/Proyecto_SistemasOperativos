@@ -6,7 +6,9 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import model.Response;
 import server.handlers.ClientRequestHandler;
-
+import server.handlers.UserRequestHandler;
+import server.handlers.ConnectionRequestHandler;
+import server.handlers.ReservationDraftRequestHandler;
 public class ClientHandler extends Thread {
 
     private Socket socket;
@@ -101,7 +103,58 @@ public class ClientHandler extends Thread {
 
     private void processRequest(String command, Object obj) {
         try {
-            Response resp = ClientRequestHandler.handle(command, obj);
+            Response resp;
+
+            switch (command.toUpperCase()) {
+
+                case "CREATE_CLIENT":
+                case "UPDATE_CLIENT":
+                case "DELETE_CLIENT":
+                    resp = ClientRequestHandler.handle(command, obj);
+                    break;
+                case "START_EQUIPMENT_DRAFT":
+                case "UPDATE_EQUIPMENT_DRAFT":
+                case "GET_EQUIPMENT_DRAFT_BY_ID":
+                case "GET_EQUIPMENT_DRAFT_BY_CLIENT_ID":
+                case "DISCARD_EQUIPMENT_DRAFT":
+                case "CONFIRM_EQUIPMENT_DRAFT":
+                case "GET_CALENDAR_BLOCKS":
+                    resp = ReservationDraftRequestHandler.handle(command, obj);
+                    break;
+                case "LOGIN":
+                    resp = UserRequestHandler.handle(command, obj);
+                    break;
+                case "ENTER_RESERVATIONS_VIEW":
+                    Integer idClient = (Integer) obj;
+
+                    this.loggedClientId = idClient;
+                    this.viewingReservations = true;
+                    resp = new Response(true, "Cliente registrado en vista de reservas", null);
+
+                    logResponse(resp);
+                    sendResponse(resp);
+                    return;
+
+                case "EXIT_RESERVATIONS_VIEW":
+                    this.viewingReservations = false;
+
+                    resp = new Response(true, "Cliente salió de vista de reservas", null);
+
+                    logResponse(resp);
+                    sendResponse(resp);
+                    return;
+                case "LOGOUT":
+                case "CLOSE_CONNECTION":
+                    resp = ConnectionRequestHandler.handle(command, this);
+
+                    logResponse(resp);
+                    sendResponse(resp);
+
+                    return;
+                default:
+                    resp = new Response(false, "Comando no reconocido", null);
+                    break;
+            }
 
             logResponse(resp);
             sendResponse(resp);
