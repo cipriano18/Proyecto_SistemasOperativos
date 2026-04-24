@@ -8,6 +8,7 @@ model\Response.class
 model\User.class
 network\SocketManager.class
 session\Session.class
+model\CalendarRequest.class
 utils\CalendarConstants.class
 controller\device_schedule_screen_controller.class
 controller\profile_screen_controller.class
@@ -18,6 +19,7 @@ utils\Animations.class
 model\Contact.class
 model\Person.class
 utils\DayCard.class
+service\CalendarService.class
 com\auditorio\clientereservas\App.class
 controller\home_screen_controller.class
 controller\register_screen_controller.class

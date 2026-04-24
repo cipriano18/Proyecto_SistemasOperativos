@@ -68,7 +68,7 @@
                         <VBox prefHeight="55.0" prefWidth="151.0">
                            <children>
                               <Label styleClass="field-label" text=" MES" />
-                              <ChoiceBox prefHeight="35.0" prefWidth="150.0">
+                              <ChoiceBox fx:id="chb_month" prefHeight="35.0" prefWidth="150.0">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
@@ -78,7 +78,7 @@
                         <VBox prefHeight="55.0" prefWidth="147.0">
                            <children>
                               <Label styleClass="field-label" text=" AÑO" />
-                              <TextField prefHeight="35.0" prefWidth="120.0">
+                              <TextField fx:id="tf_year" prefHeight="35.0" prefWidth="120.0">
                                  <cursor>
                                     <Cursor fx:constant="TEXT" />
                                  </cursor>
@@ -88,7 +88,7 @@
                         <VBox>
                            <children>
                               <Label styleClass="field-label" />
-                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="39.0" style="-fx-background-color: red;">
+                              <Button fx:id="btn_search" mnemonicParsing="false" onAction="#GetCalendar" prefHeight="35.0" prefWidth="39.0" style="-fx-background-color: red;">
                                  <graphic>
                                     <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -149,7 +149,7 @@
             <HBox>
                <children>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <GridPane fx:id="grid_calendar" alignment="CENTER" gridLinesVisible="true" stylesheets="@../styles/main.css">
+            <GridPane fx:id="grid_calendar" alignment="CENTER" stylesheets="@../styles/main.css">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
@@ -191,7 +191,7 @@
                                     </HBox>
                                  </graphic>
                               </Button>
-                              <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="160.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-border-radius: 5;">
+                              <Button disable="true" mnemonicParsing="false" prefHeight="33.0" prefWidth="160.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-border-radius: 5;">
                                  <graphic>
                                     <HBox alignment="CENTER_LEFT" prefHeight="19.0" prefWidth="97.0" spacing="5.0">
                                        <children>
