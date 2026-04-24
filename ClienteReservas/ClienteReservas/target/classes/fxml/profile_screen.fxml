@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.profile_screen_controller">
+   <center>
+      <VBox minHeight="300.0" minWidth="840.0" prefHeight="300.0" prefWidth="940.0">
+         <children>
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+               <content>
+                  <HBox cache="true" cacheHint="SCALE" minWidth="840.0" prefWidth="940.0">
+                     <children>
+                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <VBox alignment="TOP_CENTER" minWidth="840.0" prefHeight="100.0" prefWidth="940.0" spacing="40.0">
+                           <children>
+                              <Label fx:id="lbl_form1" styleClass="hero-title-2" text="Datos Personales">
+                                 <font>
+                                    <Font name="Tw Cen MT Bold" size="17.0" />
+                                 </font>
+                              </Label>
+                              <VBox fx:id="vb_form1" spacing="20.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <HBox alignment="TOP_CENTER" spacing="80.0">
+                                       <children>
+                                          <VBox spacing="6">
+                                             <children>
+                                                <Label styleClass="field-label" text="PRIMER NOMBRE" />
+                                                <TextField fx:id="tf_first_name" prefWidth="340.0" promptText="Primer Nombre" styleClass="text-field" />
+                                                <Label fx:id="msg_name" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
+                                             </children>
+                                          </VBox>
+                                          <VBox spacing="6">
+                                             <children>
+                                                <Label styleClass="field-label" text="SEGUNDO NOMBRE" />
+                                                <TextField fx:id="tf_second_name" prefWidth="340.0" promptText="Segundo Nombre" styleClass="text-field" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="TOP_CENTER" spacing="80.0">
+                                       <children>
+                                          <VBox spacing="6">
+                                             <children>
+                                                <Label styleClass="field-label" text="PRIMER APELLIDO" />
+                                                <TextField fx:id="tf_first_surname" prefWidth="340.0" promptText="Primer Apellido" styleClass="text-field" />
+                                                <Label fx:id="msg_surname" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
+                                             </children>
+                                          </VBox>
+                                          <VBox spacing="6">
+                                             <children>
+                                                <Label styleClass="field-label" text="SEGUNDO APELLIDO" />
+                                                <TextField fx:id="tf_second_surname" prefWidth="340.0" promptText="Segundo Apellido" styleClass="text-field" />
+                                                <Label fx:id="msg_Sec_surname" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="TOP_CENTER" spacing="80.0">
+                                       <children>
+                                          <VBox spacing="6">
+                                             <children>
+                                                <Label styleClass="field-label" text="CÉDULA (no editable)" />
+                                                <TextField fx:id="tf_id_card" editable="false" prefWidth="340.0" promptText="Cédula" styleClass="text-field" />
+                                             </children>
+                                          </VBox>
+                                          <Region prefHeight="68.0" prefWidth="337.0" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <Separator prefWidth="200.0" />
+                              <Label fx:id="lbl_form2" styleClass="hero-title-2" text="Contacto">
+                                 <font>
+                                    <Font name="Tw Cen MT Bold" size="17.0" />
+                                 </font>
+                              </Label>
+                              <HBox fx:id="hb_form2" alignment="TOP_CENTER" spacing="80.0">
+                                 <children>
+                                    <VBox prefHeight="68.0" prefWidth="345.0" spacing="6">
+                                       <children>
+                                          <Label styleClass="field-label" text="TIPO DE CONTACTO" />
+                                          <HBox alignment="CENTER_LEFT" spacing="40.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <RadioButton fx:id="rdb_mail" mnemonicParsing="false" onAction="#ChangeToMail" selected="true" text="Correo Electrónico">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="tg_contact_tipe" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="rdb_phone" mnemonicParsing="false" onAction="#ChangeToPhone" text="Teléfono" toggleGroup="$tg_contact_tipe" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="6">
+                                       <children>
+                                          <Label fx:id="lbl_contact_type" styleClass="field-label" text="CORREO ELECTRÓNICO" />
+                                          <TextField fx:id="tf_contact" prefWidth="340.0" promptText="ejemplo.una@est.una.ac.cr" styleClass="text-field" />
+                                          <Label fx:id="msg_contact" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <Separator prefWidth="200.0" />
+                              <VBox fx:id="vb_title3" alignment="TOP_CENTER">
+                                 <children>
+                                    <Label styleClass="hero-title-2" text="Usuario">
+                                       <font>
+                                          <Font name="Tw Cen MT Bold" size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <Label styleClass="form-subtitle" text="Deja la contraseña vacía si no deseas cambiarla." />
+                                 </children>
+                              </VBox>
+                              <HBox fx:id="hb_form3" alignment="TOP_CENTER" spacing="80.0">
+                                 <children>
+                                    <VBox spacing="6">
+                                       <children>
+                                          <Label styleClass="field-label" text="USUARIO (no editable)" />
+                                          <TextField fx:id="tf_user" editable="false" prefWidth="340.0" promptText="Usuario" styleClass="text-field" />
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="6">
+                                       <children>
+                                          <Label styleClass="field-label" text="NUEVA CONTRASEÑA" />
+                                          <TextField fx:id="tf_pass" prefWidth="340.0" promptText="Dejar vacío para no cambiar" styleClass="text-field" />
+                                          <Label fx:id="msg_pass" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <Separator prefWidth="200.0" />
+                              <HBox alignment="CENTER" spacing="40.0">
+                                 <children>
+                                    <Button fx:id="btn_save" alignment="CENTER" onAction="#SaveChanges" prefHeight="49.0" prefWidth="360.0" styleClass="btn-primary" text="Guardar cambios" />
+                                    <Button fx:id="btn_delete" alignment="CENTER" onAction="#DeleteAccount" prefHeight="49.0" prefWidth="360.0" styleClass="btn-primary" text="Eliminar cuenta" />
+                                 </children>
+                              </HBox>
+                              <Label fx:id="msg_global" prefWidth="760.0" styleClass="msg-error" text="" wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                           </padding>
+                        </VBox>
+                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </content>
+            </ScrollPane>
+         </children>
+         <stylesheets>
+            <URL value="@../styles/main.css" />
+            <URL value="@../styles/text.css" />
+         </stylesheets>
+      </VBox>
+   </center>
+   <top>
+      <HBox maxHeight="200.0" minHeight="200.0" prefHeight="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="btn_goback" maxHeight="200.0" maxWidth="94.0" minHeight="200.0" minWidth="94.0" mnemonicParsing="false" onAction="#GoBack" prefHeight="200.0" prefWidth="94.0" styleClass="btn-back" stylesheets="@../styles/register.css">
+               <graphic>
+                  <ImageView fitHeight="36.0" fitWidth="61.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/back.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <HBox styleClass="hero-panel" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox alignment="CENTER_LEFT" maxHeight="200.0" maxWidth="400.0" minHeight="100.0" minWidth="400.0" prefHeight="196.0" prefWidth="400.0">
+                     <children>
+                        <VBox fx:id="vb_info" alignment="CENTER_LEFT" spacing="5.0">
+                           <children>
+                              <Label fx:id="lbl_sis" styleClass="hero-badge" text="SISTEMA INSTITUCIONAL" />
+                              <Label fx:id="lbl_title" minWidth="300.0" styleClass="hero-title" text="Mi Perfil" textFill="WHITE" />
+                              <Label fx:id="lbl_profile_info" minWidth="300.0" styleClass="hero-subtitle" text="Actualiza tus datos o elimina tu cuenta del sistema." wrapText="true" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                     </padding>
+                  </HBox>
+                  <Region prefHeight="116.0" prefWidth="318.0" HBox.hgrow="ALWAYS" />
+                  <Pane prefHeight="200.0" prefWidth="501.0">
+                     <children>
+                        <HBox fx:id="hb_id_card" alignment="TOP_CENTER" layoutX="17.0" layoutY="-60.0" prefHeight="181.0" prefWidth="282.0" rotate="-16.7" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" translateX="-15.0" translateY="25.0">
+                           <children>
+                              <VBox maxHeight="181.0" maxWidth="269.0" minHeight="181.0" minWidth="182.0" prefHeight="181.0" prefWidth="210.0" spacing="20.0" style="-fx-background-radius: 15; -fx-border-radius: 15;">
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" top="17.0" />
+                                 </padding>
+                                 <children>
+                                    <VBox>
+                                       <children>
+                                          <Label styleClass="field-label" text="Nombre" />
+                                          <Label fx:id="lbl_card_name" styleClass="form-card" />
+                                       </children>
+                                    </VBox>
+                                    <VBox>
+                                       <children>
+                                          <Label styleClass="field-label" text="Cédula" />
+                                          <Label fx:id="lbl_card_ced" styleClass="form-card" />
+                                       </children>
+                                    </VBox>
+                                    <VBox>
+                                       <children>
+                                          <Label styleClass="field-label" text="Contacto" />
+                                          <Label fx:id="lbl_card_contact" styleClass="form-card" VBox.vgrow="ALWAYS">
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <VBox alignment="TOP_CENTER" prefHeight="181.0" prefWidth="70.0" style="-fx-background-radius: 15; -fx-border-radius: 15;">
+                                 <children>
+                                    <ImageView fitHeight="51.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../assets/Logo-UNA-Rojo.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Region prefHeight="200.0" prefWidth="65.0" />
+                                    <Pane maxHeight="70.0" maxWidth="65.0" minHeight="70.0" minWidth="65.0" opacity="0.98" prefHeight="70.0" prefWidth="65.0" style="-fx-background-radius: 15;">
+                                       <children>
+                                          <Rectangle arcHeight="5.0" fill="#c62e17" height="10.0" layoutX="50.0" layoutY="34.0" opacity="0.67" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
+                                          <Rectangle arcHeight="5.0" fill="#c62e17" height="10.0" layoutX="50.0" layoutY="47.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
+                                          <Rectangle arcHeight="5.0" fill="#c62e17" height="10.0" layoutX="37.0" layoutY="34.0" opacity="0.34" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
+                                          <Rectangle arcHeight="5.0" fill="#c62e17" height="10.0" layoutX="50.0" layoutY="21.0" opacity="0.34" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
+                                          <Rectangle arcHeight="5.0" fill="#c62e17" height="10.0" layoutX="24.0" layoutY="47.0" opacity="0.34" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
+                                          <Rectangle arcHeight="5.0" fill="#c62e17" height="10.0" layoutX="37.0" layoutY="47.0" opacity="0.67" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
+                                          <Rectangle arcHeight="5.0" fill="#c62e17" height="10.0" layoutX="37.0" layoutY="21.0" opacity="0.13" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
+                                          <Rectangle arcHeight="5.0" fill="#c62e17" height="10.0" layoutX="24.0" layoutY="34.0" opacity="0.13" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
+                                          <Rectangle arcHeight="5.0" fill="#c62e17" height="10.0" layoutX="11.0" layoutY="47.0" opacity="0.13" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
+                                          <Rectangle arcHeight="5.0" fill="#c62e17" height="10.0" layoutX="50.0" layoutY="8.0" opacity="0.13" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
+                                       </children>
+                                    </Pane>
+                                 </children>
+                                 <padding>
+                                    <Insets top="10.0" />
+                                 </padding>
+                                 <HBox.margin>
+                                    <Insets right="10.0" />
+                                 </HBox.margin>
+                              </VBox>
+                           </children>
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </HBox>
+                     </children>
+                  </Pane>
+               </children>
+            </HBox>
+         </children>
+         <stylesheets>
+            <URL value="@../styles/main.css" />
+            <URL value="@../styles/text.css" />
+         </stylesheets>
+      </HBox>
+   </top>
+</BorderPane>

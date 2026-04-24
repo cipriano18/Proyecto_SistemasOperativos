@@ -5,7 +5,7 @@
 .root {
     -fx-font-family: 'DM Sans', sans-serif;
 
-    /* 🎯 Paleta UNA (rojo institucional) */
+    /* Paleta UNA (rojo institucional) */
     -primary: #C8102E;          /* rojo principal */
     -primary-dark: #9E0F24;
     -primary-deep: #6F0A18;
@@ -34,28 +34,6 @@
     -fx-background-color: linear-gradient(to bottom right, #6F0A18, #C8102E);
 }
 
-.hero-title {
-    -fx-font-family: 'Tw Cen MT', sans-serif;
-    -fx-font-size: 38px;
-    -fx-font-weight: 700;
-    -fx-wrap-text: true;
-}
-
-.hero-subtitle {
-    -fx-font-family: 'Tw Cen MT', sans-serif;
-    -fx-font-size: 14px;
-    -fx-text-fill: #FFD6DB;
-    -fx-wrap-text: true;
-    -fx-line-spacing: 4px;
-}
-
-.hero-badge {
-    -fx-font-size: 10px;
-    -fx-font-weight: 700;
-    -fx-text-fill: #FFB3BB;
-    -fx-letter-spacing: 3px;
-}
-
 .logo-box {
     -fx-background-color: rgba(255, 255, 255, 0.12);
     -fx-background-radius: 10px;
@@ -74,24 +52,6 @@
 /* ===== PANEL DERECHO (formulario) ===== */
 .form-panel {
     -fx-background-color: white;
-}
-
-.form-title {
-    -fx-font-size: 26px;
-    -fx-font-weight: 700;
-    -fx-text-fill: #C8102E;
-}
-
-.form-subtitle {
-    -fx-font-size: 13px;
-    -fx-text-fill: #5A5A5E;
-}
-
-/* ===== LABELS ===== */
-.field-label {
-    -fx-font-size: 11px;
-    -fx-font-weight: 700;
-    -fx-text-fill: #9E0F24;
 }
 
 /* ===== INPUTS ===== */
@@ -149,33 +109,6 @@
     -fx-background-color: #E9EAEC;
 }
 
-/* ===== BOTÓN LINK ===== */
-.btn-link {
-    -fx-background-color: transparent;
-    -fx-text-fill: #C8102E;
-    -fx-font-size: 12px;
-    -fx-font-weight: 600;
-    -fx-cursor: hand;
-    -fx-padding: 0;
-}
-
-.btn-link:hover {
-    -fx-text-fill: #6F0A18;
-}
-
-/* ===== MENSAJES ===== */
-.msg-error {
-    -fx-font-size: 12px;
-    -fx-text-fill: #BA1A1A;
-    -fx-font-weight: 600;
-}
-
-.msg-success {
-    -fx-font-size: 12px;
-    -fx-text-fill: #1E7A34;
-    -fx-font-weight: 600;
-}
-
 /* ===== SCROLL ===== */
 .scroll-bar:vertical .thumb {
     -fx-background-color: #D6D6DA;
@@ -188,7 +121,18 @@
     -fx-text-fill: #5A5A5E;
 }
 
-.divider-line {
-    -fx-background-color: #E0E0E3;
-    -fx-pref-height: 1px;
+
+.btn-section{
+    -fx-background-color: white;
+    -fx-background-radius: 0px;
+}
+
+.btn-section:hover {
+    -fx-background-color: #e8e5e5;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+.btn-section:pressed {
+    -fx-background-color: #dcdcdc;
 }
