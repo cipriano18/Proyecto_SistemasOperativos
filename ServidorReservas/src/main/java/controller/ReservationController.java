@@ -1,65 +1,159 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
 
+import database.ReservationDAO;
+import java.util.List;
 import model.EquipmentReservationRequest;
 import model.RXE;
 import model.Reservation;
-import database.ReservationDAO;
-import java.util.List;
+import model.Response;
 
-/**
- *
- * @author Cipriano
- */
 public class ReservationController {
-      public static String createEquipmentReservation(EquipmentReservationRequest equipmentReservation) {
 
-        if (equipmentReservation == null) {
-            return "ERROR:La solicitud de reserva es obligatoria";
+    public static Response createEquipmentReservation(EquipmentReservationRequest request) {
+        Response validation = validateEquipmentReservationRequest(request, false);
+        if (!validation.isSuccess()) {
+            return validation;
         }
 
-        Reservation reservation = equipmentReservation.getReservation();
-        List<RXE> equipmentList = equipmentReservation.getEquipmentList();
+        boolean created = ReservationDAO.createEquipmentReservation(
+                request.getReservation(),
+                request.getIdClient(),
+                request.getEquipmentList()
+        );
+
+        if (!created) {
+            return new Response(false, "No se pudo crear la reservación. Verifique disponibilidad.", null);
+        }
+
+        return new Response(true, "Reservación creada correctamente", request);
+    }
+
+    public static Response updateEquipmentReservation(EquipmentReservationRequest request) {
+        Response validation = validateEquipmentReservationRequest(request, true);
+        if (!validation.isSuccess()) {
+            return validation;
+        }
+
+        boolean updated = ReservationDAO.updateEquipmentReservation(
+                request.getReservation(),
+                request.getIdClient(),
+                request.getEquipmentList()
+        );
+
+        if (!updated) {
+            return new Response(false, "No se pudo actualizar la reservación. Verifique disponibilidad.", null);
+        }
+
+        return new Response(true, "Reservación actualizada correctamente", request);
+    }
+
+    public static Response getReservationById(int idReservation) {
+        if (idReservation <= 0) {
+            return new Response(false, "El id de la reservación es inválido", null);
+        }
+
+        EquipmentReservationRequest request = ReservationDAO.getEquipmentReservationById(idReservation);
+
+        if (request == null) {
+            return new Response(false, "Reservación no encontrada", null);
+        }
+
+        return new Response(true, "Reservación obtenida correctamente", request);
+    }
+
+    public static Response getReservationsByClientId(int idClient) {
+        if (idClient <= 0) {
+            return new Response(false, "El cliente es obligatorio", null);
+        }
+
+        List<EquipmentReservationRequest> reservations = ReservationDAO.getEquipmentReservationsByClientId(idClient);
+
+        if (reservations == null || reservations.isEmpty()) {
+            return new Response(false, "No se encontraron reservaciones para este cliente", null);
+        }
+
+        return new Response(true, "Reservaciones obtenidas correctamente", reservations);
+    }
+
+    public static Response deleteReservationById(int idReservation, int idClient) {
+        if (idReservation <= 0) {
+            return new Response(false, "El id de la reservación es inválido", null);
+        }
+
+        if (idClient <= 0) {
+            return new Response(false, "El cliente es obligatorio", null);
+        }
+
+        boolean deleted = ReservationDAO.deleteReservationById(idReservation, idClient);
+
+        if (!deleted) {
+            return new Response(false, "No se pudo eliminar la reservación", null);
+        }
+
+        return new Response(true, "Reservación eliminada correctamente", idReservation);
+    }
+
+    public static Response deleteReservationsByClientId(int idClient) {
+        if (idClient <= 0) {
+            return new Response(false, "El cliente es obligatorio", null);
+        }
+
+        boolean deleted = ReservationDAO.deleteReservationsByClientId(idClient);
+
+        if (!deleted) {
+            return new Response(false, "No se pudieron eliminar las reservas del cliente", null);
+        }
+
+        return new Response(true, "Reservas del cliente eliminadas correctamente", idClient);
+    }
+
+    private static Response validateEquipmentReservationRequest(EquipmentReservationRequest request, boolean requireIdReservation) {
+        if (request == null) {
+            return new Response(false, "La solicitud de reserva es obligatoria", null);
+        }
+
+        Reservation reservation = request.getReservation();
 
         if (reservation == null) {
-            return "ERROR:La reserva es obligatoria";
+            return new Response(false, "La reserva es obligatoria", null);
         }
 
-        if (reservation.getIdClient() <= 0) {
-            return "ERROR:El cliente es obligatorio";
+        if (requireIdReservation && reservation.getIdReservation() <= 0) {
+            return new Response(false, "El id de la reservación es obligatorio", null);
+        }
+
+        if (request.getIdClient() <= 0) {
+            return new Response(false, "El cliente es obligatorio", null);
         }
 
         if (reservation.getIdSection() <= 0) {
-            return "ERROR:La sección es obligatoria";
+            return new Response(false, "La sección es obligatoria", null);
         }
 
         if (reservation.getReservationDate() == null) {
-            return "ERROR:La fecha de reserva es obligatoria";
+            return new Response(false, "La fecha de reserva es obligatoria", null);
         }
 
+        List<RXE> equipmentList = request.getEquipmentList();
+
         if (equipmentList == null || equipmentList.isEmpty()) {
-            return "ERROR:Debe seleccionar al menos un equipo";
+            return new Response(false, "Debe seleccionar al menos un equipo", null);
         }
 
         for (RXE item : equipmentList) {
+            if (item == null) {
+                return new Response(false, "La lista contiene un equipo inválido", null);
+            }
+
             if (item.getIdEquipment() <= 0) {
-                return "ERROR:Equipo inválido";
+                return new Response(false, "Equipo inválido", null);
             }
 
             if (item.getQuantity() <= 0) {
-                return "ERROR:La cantidad debe ser mayor que cero";
+                return new Response(false, "La cantidad debe ser mayor que cero", null);
             }
         }
 
-        boolean created = ReservationDAO.createEquipmentReservation(reservation, equipmentList);
-
-        if (!created) {
-            return "ERROR:No se pudo crear la reservación de equipo";
-        }
-
-        return "SUCCESS:Reservación de equipo creada correctamente";
+        return new Response(true, "Validación correcta", null);
     }
 }

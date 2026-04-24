@@ -5,8 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 import java.io.IOException;
-import server.Server;
 
 public class App extends Application {
 
@@ -14,13 +14,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-
-        // Arranca el servidor en hilo separado
-        Thread serverThread = new Thread(() -> Server.startServer());
-        serverThread.setDaemon(true);
-        serverThread.start();
-
-        scene = new Scene(loadFXML("superAdmin"), 870, 480);
+        scene = new Scene(loadFXML("superAdmin"), 870, 520);
         stage.setScene(scene);
         stage.show();
     }

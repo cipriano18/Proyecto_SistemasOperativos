@@ -7,51 +7,58 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
 import model.User;
 import database.UserDAO;
-import database.AdminDAO;
-import model.Admin;
+import server.Server;
+import service.ReservationDraftCleanupService;
 
 public class SuperAdminController {
 
-    @FXML private TableView<User>            adminTable;
+    @FXML private TableView<User> adminTable;
     @FXML private TableColumn<User, Integer> idColumn;
-    @FXML private TableColumn<User, String>  usernameColumn;
-    @FXML private TableColumn<User, Integer> roleColumn;   
+    @FXML private TableColumn<User, String> usernameColumn;
+    @FXML private TableColumn<User, Integer> roleColumn;
 
-    @FXML private TextField     usernameField;
+    @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
-    @FXML private TextField     passwordVisible;
-    @FXML private Button        togglePasswordBtn;
+    @FXML private TextField passwordVisible;
+    @FXML private Button togglePasswordBtn;
 
     @FXML private Button createButton;
     @FXML private Button selectButton;
     @FXML private Button revokeButton;
+    @FXML private Button serverButton;
+
+    @FXML private HBox adminContent;
+    @FXML private Label sectionTitleLabel;
 
     private boolean showingPassword = false;
+    private boolean serverOn = false;
+    private Thread serverThread;
 
     private static final String ICON_HIDE = "●";
     private static final String ICON_SHOW = "○";
 
-    // Roles
     private static final int ROLE_SUPER_ADMIN = 1;
-    private static final int ROLE_ADMIN       = 2;
+    private static final int ROLE_ADMIN = 2;
 
-    // ─────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────
     public void initialize() {
+
         idColumn.setCellValueFactory(new PropertyValueFactory<>("idUser"));
         usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
-
-        // ── Columna Rol
         roleColumn.setCellValueFactory(new PropertyValueFactory<>("idRole"));
+
         roleColumn.setCellFactory(col -> new TableCell<User, Integer>() {
             private final Label badge = new Label();
 
             @Override
             protected void updateItem(Integer role, boolean empty) {
                 super.updateItem(role, empty);
+
                 if (empty || role == null) {
                     setGraphic(null);
                     return;
                 }
+
                 if (role == ROLE_SUPER_ADMIN) {
                     badge.setText("Super Admin");
                     badge.getStyleClass().setAll("role-badge-super");
@@ -59,60 +66,155 @@ public class SuperAdminController {
                     badge.setText("Administrador");
                     badge.getStyleClass().setAll("role-badge-admin");
                 }
+
                 setGraphic(badge);
                 setText(null);
             }
         });
 
-        // ── Row factory: resalta toda la fila si es Super Admin ───────────
         adminTable.setRowFactory(tv -> new TableRow<User>() {
             @Override
             protected void updateItem(User user, boolean empty) {
                 super.updateItem(user, empty);
+
                 getStyleClass().remove("row-super-admin");
+
                 if (!empty && user != null && user.getIdRole() == ROLE_SUPER_ADMIN) {
-                    if (!getStyleClass().contains("row-super-admin")) {
-                        getStyleClass().add("row-super-admin");
-                    }
+                    getStyleClass().add("row-super-admin");
                 }
             }
         });
 
-        // ── Sincronizar campos de contraseña ──────────────────────────────
+        // Sincronizar password visible
         passwordField.textProperty().addListener((obs, o, n) -> {
             if (!showingPassword) passwordVisible.setText(n);
         });
+
         passwordVisible.textProperty().addListener((obs, o, n) -> {
             if (showingPassword) passwordField.setText(n);
         });
 
         togglePasswordBtn.setText(ICON_SHOW);
+
         refreshAdminList();
+
+        // Inicialmente apagado
+        setServerState(false);
     }
 
-    // ── Toggle visibilidad de contraseña ─────────────────────────────────
+    // ─────────────────────────────────────────────────────────
     @FXML
     private void handleTogglePassword() {
         showingPassword = !showingPassword;
+
         if (showingPassword) {
             passwordVisible.setText(passwordField.getText());
-            passwordVisible.setVisible(true);  passwordVisible.setManaged(true);
-            passwordField.setVisible(false);   passwordField.setManaged(false);
+            passwordVisible.setVisible(true);
+            passwordField.setVisible(false);
+
             togglePasswordBtn.setText(ICON_HIDE);
             togglePasswordBtn.getStyleClass().add("active");
-            passwordVisible.requestFocus();
-            passwordVisible.positionCaret(passwordVisible.getText().length());
         } else {
             passwordField.setText(passwordVisible.getText());
-            passwordField.setVisible(true);   passwordField.setManaged(true);
-            passwordVisible.setVisible(false); passwordVisible.setManaged(false);
+            passwordField.setVisible(true);
+            passwordVisible.setVisible(false);
+
             togglePasswordBtn.setText(ICON_SHOW);
             togglePasswordBtn.getStyleClass().remove("active");
-            passwordField.requestFocus();
-            passwordField.positionCaret(passwordField.getText().length());
         }
     }
 
+    // ─────────────────────────────────────────────────────────
+    @FXML
+    private void handleToggleServer() {
+        if (serverOn) {
+            stopServer();
+        } else {
+            startServer();
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    private void startServer() {
+        if (serverOn) return;
+
+        serverThread = new Thread(() -> {
+            try {
+                Server.startServer();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        serverThread.setDaemon(true);
+        serverThread.start();
+
+        ReservationDraftCleanupService.start();
+
+        setServerState(true);
+
+        showAlert(AlertType.INFORMATION, "Servidor iniciado",
+                "El servidor se inició correctamente.");
+    }
+
+    // ─────────────────────────────────────────────────────────
+    private void stopServer() {
+        if (!serverOn) return;
+
+        try {
+            // IMPORTANTE: estos métodos deben existir
+            Server.stopServer();
+            ReservationDraftCleanupService.stop();
+
+            if (serverThread != null && serverThread.isAlive()) {
+                serverThread.interrupt();
+            }
+
+            setServerState(false);
+
+            showAlert(AlertType.INFORMATION, "Servidor apagado",
+                    "El servidor se apagó correctamente.");
+
+        } catch (Exception e) {
+            showAlert(AlertType.ERROR, "Error",
+                    "No se pudo apagar el servidor correctamente.");
+            e.printStackTrace();
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    private void setServerState(boolean serverOn) {
+        this.serverOn = serverOn;
+
+        adminContent.setDisable(!serverOn);
+        sectionTitleLabel.setDisable(!serverOn);
+        revokeButton.setDisable(!serverOn);
+        selectButton.setDisable(!serverOn);
+
+        if (serverOn) {
+            adminContent.getStyleClass().remove("locked-section");
+            sectionTitleLabel.getStyleClass().remove("locked-section");
+
+            serverButton.setText("Apagar servidor");
+            serverButton.getStyleClass().remove("btn-primary");
+            serverButton.getStyleClass().add("btn-danger");
+
+        } else {
+            if (!adminContent.getStyleClass().contains("locked-section")) {
+                adminContent.getStyleClass().add("locked-section");
+            }
+
+            if (!sectionTitleLabel.getStyleClass().contains("locked-section")) {
+                sectionTitleLabel.getStyleClass().add("locked-section");
+            }
+
+            serverButton.setText("Prender servidor");
+            serverButton.getStyleClass().remove("btn-danger");
+            serverButton.getStyleClass().add("btn-primary");
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────
     private String getPassword() {
         return showingPassword ? passwordVisible.getText() : passwordField.getText();
     }
@@ -120,10 +222,11 @@ public class SuperAdminController {
     private void clearPasswordFields() {
         passwordField.clear();
         passwordVisible.clear();
+
         if (showingPassword) handleTogglePassword();
     }
 
-    // ── Crear administrador ───────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────
     @FXML
     private void handleCreateAdmin() {
         String username = usernameField.getText().trim();
@@ -134,7 +237,6 @@ public class SuperAdminController {
             return;
         }
 
-        // Verificar si ya existe un Super Admin
         boolean superAdminExists = UserDAO.getAllAdminUsers().stream()
                 .anyMatch(u -> u.getIdRole() == ROLE_SUPER_ADMIN);
 
@@ -154,96 +256,51 @@ public class SuperAdminController {
             return;
         }
 
-        User createdUser = UserDAO.getUserByUsername(username);
-        if (createdUser == null) {
-            showAlert(AlertType.ERROR, "Error", "No se pudo recuperar el usuario creado.");
-            return;
-        }
-
         refreshAdminList();
         usernameField.clear();
         clearPasswordFields();
-        showAlert(AlertType.INFORMATION, "Éxito", "Super Administrador creado correctamente.");
+
+        showAlert(AlertType.INFORMATION, "Éxito",
+                "Super Administrador creado correctamente.");
     }
 
-    // ── Seleccionar Super Admin ───────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────
     @FXML
     private void handleSelectAdmin() {
         User selected = adminTable.getSelectionModel().getSelectedItem();
+
         if (selected == null) {
             showAlert(AlertType.WARNING, "Selección inválida",
-                    "Debe seleccionar un administrador de la lista.");
+                    "Debe seleccionar un administrador.");
             return;
         }
 
-        // Verificar si ya existe un Super Admin
-        boolean superAdminExists = UserDAO.getAllAdminUsers().stream()
-                .anyMatch(u -> u.getIdRole() == ROLE_SUPER_ADMIN);
+        boolean updated = UserDAO.updateUserRole(selected.getIdUser(), ROLE_SUPER_ADMIN);
 
-        if (superAdminExists) {
-            showAlert(AlertType.WARNING, "Error",
-                    "Ya existe un Super Administrador. Solo puede haber uno.");
-            return;
+        if (updated) {
+            refreshAdminList();
         }
-
-        Alert confirm = new Alert(AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmar Super Admin");
-        confirm.setHeaderText(null);
-        confirm.setContentText("¿Asignar a \"" + selected.getUsername() + "\" como Super Administrador?");
-
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                boolean updated = UserDAO.updateUserRole(selected.getIdUser(), ROLE_SUPER_ADMIN);
-                if (updated) {
-                    selected.setIdRole(ROLE_SUPER_ADMIN); // actualizar objeto local
-                    refreshAdminList();
-                    showAlert(AlertType.INFORMATION, "Super Admin asignado",
-                            "\"" + selected.getUsername() + "\" ahora es Super Administrador.");
-                } else {
-                    showAlert(AlertType.ERROR, "Error", "No se pudo actualizar el rol del usuario.");
-                }
-            }
-        });
     }
 
-    // ── Revocar Super Admin ───────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────
     @FXML
     private void handleRevokeAdmin() {
         User selected = adminTable.getSelectionModel().getSelectedItem();
+
         if (selected == null) {
             showAlert(AlertType.WARNING, "Selección inválida",
-                    "Debe seleccionar un administrador de la lista.");
+                    "Debe seleccionar un administrador.");
             return;
         }
 
-        // Verificar si es Super Admin
-        if (selected.getIdRole() != ROLE_SUPER_ADMIN) {
-            showAlert(AlertType.WARNING, "Acción inválida",
-                    "El usuario \"" + selected.getUsername() + "\" no es Super Administrador.");
-            return;
+        boolean updated = UserDAO.updateUserRole(selected.getIdUser(), ROLE_ADMIN);
+
+        if (updated) {
+            refreshAdminList();
         }
-
-        Alert confirm = new Alert(AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmar acción");
-        confirm.setHeaderText(null);
-        confirm.setContentText("¿Quitar privilegios de Super Admin a \"" + selected.getUsername() + "\"?");
-
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                boolean updated = UserDAO.updateUserRole(selected.getIdUser(), ROLE_ADMIN);
-                if (updated) {
-                    selected.setIdRole(ROLE_ADMIN);
-                    refreshAdminList();
-                    showAlert(AlertType.INFORMATION, "Privilegios revocados",
-                            "Se quitaron los privilegios de Super Admin a \"" + selected.getUsername() + "\".");
-                } else {
-                    showAlert(AlertType.ERROR, "Error", "No se pudo actualizar el rol del usuario.");
-                }
-            }
-        });
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────
     private void refreshAdminList() {
         adminTable.getItems().setAll(UserDAO.getAllAdminUsers());
     }

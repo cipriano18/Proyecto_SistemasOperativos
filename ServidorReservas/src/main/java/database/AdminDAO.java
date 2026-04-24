@@ -88,6 +88,34 @@ public class AdminDAO {
 
         return null;
     }
+    // Obtener administrador por Cedula
+    public static Admin getAdminByIdentityCard(String identityCard) {
+        String sql = "SELECT id_admin, id_user, f_name, m_name, f_surname, m_surname, identity_card "
+                + "FROM AUD_Administrators WHERE identity_card = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, identityCard);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new Admin(
+                        rs.getInt("id_admin"),
+                        rs.getInt("id_user"),
+                        rs.getString("f_name"),
+                        rs.getString("m_name"),
+                        rs.getString("f_surname"),
+                        rs.getString("m_surname"),
+                        rs.getString("identity_card")
+                );
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al buscar administrador por cédula: " + e.getMessage());
+        }
+
+        return null;
+    }
 
     public static boolean insertAdmin(Admin admin) {
         Connection conn = null;
@@ -211,47 +239,88 @@ public class AdminDAO {
 
 // Eliminar admin en cascada (CXA + Contacts + Admin + User)
     public static boolean deleteAdminCascade(int idAdmin) {
-        try (Connection conn = DBConnection.getConnection()) {
+        String getAdminSql = "SELECT id_user FROM AUD_Administrators WHERE id_admin = ?";
+        String getContactsSql = "SELECT id_contact FROM AUD_CXA WHERE id_admin = ?";
+        String deleteContactSql = "DELETE FROM AUD_Contacts WHERE id_contact = ?";
+        String deleteUserSql = "DELETE FROM AUD_Users WHERE id_user = ?";
 
-            // 1. Obtener id_contact antes de eliminar
-            int idContact = -1;
-            String getContact = "SELECT id_contact FROM AUD_CXA WHERE id_admin = ?";
-            try (PreparedStatement ps = conn.prepareStatement(getContact)) {
+        Connection conn = null;
+
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            int idUser = -1;
+            List<Integer> contactIds = new ArrayList<>();
+
+            // 1. Obtener id_user
+            try (PreparedStatement ps = conn.prepareStatement(getAdminSql)) {
                 ps.setInt(1, idAdmin);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    idContact = rs.getInt("id_contact");
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        idUser = rs.getInt("id_user");
+                    } else {
+                        conn.rollback();
+                        return false;
+                    }
                 }
             }
 
-            // 2. Eliminar CXA 
-            String deleteCXA = "DELETE FROM AUD_CXA WHERE id_admin = ?";
-            try (PreparedStatement ps = conn.prepareStatement(deleteCXA)) {
+            // 2. Obtener todos los contactos del admin
+            try (PreparedStatement ps = conn.prepareStatement(getContactsSql)) {
                 ps.setInt(1, idAdmin);
-                ps.executeUpdate();
-            }
 
-            // 3. Eliminar contacto
-            if (idContact != -1) {
-                String deleteContact = "DELETE FROM AUD_Contacts WHERE id_contact = ?";
-                try (PreparedStatement ps = conn.prepareStatement(deleteContact)) {
-                    ps.setInt(1, idContact);
-                    ps.executeUpdate();
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        contactIds.add(rs.getInt("id_contact"));
+                    }
                 }
             }
 
-            // 4. Eliminar admin
-            String deleteAdmin = "DELETE FROM AUD_Administrators WHERE id_admin = ?";
-            try (PreparedStatement ps = conn.prepareStatement(deleteAdmin)) {
-                ps.setInt(1, idAdmin);
+            // 3. Eliminar contactos
+            // Por ON DELETE CASCADE en AUD_CXA(id_contact), se eliminan también las relaciones
+            if (!contactIds.isEmpty()) {
+                try (PreparedStatement ps = conn.prepareStatement(deleteContactSql)) {
+                    for (Integer idContact : contactIds) {
+                        ps.setInt(1, idContact);
+                        ps.executeUpdate();
+                    }
+                }
+            }
+
+            // 4. Eliminar usuario
+            // Por ON DELETE CASCADE en AUD_Administrators(id_user), se elimina también el admin
+            try (PreparedStatement ps = conn.prepareStatement(deleteUserSql)) {
+                ps.setInt(1, idUser);
                 ps.executeUpdate();
             }
 
+            conn.commit();
             return true;
 
         } catch (SQLException e) {
             System.out.println("Error al eliminar admin en cascada: " + e.getMessage());
+
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                System.out.println("Error al hacer rollback: " + ex.getMessage());
+            }
+
             return false;
+
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error al cerrar conexión: " + e.getMessage());
+            }
         }
     }
 }

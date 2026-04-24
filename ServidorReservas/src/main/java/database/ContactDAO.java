@@ -54,11 +54,13 @@ public static boolean insertCXC(int idClient, int idContact) {
 
         ps.setInt(1, idClient);
         ps.setInt(2, idContact);
-        ps.executeUpdate();
-        return true;
+
+        int rows = ps.executeUpdate();
+        return rows > 0;
 
     } catch (SQLException e) {
         System.out.println("Error al insertar CXC: " + e.getMessage());
+        e.printStackTrace();
         return false;
     }
 }
