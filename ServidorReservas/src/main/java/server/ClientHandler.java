@@ -1,17 +1,11 @@
 package server;
 
-import controller.ClientController;
-import controller.ReservationDraftController;
-import controller.UserController;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import model.CalendarRequest;
-import model.ClientRequest;
-import model.EquipmentReservationDraftRequest;
 import model.Response;
-import model.User;
+import server.handlers.ClientRequestHandler;
 
 public class ClientHandler extends Thread {
 
@@ -91,220 +85,26 @@ public class ClientHandler extends Thread {
             System.out.println("Error al leer objeto: " + e.getMessage());
         } finally {
             Server.clients.remove(this);
+            closeConnection();
+        }
+    }
 
-            try {
+    public void closeConnection() {
+        try {
+            if (socket != null && !socket.isClosed()) {
                 socket.close();
-            } catch (IOException e) {
-                System.out.println("Error al cerrar socket: " + e.getMessage());
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     private void processRequest(String command, Object obj) {
         try {
-            Response resp;
+            Response resp = ClientRequestHandler.handle(command, obj);
 
-            switch (command.toUpperCase()) {
-
-                case "CREATE_CLIENT": {
-                    ClientRequest request = (ClientRequest) obj;
-
-                    System.out.println("---- CREATE_CLIENT ----");
-                    System.out.println("Objeto recibido: " + request);
-
-                    resp = ClientController.createClient(request);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "UPDATE_CLIENT": {
-                    ClientRequest request = (ClientRequest) obj;
-
-                    System.out.println("---- UPDATE_CLIENT ----");
-                    System.out.println("Objeto recibido: " + request);
-
-                    resp = ClientController.updateClient(request);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "DELETE_CLIENT": {
-                    ClientRequest request = (ClientRequest) obj;
-
-                    System.out.println("---- DELETE_CLIENT ----");
-                    System.out.println("Objeto recibido: " + request);
-
-                    resp = ClientController.deleteClient(request);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "LOGIN": {
-                    User user = (User) obj;
-
-                    System.out.println("---- LOGIN ----");
-                    System.out.println("Username: " + user.getUsername());
-                    System.out.println("Password: " + user.getPassword());
-                    System.out.println("IdRole recibido: " + user.getIdRole());
-
-                    resp = UserController.login(user);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "START_EQUIPMENT_DRAFT": {
-                    EquipmentReservationDraftRequest request = (EquipmentReservationDraftRequest) obj;
-
-                    System.out.println("---- START_EQUIPMENT_DRAFT ----");
-                    System.out.println("Objeto recibido: " + request);
-
-                    resp = ReservationDraftController.startEquipmentDraft(request);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "UPDATE_EQUIPMENT_DRAFT": {
-                    EquipmentReservationDraftRequest request = (EquipmentReservationDraftRequest) obj;
-
-                    System.out.println("---- UPDATE_EQUIPMENT_DRAFT ----");
-                    System.out.println("Objeto recibido: " + request);
-
-                    resp = ReservationDraftController.updateEquipmentDraft(request);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "GET_EQUIPMENT_DRAFT_BY_ID": {
-                    Integer idDraft = (Integer) obj;
-
-                    System.out.println("---- GET_EQUIPMENT_DRAFT_BY_ID ----");
-                    System.out.println("IdDraft recibido: " + idDraft);
-
-                    resp = ReservationDraftController.getEquipmentDraftById(idDraft);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "GET_EQUIPMENT_DRAFT_BY_CLIENT_ID": {
-                    Integer idClient = (Integer) obj;
-
-                    System.out.println("---- GET_EQUIPMENT_DRAFT_BY_CLIENT_ID ----");
-                    System.out.println("IdClient recibido: " + idClient);
-
-                    resp = ReservationDraftController.getEquipmentDraftByClientId(idClient);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "ENTER_RESERVATIONS_VIEW": {
-                    Integer idClient = (Integer) obj;
-
-                    this.loggedClientId = idClient;
-                    this.viewingReservations = true;
-
-                    System.out.println("---- ENTER_RESERVATIONS_VIEW ----");
-                    System.out.println("Cliente entró a reservas");
-                    System.out.println("IdClient: " + this.loggedClientId);
-                    System.out.println("ViewingReservations: " + this.viewingReservations);
-
-                    resp = new Response(true, "Cliente registrado en vista de reservas", null);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "EXIT_RESERVATIONS_VIEW": {
-                    this.viewingReservations = false;
-
-                    System.out.println("---- EXIT_RESERVATIONS_VIEW ----");
-                    System.out.println("Cliente salió de reservas");
-                    System.out.println("IdClient: " + this.loggedClientId);
-                    System.out.println("ViewingReservations: " + this.viewingReservations);
-
-                    resp = new Response(true, "Cliente salió de vista de reservas", null);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "DISCARD_EQUIPMENT_DRAFT": {
-                    EquipmentReservationDraftRequest request = (EquipmentReservationDraftRequest) obj;
-
-                    System.out.println("---- DISCARD_EQUIPMENT_DRAFT ----");
-                    System.out.println("Objeto recibido: " + request);
-
-                    resp = ReservationDraftController.discardEquipmentDraft(
-                            request.getIdDraft(),
-                            request.getIdClient()
-                    );
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "CONFIRM_EQUIPMENT_DRAFT": {
-                    EquipmentReservationDraftRequest request = (EquipmentReservationDraftRequest) obj;
-
-                    System.out.println("---- CONFIRM_EQUIPMENT_DRAFT ----");
-                    System.out.println("Objeto recibido: " + request);
-                    System.out.println("IdDraft: " + request.getIdDraft());
-                    System.out.println("IdClient: " + request.getIdClient());
-
-                    resp = ReservationDraftController.confirmEquipmentDraft(
-                            request.getIdDraft(),
-                            request.getIdClient()
-                    );
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                case "GET_CALENDAR_BLOCKS": {
-                    CalendarRequest request = (CalendarRequest) obj;
-
-                    System.out.println("---- GET_CALENDAR_BLOCKS ----");
-                    System.out.println("Objeto recibido: " + request);
-                    System.out.println("Mes: " + request.getMonth());
-                    System.out.println("Año: " + request.getYear());
-
-                    resp = ReservationDraftController.getCalendarBlocks(
-                            request.getMonth(),
-                            request.getYear()
-                    );
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-
-                default: {
-                    resp = new Response(false, "Comando no reconocido", null);
-
-                    logResponse(resp);
-                    sendResponse(resp);
-                    break;
-                }
-            }
+            logResponse(resp);
+            sendResponse(resp);
 
         } catch (ClassCastException e) {
             System.out.println("Error de tipo al procesar petición: " + e.getMessage());
