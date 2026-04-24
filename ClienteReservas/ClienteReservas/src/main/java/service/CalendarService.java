@@ -1,11 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package service;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import model.CalendarRequest;
 import model.Response;
 import network.ServerConnection;
 import network.SocketManager;
@@ -24,13 +21,12 @@ public class CalendarService {
             ObjectOutputStream out = connection.getObjectOutput();
             ObjectInputStream in = connection.getObjectInput();
 
+            CalendarRequest request = new CalendarRequest(month, year);
+
             out.writeObject("GET_CALENDAR_BLOCKS");
             out.flush();
 
-            out.writeObject(month);
-            out.flush();
-
-            out.writeObject(year);
+            out.writeObject(request);
             out.flush();
 
             Object response = in.readObject();

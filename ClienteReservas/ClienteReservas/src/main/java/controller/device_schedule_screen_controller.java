@@ -1,14 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package controller;
 
 import java.net.URL;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.UnaryOperator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -23,15 +20,7 @@ import model.CalendarBlock;
 import model.Response;
 import service.CalendarService;
 import utils.CalendarBuilder;
-import utils.CalendarConstants;
-import javafx.scene.control.TextFormatter;
-import java.util.function.UnaryOperator;
 
-/**
- * FXML Controller class
- *
- * @author Alvaro Artavia
- */
 public class device_schedule_screen_controller implements Initializable {
 
     @FXML
@@ -55,12 +44,8 @@ public class device_schedule_screen_controller implements Initializable {
 
     private final CalendarBuilder builder = new CalendarBuilder();
 
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
         setupYearField();
 
         int currentYear = java.time.LocalDate.now().getYear();
@@ -77,6 +62,7 @@ public class device_schedule_screen_controller implements Initializable {
 
     @FXML
     private void GoToLogin(ActionEvent event) {
+        // Aquí puedes agregar la navegación al login
     }
 
     @FXML
@@ -99,9 +85,21 @@ public class device_schedule_screen_controller implements Initializable {
 
     private void loadCalendar() {
 
-        int month = chb_month.getSelectionModel().getSelectedIndex() + 1;
+        int selectedIndex = chb_month.getSelectionModel().getSelectedIndex();
+
+        if (selectedIndex < 0) {
+            return;
+        }
+
+        int month = selectedIndex + 1;
 
         String yearText = tf_year.getText().trim();
+
+        if (yearText.isEmpty()) {
+            System.out.println("Debe ingresar un año");
+            builder.buildCalendar(month, java.time.LocalDate.now().getYear(), grid_calendar, new ArrayList<>());
+            return;
+        }
 
         int year;
 
@@ -109,6 +107,7 @@ public class device_schedule_screen_controller implements Initializable {
             year = Integer.parseInt(yearText);
         } catch (NumberFormatException e) {
             System.out.println("Año inválido");
+            builder.buildCalendar(month, java.time.LocalDate.now().getYear(), grid_calendar, new ArrayList<>());
             return;
         }
 
@@ -117,11 +116,16 @@ public class device_schedule_screen_controller implements Initializable {
 
         if (year < currentYear) {
             System.out.println("El año no puede ser menor al actual");
+            builder.buildCalendar(currentMonth, currentYear, grid_calendar, new ArrayList<>());
+            chb_month.getSelectionModel().select(currentMonth - 1);
+            tf_year.setText(String.valueOf(currentYear));
             return;
         }
 
         if (year == currentYear && month < currentMonth) {
             System.out.println("No se puede seleccionar un mes pasado");
+            builder.buildCalendar(currentMonth, currentYear, grid_calendar, new ArrayList<>());
+            chb_month.getSelectionModel().select(currentMonth - 1);
             return;
         }
 
@@ -129,11 +133,9 @@ public class device_schedule_screen_controller implements Initializable {
 
         if (response.isSuccess()) {
             List<CalendarBlock> blocks = (List<CalendarBlock>) response.getData();
-
             builder.buildCalendar(month, year, grid_calendar, blocks);
         } else {
             System.out.println(response.getMessage());
-
             builder.buildCalendar(month, year, grid_calendar, new ArrayList<>());
         }
     }
@@ -143,7 +145,6 @@ public class device_schedule_screen_controller implements Initializable {
         UnaryOperator<TextFormatter.Change> filter = change -> {
             String newText = change.getControlNewText();
 
-            // Solo números y máximo 4 dígitos
             if (newText.matches("\\d{0,4}")) {
                 return change;
             }
