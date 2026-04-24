@@ -7,8 +7,8 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" stylesheets="@../styles/text.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" stylesheets="@../styles/text.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.device_schedule_screen_controller">
    <top>
       <VBox prefHeight="205.0" prefWidth="940.0" BorderPane.alignment="TOP_CENTER">
          <children>
@@ -62,22 +62,23 @@
             </HBox>
             <VBox>
                <children>
-                  <HBox alignment="CENTER" prefHeight="65.0" prefWidth="940.0" spacing="10.0" stylesheets="@../styles/schedule.css">
+                  <HBox prefHeight="65.0" prefWidth="940.0" spacing="10.0" stylesheets="@../styles/schedule.css">
                      <children>
-                        <VBox>
+                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <VBox prefHeight="55.0" prefWidth="151.0">
                            <children>
                               <Label styleClass="field-label" text=" MES" />
-                              <ChoiceBox prefHeight="35.0" prefWidth="150.0">
+                              <ChoiceBox fx:id="chb_month" prefHeight="35.0" prefWidth="150.0">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </ChoiceBox>
                            </children>
                         </VBox>
-                        <VBox>
+                        <VBox prefHeight="55.0" prefWidth="147.0">
                            <children>
                               <Label styleClass="field-label" text=" AÑO" />
-                              <TextField prefHeight="35.0" prefWidth="120.0">
+                              <TextField fx:id="tf_year" prefHeight="35.0" prefWidth="120.0">
                                  <cursor>
                                     <Cursor fx:constant="TEXT" />
                                  </cursor>
@@ -87,7 +88,7 @@
                         <VBox>
                            <children>
                               <Label styleClass="field-label" />
-                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="39.0" styleClass="btn-primary">
+                              <Button fx:id="btn_search" mnemonicParsing="false" onAction="#GetCalendar" prefHeight="35.0" prefWidth="39.0" style="-fx-background-color: red;">
                                  <graphic>
                                     <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -98,13 +99,18 @@
                               </Button>
                            </children>
                         </VBox>
-                        <Region prefHeight="116.0" prefWidth="318.0" HBox.hgrow="ALWAYS" />
+                        <VBox>
+                           <children>
+                              <Label styleClass="field-label" />
+                              <Separator orientation="VERTICAL" prefHeight="200.0" />
+                           </children>
+                        </VBox>
                         <VBox>
                            <children>
                               <Label styleClass="field-label" />
                               <HBox spacing="10.0">
                                  <children>
-                                    <Button mnemonicParsing="false" prefHeight="35.0" styleClass="btn-primary">
+                                    <Button mnemonicParsing="false" prefHeight="35.0" style="-fx-background-color: red;">
                                        <graphic>
                                           <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -113,7 +119,7 @@
                                           </ImageView>
                                        </graphic>
                                     </Button>
-                                    <Button mnemonicParsing="false" prefHeight="35.0" styleClass="btn-primary">
+                                    <Button mnemonicParsing="false" prefHeight="35.0" style="-fx-background-color: red;">
                                        <graphic>
                                           <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -126,9 +132,10 @@
                               </HBox>
                            </children>
                         </VBox>
+                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                      </children>
                      <padding>
-                        <Insets bottom="5.0" left="95.0" right="95.0" top="5.0" />
+                        <Insets bottom="5.0" top="5.0" />
                      </padding>
                   </HBox>
                </children>
@@ -137,79 +144,97 @@
       </VBox>
    </top>
    <center>
-      <ScrollPane hbarPolicy="NEVER" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS" BorderPane.alignment="TOP_CENTER">
          <content>
-      <GridPane alignment="CENTER">
-          <columnConstraints>
-              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
-              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
-              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
-              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
-              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
-          </columnConstraints>
-          <rowConstraints>
-              <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
-              <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
-          </rowConstraints>
+            <HBox>
                <children>
-                  <VBox alignment="CENTER" maxWidth="200.0" prefHeight="150.0" prefWidth="100.0" spacing="10.0" style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-background-color: white;" stylesheets="@../styles/schedule.css" GridPane.halignment="CENTER">
-                     <GridPane.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </GridPane.margin>
+                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <GridPane fx:id="grid_calendar" alignment="CENTER" stylesheets="@../styles/main.css">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="240.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
+                </rowConstraints>
                      <children>
-                        <HBox prefHeight="50.0" prefWidth="155.0">
+                        <VBox alignment="CENTER" maxWidth="200.0" prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-radius: 5; -fx-border-radius: 5;" styleClass="hero-panel" stylesheets="@../styles/main.css" GridPane.halignment="CENTER">
                            <children>
-                              <Label prefHeight="17.0" prefWidth="58.0" styleClass="hero-title" stylesheets="@../styles/text.css" text="31" textFill="RED" HBox.hgrow="ALWAYS" />
-                              <Region prefHeight="43.0" prefWidth="31.0" HBox.hgrow="ALWAYS" />
+                              <HBox prefHeight="50.0" prefWidth="155.0">
+                                 <children>
+                                    <Label prefHeight="17.0" prefWidth="58.0" styleClass="hero-title" stylesheets="@../styles/text.css" text="1" textFill="WHITE" HBox.hgrow="ALWAYS" />
+                                    <Region prefHeight="90.0" prefWidth="106.0" HBox.hgrow="ALWAYS" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </HBox>
+                              <Label styleClass="hero-subtitle" text="Secciones del día:" />
+                              <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="160.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-border-radius: 5;">
+                                 <graphic>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="19.0" prefWidth="97.0" spacing="5.0">
+                                       <children>
+                                          <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/morning.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label styleClass="form-subtitle" text="Mañana" />
+                                       </children>
+                                    </HBox>
+                                 </graphic>
+                              </Button>
+                              <Button disable="true" mnemonicParsing="false" prefHeight="33.0" prefWidth="160.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-border-radius: 5;">
+                                 <graphic>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="19.0" prefWidth="97.0" spacing="5.0">
+                                       <children>
+                                          <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/day.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label styleClass="form-subtitle" text="Tarde" />
+                                       </children>
+                                    </HBox>
+                                 </graphic>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="160.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-border-radius: 5;">
+                                 <graphic>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="19.0" prefWidth="97.0" spacing="5.0">
+                                       <children>
+                                          <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/night.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label styleClass="form-subtitle" text="Noche" />
+                                       </children>
+                                    </HBox>
+                                 </graphic>
+                              </Button>
                            </children>
                            <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              <Insets bottom="15.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
-                        </HBox>
-                        <Button mnemonicParsing="false" prefHeight="200.0" prefWidth="200.0" styleClass="btn-primary" text="Mañana" />
-                        <Button mnemonicParsing="false" prefHeight="200.0" prefWidth="200.0" styleClass="btn-primary" text="Tarde" VBox.vgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefHeight="200.0" prefWidth="200.0" styleClass="btn-primary" text="Noche" VBox.vgrow="ALWAYS" />
+                           <GridPane.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </GridPane.margin>
+                        </VBox>
                      </children>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
-                     </padding>
-                     <effect>
-                        <DropShadow />
-                     </effect>
-                  </VBox>
-                  <VBox alignment="CENTER" maxWidth="200.0" prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-radius: 15; -fx-border-radius: 15;" styleClass="hero-panel" stylesheets="@../styles/main.css" GridPane.columnIndex="1" GridPane.halignment="CENTER">
-                     <children>
-                        <HBox prefHeight="50.0" prefWidth="155.0">
-                           <children>
-                              <Label prefHeight="17.0" prefWidth="58.0" styleClass="hero-title" stylesheets="@../styles/text.css" text="31" textFill="WHITE" HBox.hgrow="ALWAYS" />
-                              <Region prefHeight="90.0" prefWidth="106.0" HBox.hgrow="ALWAYS" />
-                           </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </HBox>
-                        <Button mnemonicParsing="false" prefHeight="200.0" prefWidth="200.0" styleClass="btn-secondary" text="Mañana" />
-                        <Button mnemonicParsing="false" prefHeight="200.0" prefWidth="200.0" styleClass="btn-secondary" text="Tarde" VBox.vgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefHeight="200.0" prefWidth="200.0" styleClass="btn-secondary" text="Noche" VBox.vgrow="ALWAYS" />
-                     </children>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
-                     </padding>
-                     <effect>
-                        <DropShadow />
-                     </effect>
-                     <GridPane.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </GridPane.margin>
-                  </VBox>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+            </GridPane>
+                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-      </GridPane>
+            </HBox>
          </content>
       </ScrollPane>
    </center>
