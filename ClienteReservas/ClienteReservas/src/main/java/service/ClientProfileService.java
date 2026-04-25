@@ -45,7 +45,7 @@ public class ClientProfileService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new Response(false, "Error al conectar con el servidor: " + e.getMessage(), null);
+            return null;
         }
     }
 }

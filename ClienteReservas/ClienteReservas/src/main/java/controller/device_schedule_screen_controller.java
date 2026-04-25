@@ -1,5 +1,8 @@
 package controller;
 
+import com.auditorio.clientereservas.App;
+import components.PopUp;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,8 +64,8 @@ public class device_schedule_screen_controller implements Initializable {
     }
 
     @FXML
-    private void GoToLogin(ActionEvent event) {
-        // Aquí puedes agregar la navegación al login
+    private void GoToLogin(ActionEvent event) throws IOException {
+        App.setRoot("home_screen");
     }
 
     @FXML
@@ -131,13 +134,36 @@ public class device_schedule_screen_controller implements Initializable {
 
         Response response = CalendarService.getCalendarBlocks(month, year);
 
-        if (response.isSuccess()) {
-            List<CalendarBlock> blocks = (List<CalendarBlock>) response.getData();
-            builder.buildCalendar(month, year, grid_calendar, blocks);
-        } else {
-            System.out.println(response.getMessage());
+        if (response == null) {
+            PopUp.warning(
+                    "Error de conexión",
+                    "No se pudo obtener el calendario",
+                    "No se pudo contactar el servidor. Verifique su conexión o intente nuevamente.",
+                    "power_off.png",
+                    1,
+                    "Aceptar"
+            );
+
             builder.buildCalendar(month, year, grid_calendar, new ArrayList<>());
+            return;
         }
+
+        if (!response.isSuccess()) {
+            PopUp.warning(
+                    "Error al cargar calendario",
+                    "No se pudo obtener la información",
+                    response.getMessage() != null ? response.getMessage() : "Ocurrió un error inesperado.",
+                    "error.png",
+                    1,
+                    "Aceptar"
+            );
+
+            builder.buildCalendar(month, year, grid_calendar, new ArrayList<>());
+            return;
+        }
+
+        List<CalendarBlock> blocks = (List<CalendarBlock>) response.getData();
+        builder.buildCalendar(month, year, grid_calendar, blocks);
     }
 
     private void setupYearField() {

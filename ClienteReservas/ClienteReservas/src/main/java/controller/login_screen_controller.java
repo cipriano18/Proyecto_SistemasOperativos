@@ -5,10 +5,10 @@
 package controller;
 
 import com.auditorio.clientereservas.App;
+import components.PopUp;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.animation.Animation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -76,16 +76,60 @@ public class login_screen_controller implements Initializable {
         }
 
         Response resp = AuthService.login(username, password);
-
-        if (resp.isSuccess()) {
-            if (resp.getData() instanceof ClientRequest) {
-                ClientRequest data = (ClientRequest) resp.getData();
-                if (data.getUser().getIdRole() == 3) {
-                    Session.getInstance().setClient(data);
-                    App.setRoot("home_screen");
-                }
-            }
+        if (resp == null) {
+            PopUp.warning(
+                    "Error de conexión",
+                    "Verifique su conexión o intente nuevamente.",
+                    "Es posible que el servicio esté temporalmente no disponible o que exista un problema con su conexión a internet.\n"
+                    + "Por favor, intente nuevamente más tarde.",
+                    "power_off.png",
+                    1,
+                    "Aceptar"
+            );
+            return;
         }
+
+        if (!resp.isSuccess()) {
+            PopUp.warning(
+                    "Credenciales inválidas",
+                    "Usuario o contraseña incorrectos",
+                    resp.getMessage() != null ? resp.getMessage() : "Intente nuevamente.",
+                    "person_off.png",
+                    1,
+                    "Aceptar"
+            );
+            System.out.println(resp.getMessage());
+            return;
+        }
+
+        if (!(resp.getData() instanceof ClientRequest)) {
+            PopUp.warning(
+                    "Error inesperado",
+                    "Respuesta inválida del servidor",
+                    "No se pudo procesar la información recibida.",
+                    "dangerous.png",
+                    1,
+                    "Aceptar"
+            );
+            return;
+        }
+
+        ClientRequest data = (ClientRequest) resp.getData();
+
+        if (data.getUser().getIdRole() != 3 && data.getUser().getIdRole() != 2 && data.getUser().getIdRole() != 1) {
+            PopUp.warning(
+                    "Acceso denegado",
+                    "No tiene permisos",
+                    "Este usuario no puede acceder a esta aplicación.",
+                    "person_off.png",
+                    1,
+                    "Aceptar"
+            );
+            return;
+        }
+
+        Session.getInstance().setClient(data);
+        App.setRoot("home_screen");
 
     }
 

@@ -18,6 +18,7 @@ model\Client.class
 utils\Animations.class
 model\Contact.class
 model\Person.class
+components\PopUp.class
 utils\DayCard.class
 service\CalendarService.class
 com\auditorio\clientereservas\App.class

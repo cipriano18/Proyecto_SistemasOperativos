@@ -5,6 +5,7 @@
 package controller;
 
 import com.auditorio.clientereservas.App;
+import components.PopUp;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -59,17 +60,30 @@ public class home_screen_controller implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         ClientRequest session = Session.getInstance().getClient();
+
         if (session == null) {
+            PopUp.warning(
+                    "Sesión expirada",
+                    "Debe iniciar sesión",
+                    "Su sesión ha expirado o no es válida. Por favor, inicie sesión nuevamente.",
+                    "error.png",
+                    1,
+                    "Ir al login"
+            );
+
             try {
                 App.setRoot("login_screen");
             } catch (IOException ignored) {
             }
             return;
         }
+
         if (lbl_welcome != null && session.getClient() != null) {
-            lbl_welcome.setText("¿Qué hacemos " + session.getClient().getfName()+ "?");
+            lbl_welcome.setText("¿Qué hacemos " + session.getClient().getfName() + "?");
         }
+
     }
 
     @FXML
@@ -88,7 +102,7 @@ public class home_screen_controller implements Initializable {
 
     @FXML
     private void GoToSchedule(ActionEvent event) throws IOException {
-        
+
     }
 
     @FXML

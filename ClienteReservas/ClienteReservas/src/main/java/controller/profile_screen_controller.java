@@ -1,6 +1,7 @@
 package controller;
 
 import com.auditorio.clientereservas.App;
+import components.PopUp;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
@@ -30,24 +31,42 @@ public class profile_screen_controller implements Initializable {
 
     private String contactType = "EMAIL";
 
-    @FXML private TextField tf_first_name;
-    @FXML private Label msg_name;
-    @FXML private TextField tf_second_name;
-    @FXML private TextField tf_first_surname;
-    @FXML private Label msg_surname;
-    @FXML private TextField tf_second_surname;
-    @FXML private Label msg_Sec_surname;
-    @FXML private TextField tf_id_card;
-    @FXML private RadioButton rdb_mail;
-    @FXML private ToggleGroup tg_contact_tipe;
-    @FXML private RadioButton rdb_phone;
-    @FXML private Label lbl_contact_type;
-    @FXML private TextField tf_contact;
-    @FXML private Label msg_contact;
-    @FXML private TextField tf_user;
-    @FXML private TextField tf_pass;
-    @FXML private Label msg_pass;
-    @FXML private Label msg_global;
+    @FXML
+    private TextField tf_first_name;
+    @FXML
+    private Label msg_name;
+    @FXML
+    private TextField tf_second_name;
+    @FXML
+    private TextField tf_first_surname;
+    @FXML
+    private Label msg_surname;
+    @FXML
+    private TextField tf_second_surname;
+    @FXML
+    private Label msg_Sec_surname;
+    @FXML
+    private TextField tf_id_card;
+    @FXML
+    private RadioButton rdb_mail;
+    @FXML
+    private ToggleGroup tg_contact_tipe;
+    @FXML
+    private RadioButton rdb_phone;
+    @FXML
+    private Label lbl_contact_type;
+    @FXML
+    private TextField tf_contact;
+    @FXML
+    private Label msg_contact;
+    @FXML
+    private TextField tf_user;
+    @FXML
+    private TextField tf_pass;
+    @FXML
+    private Label msg_pass;
+    @FXML
+    private Label msg_global;
 
     private static final String NAME_REGEX = "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$";
     private static final String EMAIL_REGEX = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
@@ -90,7 +109,7 @@ public class profile_screen_controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         ClientRequest session = Session.getInstance().getClient();
         if (session == null) {
             try {
@@ -103,11 +122,11 @@ public class profile_screen_controller implements Initializable {
         Client c = session.getClient();
         User u = session.getUser();
         Contact ct = session.getContact();
-        
+
         lbl_card_name.setText(nullSafe(c.getfName()) + nullSafe(c.getmName()) + nullSafe(c.getfSurname()) + nullSafe(c.getmSurname()));
         lbl_card_ced.setText(nullSafe(c.getIdentityCard()));
         lbl_card_contact.setText(nullSafe(ct.getContactValue()));
-        
+
         tf_first_name.setText(nullSafe(c.getfName()));
         tf_second_name.setText(nullSafe(c.getmName()));
         tf_first_surname.setText(nullSafe(c.getfSurname()));
@@ -129,7 +148,7 @@ public class profile_screen_controller implements Initializable {
                 tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
             }
         }
-        
+
         //Animations
         Animations anim = new Animations();
         anim.appear(hb_id_card, 100, 1, 0);
@@ -195,42 +214,62 @@ public class profile_screen_controller implements Initializable {
         boolean hasErrors = false;
 
         if (fName.isEmpty()) {
-            showError(msg_name, "El primer nombre es obligatorio"); hasErrors = true;
+            showError(msg_name, "El primer nombre es obligatorio");
+            hasErrors = true;
         } else if (!fName.matches(NAME_REGEX)) {
-            showError(msg_name, "El primer nombre es inválido"); hasErrors = true;
+            showError(msg_name, "El primer nombre es inválido");
+            hasErrors = true;
         }
 
         if (fSurname.isEmpty()) {
-            showError(msg_surname, "El primer apellido es obligatorio"); hasErrors = true;
+            showError(msg_surname, "El primer apellido es obligatorio");
+            hasErrors = true;
         } else if (!fSurname.matches(NAME_REGEX)) {
-            showError(msg_surname, "El primer apellido es inválido"); hasErrors = true;
+            showError(msg_surname, "El primer apellido es inválido");
+            hasErrors = true;
         }
 
         if (mSurname.isEmpty()) {
-            showError(msg_Sec_surname, "El segundo apellido es obligatorio"); hasErrors = true;
+            showError(msg_Sec_surname, "El segundo apellido es obligatorio");
+            hasErrors = true;
         } else if (!mSurname.matches(NAME_REGEX)) {
-            showError(msg_Sec_surname, "El segundo apellido es inválido"); hasErrors = true;
+            showError(msg_Sec_surname, "El segundo apellido es inválido");
+            hasErrors = true;
         }
 
         if (contactValue.isEmpty()) {
-            showError(msg_contact, "El valor del contacto es obligatorio"); hasErrors = true;
+            showError(msg_contact, "El valor del contacto es obligatorio");
+            hasErrors = true;
         } else if ("PHONE".equals(contactType) && !contactValue.matches(PHONE_REGEX)) {
-            showError(msg_contact, "El teléfono debe contener exactamente 8 dígitos"); hasErrors = true;
+            showError(msg_contact, "El teléfono debe contener exactamente 8 dígitos");
+            hasErrors = true;
         } else if ("EMAIL".equals(contactType) && !contactValue.matches(EMAIL_REGEX)) {
-            showError(msg_contact, "El correo debe tener un formato válido"); hasErrors = true;
+            showError(msg_contact, "El correo debe tener un formato válido");
+            hasErrors = true;
         }
 
         String passwordToSend;
         if (newPassword.isEmpty()) {
             passwordToSend = session.getUser().getPassword();
         } else if (newPassword.length() < 8 || !newPassword.matches(".*[A-Z].*") || !newPassword.matches(".*[0-9].*")) {
-            showError(msg_pass, "La contraseña es inválida"); hasErrors = true;
+            showError(msg_pass, "La contraseña es inválida");
+            hasErrors = true;
             passwordToSend = null;
         } else {
             passwordToSend = newPassword;
         }
 
-        if (hasErrors) return;
+        if (hasErrors) {
+            PopUp.warning(
+                    "Campos obligatorios",
+                    "Faltan datos",
+                    "Debe completar todos los campos requeridos antes de continuar.",
+                    "back_hand.png",
+                    1,
+                    "Aceptar"
+            );
+            return;
+        }
 
         User currentUser = session.getUser();
         Client currentClient = session.getClient();
@@ -254,9 +293,22 @@ public class profile_screen_controller implements Initializable {
         Response resp = ClientProfileService.update(request);
 
         if (resp.isSuccess()) {
+            PopUp.notification(
+                    "Cliente actualizado",
+                    "Se aplicaron los cambios correctamente.",
+                    "check_circle.png"
+            );
             Session.getInstance().setClient(request);
-            App.setRoot("home_screen");
+            App.setRoot("profile_screen");
         } else {
+            PopUp.warning(
+                    "Algo salio mal",
+                    "El servidor negó tus cambios.",
+                    "Es posible que alguno de los datos incumpla formatos o ya esté ocupado.",
+                    "power_off.png",
+                    1,
+                    "Aceptar"
+            );
             routeServerError(resp.getMessage());
         }
     }
@@ -264,30 +316,69 @@ public class profile_screen_controller implements Initializable {
     @FXML
     private void DeleteAccount(ActionEvent event) throws IOException {
         ClientRequest session = Session.getInstance().getClient();
+
         if (session == null) {
+            PopUp.warning(
+                    "Sesión inválida",
+                    "Debe iniciar sesión",
+                    "No se encontró una sesión activa. Por favor, inicie sesión nuevamente.",
+                    "person_off.png",
+                    1,
+                    "Aceptar"
+            );
+
             App.setRoot("login_screen");
             return;
         }
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "¿Seguro que deseas eliminar tu cuenta? Esta acción es irreversible.",
-                ButtonType.OK, ButtonType.CANCEL);
-        confirm.setHeaderText("Eliminar cuenta");
-        confirm.setTitle("Confirmar eliminación");
+        boolean confirm = PopUp.warning(
+                "Eliminar cuenta",
+                "¿Está seguro?",
+                "Esta acción eliminará su cuenta de forma permanente y no se puede deshacer.",
+                "question.png",
+                2,
+                "Eliminar"
+        );
 
-        Optional<ButtonType> result = confirm.showAndWait();
-        if (!result.isPresent() || result.get() != ButtonType.OK) {
+        if (!confirm) {
             return;
         }
 
         Response resp = ClientProfileService.delete(session);
 
+        if (resp == null) {
+            PopUp.warning(
+                    "Error de conexión",
+                    "No se pudo eliminar la cuenta",
+                    "No se pudo contactar el servidor. Intente nuevamente.",
+                    "power_off.png",
+                    1,
+                    "Aceptar"
+            );
+            return;
+        }
+
+        // Eliminación exitosa
         if (resp.isSuccess()) {
+            PopUp.notification(
+                    "Cliente Eliminado",
+                    "Todas las credenciales fueron eliminadas del sistema.",
+                    "check_circle.png"
+            );
             Session.getInstance().clear();
             App.setRoot("profile_screen");
-        } else {
-            showError(msg_global, resp.getMessage() == null ? "No se pudo eliminar la cuenta" : resp.getMessage());
+            return;
         }
+
+        // 🔴 Error del servidor
+        PopUp.warning(
+                "Error",
+                "No se pudo eliminar la cuenta",
+                resp.getMessage() != null ? resp.getMessage() : "Ocurrió un error inesperado.",
+                "error.png",
+                1,
+                "Aceptar"
+        );
     }
 
     private void routeServerError(String msg) {

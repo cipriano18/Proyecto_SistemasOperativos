@@ -39,7 +39,7 @@ public class CalendarService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new Response(false, "Error al obtener el calendario: " + e.getMessage(), null);
+            return null;
         }
     }
 }
