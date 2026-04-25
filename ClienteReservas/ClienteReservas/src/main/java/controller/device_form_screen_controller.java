@@ -53,6 +53,8 @@ public class device_form_screen_controller implements Initializable {
     private Button btn_add_device;
     @FXML
     private Button btn_save_reservation;
+    @FXML
+    private VBox vb_added_devices;
 
     /**
      * Initializes the controller class.

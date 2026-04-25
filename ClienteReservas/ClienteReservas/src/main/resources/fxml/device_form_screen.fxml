@@ -125,7 +125,7 @@
                               </Separator>
                            </children>
                         </HBox>
-                        <VBox minHeight="100.0" minWidth="100.0" prefWidth="760.0" VBox.vgrow="ALWAYS">
+                        <VBox fx:id="vb_added_devices" minHeight="100.0" minWidth="100.0" prefWidth="760.0" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox fx:id="hb_list_device_card" alignment="CENTER_LEFT" prefHeight="74.0" prefWidth="740.0" spacing="10.0" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #e0e0e0;">
                                  <VBox.margin>
