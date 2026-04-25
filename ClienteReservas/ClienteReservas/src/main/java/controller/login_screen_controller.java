@@ -19,7 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import dto.ClientRequest;
-import service.Response;
+import model.Response;
 import service.AuthService;
 import session.Session;
 import utils.Animations;

@@ -17,6 +17,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import dto.ClientRequest;
+import model.Response;
+import service.CalendarService;
 import session.Session;
 
 /**
@@ -97,7 +99,25 @@ public class home_screen_controller implements Initializable {
 
     @FXML
     private void GoToDevices(ActionEvent event) throws IOException {
-        App.setRoot("device_schedule_screen");
+        int idClient = Session.getInstance()
+                .getClient()
+                .getClient()
+                .getIdClient();
+        Response resp = CalendarService.enterReservationsView(idClient);
+        if (resp.isSuccess()) {
+            App.setRoot("device_schedule_screen");
+        } else {
+            PopUp.warning(
+                    "Error de conexión",
+                    "Verifique su conexión o intente nuevamente.",
+                    "Es posible que el servicio esté temporalmente no disponible o que exista un problema con su conexión a internet.\n"
+                    + "Por favor, intente nuevamente más tarde.",
+                    "power_off.png",
+                    1,
+                    "Aceptar"
+            );
+        }
+
     }
 
     @FXML

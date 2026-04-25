@@ -20,9 +20,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import model.CalendarBlock;
-import service.Response;
+import model.Response;
 import service.CalendarService;
 import utils.CalendarBuilder;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 public class device_schedule_screen_controller implements Initializable {
 
@@ -44,7 +46,7 @@ public class device_schedule_screen_controller implements Initializable {
     private TextField tf_year;
     @FXML
     private Button btn_search;
-
+    
     private final CalendarBuilder builder = new CalendarBuilder();
 
     @Override
@@ -61,10 +63,19 @@ public class device_schedule_screen_controller implements Initializable {
         });
 
         loadCalendar();
+
+        Platform.runLater(() -> {
+            Stage stage = (Stage) btn_search.getScene().getWindow();
+
+            stage.setOnCloseRequest(event -> {
+                CalendarService.exitReservationsView();
+            });
+        });
     }
 
     @FXML
     private void GoToLogin(ActionEvent event) throws IOException {
+        CalendarService.exitReservationsView();
         App.setRoot("home_screen");
     }
 

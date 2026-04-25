@@ -21,7 +21,7 @@ import javafx.scene.layout.VBox;
 import model.Client;
 import dto.ClientRequest;
 import model.Contact;
-import service.Response;
+import model.Response;
 import model.User;
 import service.ClientProfileService;
 import session.Session;
