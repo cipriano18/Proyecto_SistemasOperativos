@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import server.handlers.AdminRequestHandler;
 import server.handlers.AuditoriumDraftRequestHandler;
 import service.Response;
 import server.handlers.ClientRequestHandler;
@@ -114,6 +115,11 @@ public class ClientHandler extends Thread {
                 case "UPDATE_CLIENT":
                 case "DELETE_CLIENT":
                     resp = ClientRequestHandler.handle(command, obj);
+                    break;
+                case "CREATE_ADMIN":
+                case "UPDATE_ADMIN":
+                case "DELETE_ADMIN":
+                    resp = AdminRequestHandler.handle(command, obj);
                     break;
                 case "START_EQUIPMENT_DRAFT":
                 case "UPDATE_EQUIPMENT_DRAFT":

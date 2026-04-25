@@ -42,7 +42,16 @@ public class UserController {
 
         System.out.println("Usuario validado: " + loggedUser);
         System.out.println("Rol detectado: " + loggedUser.getIdRole());
+        // SUPER ADMIN
+        if (loggedUser.getIdRole() == 1) {
 
+            AdminRequest adminRequest = new AdminRequest();
+            adminRequest.setUser(loggedUser);
+            adminRequest.setAdmin(null);
+            adminRequest.setContact(null);
+
+            return new Response(true, "Login correcto - SUPER ADMIN", adminRequest);
+        }
         // ADMIN
         if (loggedUser.getIdRole() == 2) {
 
