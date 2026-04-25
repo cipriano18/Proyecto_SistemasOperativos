@@ -325,4 +325,203 @@ public class AuditoriumDraftDAO {
             return false;
         }
     }
+    
+    // Eliminar un draft de auditorio.
+    // Al eliminar de AUD_ReservationDrafts, también se elimina en cascada:
+    // AUD_AuditoriumDrafts y AUD_RDXE.
+    public static boolean deleteDraft(int idDraft) {
+
+        if (idDraft <= 0) {
+            return false;
+        }
+
+        String sql = "DELETE FROM AUD_ReservationDrafts WHERE id_draft = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idDraft);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Error al eliminar draft de auditorio: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    // Obtener un draft de auditorio completo por ID
+    public static AuditoriumDraftRequest getDraftById(int idDraft) {
+
+        if (idDraft <= 0) {
+            return null;
+        }
+
+        String draftSql =
+                "SELECT d.id_draft, d.id_client, d.id_section, d.reservation_date, " +
+                "       ad.id_auditorium_draft, ad.event_name, ad.attendees_count, ad.observations " +
+                "FROM AUD_ReservationDrafts d " +
+                "INNER JOIN AUD_AuditoriumDrafts ad ON d.id_draft = ad.id_draft " +
+                "WHERE d.id_draft = ? AND d.expires_at > NOW()";
+
+        String equipmentSql =
+                "SELECT id_equipment, quantity " +
+                "FROM AUD_RDXE " +
+                "WHERE id_draft = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement psDraft = conn.prepareStatement(draftSql);
+             PreparedStatement psEquipment = conn.prepareStatement(equipmentSql)) {
+
+            psDraft.setInt(1, idDraft);
+
+            try (ResultSet rs = psDraft.executeQuery()) {
+                if (rs.next()) {
+
+                    Reservation reservation = new Reservation();
+                    reservation.setIdSection(rs.getInt("id_section"));
+                    reservation.setReservationDate(rs.getDate("reservation_date"));
+
+                    AuditoriumDraft auditoriumDraft = new AuditoriumDraft();
+                    auditoriumDraft.setIdAuditoriumDraft(rs.getInt("id_auditorium_draft"));
+                    auditoriumDraft.setIdDraft(rs.getInt("id_draft"));
+                    auditoriumDraft.setEventName(rs.getString("event_name"));
+                    auditoriumDraft.setAttendeesCount(rs.getInt("attendees_count"));
+                    auditoriumDraft.setObservations(rs.getString("observations"));
+
+                    List<RXE> equipmentList = new java.util.ArrayList<>();
+
+                    psEquipment.setInt(1, idDraft);
+
+                    try (ResultSet rsEquipment = psEquipment.executeQuery()) {
+                        while (rsEquipment.next()) {
+                            RXE item = new RXE();
+                            item.setIdEquipment(rsEquipment.getInt("id_equipment"));
+                            item.setQuantity(rsEquipment.getInt("quantity"));
+                            equipmentList.add(item);
+                        }
+                    }
+
+                    AuditoriumDraftRequest request = new AuditoriumDraftRequest();
+                    request.setIdDraft(rs.getInt("id_draft"));
+                    request.setIdClient(rs.getInt("id_client"));
+                    request.setReservation(reservation);
+                    request.setAuditoriumDraft(auditoriumDraft);
+                    request.setEquipmentList(equipmentList);
+
+                    return request;
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener draft de auditorio por ID: " + e.getMessage());
+        }
+
+        return null;
+    }
+    
+    // Confirmar un draft de auditorio.
+    // Convierte la reserva temporal en reserva real y luego elimina el draft.
+    public static boolean confirmDraft(int idDraft, int idClient) {
+
+        AuditoriumDraftRequest draftRequest = getDraftById(idDraft);
+
+        if (draftRequest == null) {
+            return false;
+        }
+
+        if (draftRequest.getIdClient() != idClient) {
+            return false;
+        }
+
+        Reservation reservation = draftRequest.getReservation();
+        AuditoriumDraft auditoriumDraft = draftRequest.getAuditoriumDraft();
+        List<RXE> equipmentList = draftRequest.getEquipmentList();
+
+        if (reservation == null || auditoriumDraft == null) {
+            return false;
+        }
+
+        if (auditoriumDraft.getAttendeesCount() > 200) {
+            return false;
+        }
+
+        if (existsAuditoriumReservationByDateAndSection(
+                reservation.getReservationDate(),
+                reservation.getIdSection())) {
+            return false;
+        }
+
+        String insertReservationSql =
+                "INSERT INTO AUD_Reservations (id_section, reservation_date) VALUES (?, ?)";
+
+        String insertRXCSql =
+                "INSERT INTO AUD_RXC (id_reservation, id_client) VALUES (?, ?)";
+
+        String insertAuditoriumReservationSql =
+                "INSERT INTO AUD_AuditoriumReservations " +
+                "(id_reservation, event_name, attendees_count, observations) " +
+                "VALUES (?, ?, ?, ?)";
+
+        String insertRXESql =
+                "INSERT INTO AUD_RXE (id_reservation, id_equipment, quantity) VALUES (?, ?, ?)";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement psReservation = conn.prepareStatement(insertReservationSql, PreparedStatement.RETURN_GENERATED_KEYS);
+             PreparedStatement psRXC = conn.prepareStatement(insertRXCSql);
+             PreparedStatement psAuditoriumReservation = conn.prepareStatement(insertAuditoriumReservationSql);
+             PreparedStatement psRXE = conn.prepareStatement(insertRXESql)) {
+
+            conn.setAutoCommit(false);
+
+            psReservation.setInt(1, reservation.getIdSection());
+            psReservation.setDate(2, reservation.getReservationDate());
+            psReservation.executeUpdate();
+
+            int idReservation;
+
+            try (ResultSet generatedKeys = psReservation.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    idReservation = generatedKeys.getInt(1);
+                } else {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            psRXC.setInt(1, idReservation);
+            psRXC.setInt(2, idClient);
+            psRXC.executeUpdate();
+
+            psAuditoriumReservation.setInt(1, idReservation);
+            psAuditoriumReservation.setString(2, auditoriumDraft.getEventName());
+            psAuditoriumReservation.setInt(3, auditoriumDraft.getAttendeesCount());
+            psAuditoriumReservation.setString(4, auditoriumDraft.getObservations());
+            psAuditoriumReservation.executeUpdate();
+
+            if (equipmentList != null && !equipmentList.isEmpty()) {
+                for (RXE item : equipmentList) {
+                    int availableQuantity = getEquipmentAvailableQuantity(conn, item.getIdEquipment());
+
+                    if (item.getIdEquipment() <= 0 || item.getQuantity() <= 0 || availableQuantity < item.getQuantity()) {
+                        conn.rollback();
+                        return false;
+                    }
+
+                    psRXE.setInt(1, idReservation);
+                    psRXE.setInt(2, item.getIdEquipment());
+                    psRXE.setInt(3, item.getQuantity());
+                    psRXE.executeUpdate();
+                }
+            }
+
+            conn.commit();
+
+            deleteDraft(idDraft);
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Error al confirmar draft de auditorio: " + e.getMessage());
+            return false;
+        }
+    }
 }

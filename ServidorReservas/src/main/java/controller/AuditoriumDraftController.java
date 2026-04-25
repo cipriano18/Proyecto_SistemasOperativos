@@ -136,4 +136,52 @@ public class AuditoriumDraftController {
 
         return new Response(true, "Reserva temporal de auditorio actualizada correctamente", request);
     }
+    
+    public static Response discardAuditoriumDraft(int idDraft, int idClient) {
+
+        if (idDraft <= 0) {
+            return new Response(false, "El id de la reserva temporal es obligatorio", null);
+        }
+
+        if (idClient <= 0) {
+            return new Response(false, "El cliente es obligatorio", null);
+        }
+
+        AuditoriumDraftRequest draft = AuditoriumDraftDAO.getDraftById(idDraft);
+
+        if (draft == null) {
+            return new Response(false, "Reserva temporal no encontrada o expirada", null);
+        }
+
+        if (draft.getIdClient() != idClient) {
+            return new Response(false, "La reserva temporal no pertenece a este cliente", null);
+        }
+
+        boolean deleted = AuditoriumDraftDAO.deleteDraft(idDraft);
+
+        if (!deleted) {
+            return new Response(false, "No se pudo descartar la reserva temporal de auditorio", null);
+        }
+
+        return new Response(true, "Reserva temporal de auditorio descartada correctamente", draft);
+    }
+    
+    public static Response confirmAuditoriumDraft(int idDraft, int idClient) {
+
+        if (idDraft <= 0) {
+            return new Response(false, "El id de la reserva temporal es obligatorio", null);
+        }
+
+        if (idClient <= 0) {
+            return new Response(false, "El cliente es obligatorio", null);
+        }
+
+        boolean confirmed = AuditoriumDraftDAO.confirmDraft(idDraft, idClient);
+
+        if (!confirmed) {
+            return new Response(false, "No se pudo confirmar la reserva de auditorio", null);
+        }
+
+        return new Response(true, "Reserva de auditorio confirmada correctamente", idDraft);
+    }
 }
