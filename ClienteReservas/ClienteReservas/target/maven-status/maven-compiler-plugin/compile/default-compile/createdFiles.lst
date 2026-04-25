@@ -11,6 +11,7 @@ utils\CalendarConstants.class
 controller\device_schedule_screen_controller.class
 controller\profile_screen_controller.class
 service\RegisterClient.class
+controller\device_form_screen_controller.class
 utils\CalendarBuilder.class
 model\Client.class
 utils\Animations.class

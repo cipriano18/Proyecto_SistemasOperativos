@@ -17,7 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import dto.ClientRequest;
-import model.Response;
+import service.Response;
 import service.CalendarService;
 import session.Session;
 

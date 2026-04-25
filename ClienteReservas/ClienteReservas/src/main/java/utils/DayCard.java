@@ -4,8 +4,15 @@
  */
 package utils;
 
+import com.auditorio.clientereservas.App;
+import components.PopUp;
+import dto.EquipmentReservationDraftRequest;
+import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -16,6 +23,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import model.CalendarBlock;
+import model.Reservation;
+import service.CalendarService;
+import service.Response;
+import session.Session;
 
 public class DayCard {
 
@@ -108,7 +119,44 @@ public class DayCard {
         button.setGraphic(content);
 
         button.setOnAction(e -> {
-            System.out.println("Fecha: " + date + " | Seccion: " + idSection + " | Estado: " + status);
+            try {
+                EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
+                int idClient = Session.getInstance()
+                        .getClient()
+                        .getClient()
+                        .getIdClient();
+                request.setIdClient(idClient);
+
+                // Reservation
+                Reservation reservation = new Reservation();
+                reservation.setIdSection(idSection);
+                reservation.setReservationDate(date);
+                request.setReservation(reservation);
+
+                // Lista vacía
+                request.setEquipmentList(new ArrayList<>());
+                Response resp = CalendarService.startEquipmentDraft(request);
+
+                if (resp != null && resp.isSuccess()) {
+                    CalendarService.exitReservationsView();
+                    App.setRoot("device_form_screen");
+                } else {
+                    String msg = (resp != null) ? resp.getMessage() : "No se pudo conectar al servidor";
+
+                    PopUp.warning(
+                            "Error",
+                            "No se pudo iniciar la reserva",
+                            msg,
+                            "error.png",
+                            1,
+                            "Aceptar"
+                    );
+                }
+
+            } catch (IOException ex) {
+                Logger.getLogger(DayCard.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         });
 
         return button;
@@ -129,44 +177,44 @@ public class DayCard {
         return CalendarConstants.STATUS_AVAILABLE;
     }
 
-private void applyButtonStatus(Button button, String status) {
+    private void applyButtonStatus(Button button, String status) {
 
-    button.getStyleClass().removeAll(
-            "section-available",
-            "section-reserved",
-            "section-blocked"
-    );
+        button.getStyleClass().removeAll(
+                "section-available",
+                "section-reserved",
+                "section-blocked"
+        );
 
-    // IMPORTANTE: limpiar tooltip anterior
-    Tooltip.uninstall(button, button.getTooltip());
+        // IMPORTANTE: limpiar tooltip anterior
+        Tooltip.uninstall(button, button.getTooltip());
 
-    Tooltip tooltip = new Tooltip();
+        Tooltip tooltip = new Tooltip();
 
-    switch (status) {
+        switch (status) {
 
-        case CalendarConstants.STATUS_RESERVED:
-            button.getStyleClass().add("section-reserved");
-            button.setDisable(true);
-            button.setOpacity(0);
-            tooltip.setText("Este espacio ya está reservado");
-            Tooltip.install(button, tooltip);
-            break;
+            case CalendarConstants.STATUS_RESERVED:
+                button.getStyleClass().add("section-reserved");
+                button.setDisable(true);
+                button.setOpacity(0);
+                tooltip.setText("Este espacio ya está reservado");
+                Tooltip.install(button, tooltip);
+                break;
 
-        case CalendarConstants.STATUS_BLOCKED:
-            button.getStyleClass().add("section-blocked");
-            button.setDisable(true);
+            case CalendarConstants.STATUS_BLOCKED:
+                button.getStyleClass().add("section-blocked");
+                button.setDisable(true);
 
-            tooltip.setText("Este espacio está bloqueado");
-            Tooltip.install(button, tooltip);
-            break;
+                tooltip.setText("Este espacio está bloqueado");
+                Tooltip.install(button, tooltip);
+                break;
 
-        default:
-            button.getStyleClass().add("section-available");
-            button.setDisable(false);
+            default:
+                button.getStyleClass().add("section-available");
+                button.setDisable(false);
 
-            tooltip.setText("Disponible para reservar");
-            button.setTooltip(tooltip); // aquí sí sirve normal
-            break;
+                tooltip.setText("Disponible para reservar");
+                button.setTooltip(tooltip); // aquí sí sirve normal
+                break;
+        }
     }
-}
 }
