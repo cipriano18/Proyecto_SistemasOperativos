@@ -1,8 +1,11 @@
-package model;
+package draft;
 
+import dto.EquipmentReservationRequest;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
+import model.RXE;
+import model.Reservation;
 
 public class EquipmentReservationDraft extends EquipmentReservationRequest implements Serializable {
     private static final long serialVersionUID = 1L;

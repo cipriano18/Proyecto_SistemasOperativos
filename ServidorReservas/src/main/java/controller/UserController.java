@@ -10,11 +10,11 @@ import database.ContactDAO;
 import model.User;
 import database.UserDAO;
 import model.Admin;
-import model.AdminRequest;
+import dto.AdminRequest;
 import model.Client;
-import model.ClientRequest;
+import dto.ClientRequest;
 import model.Contact;
-import model.Response;
+import service.Response;
 import utils.Validator;
 
 /**
@@ -42,7 +42,16 @@ public class UserController {
 
         System.out.println("Usuario validado: " + loggedUser);
         System.out.println("Rol detectado: " + loggedUser.getIdRole());
+        // SUPER ADMIN
+        if (loggedUser.getIdRole() == 1) {
 
+            AdminRequest adminRequest = new AdminRequest();
+            adminRequest.setUser(loggedUser);
+            adminRequest.setAdmin(null);
+            adminRequest.setContact(null);
+
+            return new Response(true, "Login correcto - SUPER ADMIN", adminRequest);
+        }
         // ADMIN
         if (loggedUser.getIdRole() == 2) {
 

@@ -5,7 +5,7 @@
 package server.handlers;
 
 import controller.UserController;
-import model.Response;
+import service.Response;
 import model.User;
 
 /**

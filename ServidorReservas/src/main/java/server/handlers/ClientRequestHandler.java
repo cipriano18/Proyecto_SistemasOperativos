@@ -5,8 +5,8 @@
 package server.handlers;
 
 import controller.ClientController;
-import model.ClientRequest;
-import model.Response;
+import dto.ClientRequest;
+import service.Response;
 
 /**
  *

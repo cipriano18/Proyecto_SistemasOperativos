@@ -5,9 +5,9 @@
 package server.handlers;
 
 import controller.ReservationDraftController;
-import model.CalendarRequest;
-import model.EquipmentReservationDraftRequest;
-import model.Response;
+import dto.CalendarRequest;
+import dto.EquipmentReservationDraftRequest;
+import service.Response;
 
 /**
  *

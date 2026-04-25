@@ -90,8 +90,15 @@ CREATE TABLE AUD_RXE (
     id_reservation INT NOT NULL,
     id_equipment INT NOT NULL,
     quantity INT NOT NULL,
-    FOREIGN KEY (id_reservation) REFERENCES AUD_Reservations(id_reservation) ON DELETE CASCADE,
-    FOREIGN KEY (id_equipment) REFERENCES AUD_Equipment(id_equipment),
+
+    FOREIGN KEY (id_reservation) 
+        REFERENCES AUD_Reservations(id_reservation) 
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_equipment) 
+        REFERENCES AUD_Equipment(id_equipment) 
+        ON DELETE CASCADE,
+
     UNIQUE (id_reservation, id_equipment)
 );
 
@@ -114,9 +121,40 @@ CREATE TABLE AUD_RDXE (
     id_equipment INT NOT NULL,
     quantity INT NOT NULL,
 
-    FOREIGN KEY (id_draft) REFERENCES AUD_ReservationDrafts(id_draft) ON DELETE CASCADE,
-    FOREIGN KEY (id_equipment) REFERENCES AUD_Equipment(id_equipment),
+    FOREIGN KEY (id_draft) 
+        REFERENCES AUD_ReservationDrafts(id_draft) 
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (id_equipment) 
+        REFERENCES AUD_Equipment(id_equipment) 
+        ON DELETE CASCADE,
+
     UNIQUE (id_draft, id_equipment)
+);
+-- Datos específicos de reservas reales de auditorio
+CREATE TABLE AUD_AuditoriumReservations (
+    id_auditorium_reservation INT AUTO_INCREMENT PRIMARY KEY,
+    id_reservation INT NOT NULL UNIQUE,
+    event_name VARCHAR(150) NOT NULL,
+    attendees_count INT,
+    observations VARCHAR(500),
+
+    FOREIGN KEY (id_reservation)
+        REFERENCES AUD_Reservations(id_reservation)
+        ON DELETE CASCADE
+);
+
+-- Datos específicos de reservas temporales de auditorio
+CREATE TABLE AUD_AuditoriumDrafts (
+    id_auditorium_draft INT AUTO_INCREMENT PRIMARY KEY,
+    id_draft INT NOT NULL UNIQUE,
+    event_name VARCHAR(150),
+    attendees_count INT,
+    observations VARCHAR(500),
+
+    FOREIGN KEY (id_draft)
+        REFERENCES AUD_ReservationDrafts(id_draft)
+        ON DELETE CASCADE
 );
 
 INSERT INTO AUD_Roles (name) VALUES 

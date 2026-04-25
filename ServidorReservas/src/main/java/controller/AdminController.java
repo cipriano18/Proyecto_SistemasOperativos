@@ -3,12 +3,12 @@ package controller;
 import model.Admin;
 import model.User;
 import model.Contact;
-import model.Response;
+import service.Response;
 
 import database.UserDAO;
 import database.AdminDAO;
 import database.ContactDAO;
-import model.AdminRequest;
+import dto.AdminRequest;
 
 import utils.Validator;
 

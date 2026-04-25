@@ -49,4 +49,10 @@ public class Equipment implements Serializable {
     public void setTotalQuantity(int totalQuantity) {
         this.totalQuantity = totalQuantity;
     }
+
+    @Override
+    public String toString() {
+        return "Equipment{" + "idEquipment=" + idEquipment + ", name=" + name + ", totalQuantity=" + totalQuantity + '}';
+    }
+    
 }

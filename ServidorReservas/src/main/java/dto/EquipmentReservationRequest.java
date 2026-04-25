@@ -1,7 +1,9 @@
-package model;
+package dto;
 
 import java.io.Serializable;
 import java.util.List;
+import model.RXE;
+import model.Reservation;
 
 public class EquipmentReservationRequest implements Serializable {
     private static final long serialVersionUID = 1L;

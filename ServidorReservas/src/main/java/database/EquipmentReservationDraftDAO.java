@@ -1,6 +1,6 @@
 package database;
 
-import model.EquipmentReservationDraft;
+import draft.EquipmentReservationDraft;
 import model.RXE;
 import model.Reservation;
 
@@ -47,7 +47,7 @@ public class EquipmentReservationDraftDAO {
                 block.setReservationDate(rs.getDate("reservation_date"));
                 block.setIdSection(rs.getInt("id_section"));
                 block.setStatus("BLOCKED");
-                blocks.add(block);
+                blocks.add(block); 
             }
 
         } catch (SQLException e) {
