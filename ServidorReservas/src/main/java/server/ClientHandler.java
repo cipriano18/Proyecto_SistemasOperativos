@@ -141,6 +141,7 @@ public class ClientHandler extends Thread {
                 case "GET_EQUIPMENT":
                 case "GET_ALL_EQUIPMENT":
                 case "DELETE_EQUIPMENT":
+                case "GET_AVAILABLE_EQUIPMENT":    
                     resp = EquipmentRequestHandler.handle(command, obj);
                     break;
                 case "LOGIN":

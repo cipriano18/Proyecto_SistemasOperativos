@@ -66,6 +66,25 @@ public class EquipmentController {
 
         return new Response(true, "Equipos obtenidos correctamente", equipmentList);
     }
+    
+    // Obtener equipos disponibles por fecha y sección
+    public static Response getAvailableEquipmentByDateAndSection(java.sql.Date reservationDate, int idSection) {
+
+        if (reservationDate == null) {
+            return new Response(false, "La fecha de reserva es obligatoria", null);
+        }
+
+        if (idSection <= 0) {
+            return new Response(false, "La sección es obligatoria", null);
+        }
+
+        List<Equipment> equipmentList = EquipmentDAO.getAvailableEquipmentByDateAndSection(
+                reservationDate,
+                idSection
+        );
+
+        return new Response(true, "Equipos disponibles obtenidos correctamente", equipmentList);
+    }
 
 // Actualizar equipo
     public static Response updateEquipment(Equipment equipment) {

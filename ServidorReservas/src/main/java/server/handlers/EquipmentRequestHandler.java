@@ -6,6 +6,7 @@ package server.handlers;
 
 import controller.EquipmentController;
 import model.Equipment;
+import model.Reservation;
 import service.Response;
 
 /**
@@ -29,6 +30,17 @@ public class EquipmentRequestHandler {
 
             case "GET_ALL_EQUIPMENT":
                 return EquipmentController.getAllEquipment();
+            case "GET_AVAILABLE_EQUIPMENT": {
+            Reservation reservation = (Reservation) obj;
+
+            System.out.println("---- GET_AVAILABLE_EQUIPMENT ----");
+            System.out.println("Objeto recibido: " + reservation);
+
+            return EquipmentController.getAvailableEquipmentByDateAndSection(
+                    reservation.getReservationDate(),
+                    reservation.getIdSection()
+            );
+        }    
             case "DELETE_EQUIPMENT":
                 return EquipmentController.deleteEquipment((Equipment) obj);
             default:
