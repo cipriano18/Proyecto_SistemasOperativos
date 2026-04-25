@@ -1,5 +1,6 @@
 package server;
 
+import controller.AuditoriumDraftController;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -124,6 +125,7 @@ public class ClientHandler extends Thread {
                     resp = ReservationDraftRequestHandler.handle(command, obj);
                     break;
                 case "START_AUDITORIUM_DRAFT":
+                case "UPDATE_AUDITORIUM_DRAFT":
                     resp = AuditoriumDraftRequestHandler.handle(command, obj);
                     break;
                 case "CREATE_EQUIPMENT":

@@ -22,7 +22,8 @@ public class AuditoriumDraftRequestHandler {
 
             case "START_AUDITORIUM_DRAFT":
                 return AuditoriumDraftController.startAuditoriumDraft(request);
-              
+            case "UPDATE_AUDITORIUM_DRAFT":
+                return AuditoriumDraftController.updateAuditoriumDraft(request);  
        
 
             default:

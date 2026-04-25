@@ -210,4 +210,119 @@ public class AuditoriumDraftDAO {
 
         return false;
     }
+    // Obtener la cantidad total disponible de un equipo
+    private static int getEquipmentAvailableQuantity(Connection conn, int idEquipment) throws SQLException {
+        String sql = "SELECT available_quantity FROM AUD_Equipment WHERE id_equipment = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idEquipment);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("available_quantity");
+                }
+            }
+        }
+
+        return 0;
+    }
+    // Actualizar un draft de auditorio existente
+    public static boolean updateDraft(AuditoriumDraftRequest request) {
+
+        if (request == null || request.getIdDraft() <= 0 || request.getAuditoriumDraft() == null) {
+            return false;
+        }
+
+        AuditoriumDraft auditoriumDraft = request.getAuditoriumDraft();
+
+        // Validación para que no exceda la cantidad del auditorio
+        if (auditoriumDraft.getAttendeesCount() > 200) {
+            System.out.println("Error: El auditorio solo permite máximo 200 personas");
+            return false;
+        }
+
+        String checkDraftSql =
+                "SELECT expires_at FROM AUD_ReservationDrafts WHERE id_draft = ?";
+
+        String updateAuditoriumSql =
+                "UPDATE AUD_AuditoriumDrafts " +
+                "SET event_name = ?, attendees_count = ?, observations = ? " +
+                "WHERE id_draft = ?";
+
+        String deleteRDXESql =
+                "DELETE FROM AUD_RDXE WHERE id_draft = ?";
+
+        String insertRDXESql =
+                "INSERT INTO AUD_RDXE (id_draft, id_equipment, quantity) VALUES (?, ?, ?)";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement psCheck = conn.prepareStatement(checkDraftSql);
+             PreparedStatement psUpdate = conn.prepareStatement(updateAuditoriumSql);
+             PreparedStatement psDeleteRDXE = conn.prepareStatement(deleteRDXESql);
+             PreparedStatement psInsertRDXE = conn.prepareStatement(insertRDXESql)) {
+
+            conn.setAutoCommit(false);
+
+            // 1. Verificar que el draft exista y no esté expirado
+            psCheck.setInt(1, request.getIdDraft());
+            ResultSet rs = psCheck.executeQuery();
+
+            if (!rs.next()) {
+                conn.rollback();
+                return false;
+            }
+
+            Timestamp expiresAt = rs.getTimestamp("expires_at");
+
+            if (expiresAt.before(new Timestamp(System.currentTimeMillis()))) {
+                conn.rollback();
+                return false;
+            }
+
+            // 2. Actualizar datos del auditorio
+            psUpdate.setString(1, auditoriumDraft.getEventName());
+            psUpdate.setInt(2, auditoriumDraft.getAttendeesCount());
+            psUpdate.setString(3, auditoriumDraft.getObservations());
+            psUpdate.setInt(4, request.getIdDraft());
+
+            psUpdate.executeUpdate();
+
+            // 3. Reemplazar equipos
+            psDeleteRDXE.setInt(1, request.getIdDraft());
+            psDeleteRDXE.executeUpdate();
+
+            List<RXE> equipmentList = request.getEquipmentList();
+
+            if (equipmentList != null && !equipmentList.isEmpty()) {
+                for (RXE item : equipmentList) {
+
+                    if (item.getIdEquipment() <= 0 || item.getQuantity() <= 0) {
+                        conn.rollback();
+                        return false;
+                    }
+
+                    int availableQuantity = getEquipmentAvailableQuantity(conn, item.getIdEquipment());
+
+                    if (availableQuantity < item.getQuantity()) {
+                        System.out.println("Error: cantidad solicitada mayor al inventario disponible del equipo "
+                                + item.getIdEquipment());
+                        conn.rollback();
+                        return false;
+                    }
+
+                    psInsertRDXE.setInt(1, request.getIdDraft());
+                    psInsertRDXE.setInt(2, item.getIdEquipment());
+                    psInsertRDXE.setInt(3, item.getQuantity());
+                    psInsertRDXE.executeUpdate();
+                }
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar draft de auditorio: " + e.getMessage());
+            return false;
+        }
+    }
 }

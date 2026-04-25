@@ -18,10 +18,10 @@ public class TestClient {
     private static final int PORT = 8000;
 
     public static void main(String[] args) {
-        crearReservaTemporalAuditorio();
+        actualizarReservaTemporalAuditorio(9); // Cambiá este ID por un id_draft real
     }
 
-    private static void crearReservaTemporalAuditorio() {
+    private static void actualizarReservaTemporalAuditorio(int idDraft) {
 
         try (
             Socket socket = new Socket(HOST, PORT);
@@ -29,50 +29,47 @@ public class TestClient {
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
         ) {
 
-            System.out.println("\n=========== CREANDO RESERVA TEMPORAL DE AUDITORIO ===========");
+            System.out.println("\n=========== ACTUALIZANDO RESERVA TEMPORAL DE AUDITORIO ===========");
 
             Reservation reservation = new Reservation();
-            reservation.setIdSection(1);
+            reservation.setIdSection(2);
             reservation.setReservationDate(Date.valueOf("2026-05-15"));
 
             AuditoriumDraft auditoriumDraft = new AuditoriumDraft();
-            auditoriumDraft.setEventName("Charla de Inteligencia Artificial");
-            auditoriumDraft.setAttendeesCount(80);
-            auditoriumDraft.setObservations("Se requiere audio y proyector.");
+            auditoriumDraft.setEventName("Evento actualizado desde TestClient");
+            auditoriumDraft.setAttendeesCount(120);
+            auditoriumDraft.setObservations("Actualizado correctamente con equipos nuevos.");
 
             List<RXE> equipmentList = new ArrayList<>();
 
-            RXE projector = new RXE();
-            projector.setIdEquipment(1);
-            projector.setQuantity(1);
-            equipmentList.add(projector);
-
-            RXE screen = new RXE();
-            screen.setIdEquipment(3);
-            screen.setQuantity(1);
-            equipmentList.add(screen);
+            RXE mic = new RXE();
+            mic.setIdEquipment(2);
+            mic.setQuantity(4);
+            equipmentList.add(mic);
 
             AuditoriumDraftRequest request = new AuditoriumDraftRequest();
-            request.setIdClient(12); // Debe existir en AUD_Clients
+            request.setIdDraft(idDraft);
+            request.setIdClient(1); // Debe coincidir con el cliente dueño del draft
             request.setReservation(reservation);
             request.setAuditoriumDraft(auditoriumDraft);
             request.setEquipmentList(equipmentList);
 
-            System.out.println("\n=== DATOS ENVIADOS ===");
-            System.out.println("Cliente: " + request.getIdClient());
+            System.out.println("\n=== DATOS UPDATE ENVIADOS ===");
+            System.out.println("IdDraft: " + request.getIdDraft());
+            System.out.println("IdClient: " + request.getIdClient());
             System.out.println("Fecha: " + reservation.getReservationDate());
             System.out.println("Sección: " + reservation.getIdSection());
             System.out.println("Evento: " + auditoriumDraft.getEventName());
             System.out.println("Asistentes: " + auditoriumDraft.getAttendeesCount());
             System.out.println("Observaciones: " + auditoriumDraft.getObservations());
 
-            System.out.println("\nEquipos:");
+            System.out.println("\nEquipos enviados:");
             for (RXE item : equipmentList) {
                 System.out.println("- Equipo ID: " + item.getIdEquipment()
                         + " | Cantidad: " + item.getQuantity());
             }
 
-            out.writeObject("START_AUDITORIUM_DRAFT");
+            out.writeObject("UPDATE_AUDITORIUM_DRAFT");
             out.flush();
 
             out.writeObject(request);
@@ -80,7 +77,7 @@ public class TestClient {
 
             Object response = in.readObject();
 
-            System.out.println("\n=== RESPUESTA ===");
+            System.out.println("\n=== RESPUESTA UPDATE ===");
 
             if (response instanceof Response) {
                 Response resp = (Response) response;
@@ -92,25 +89,11 @@ public class TestClient {
                 if (resp.getData() instanceof AuditoriumDraftRequest) {
                     AuditoriumDraftRequest data = (AuditoriumDraftRequest) resp.getData();
 
-                    System.out.println("\n=== RESERVA TEMPORAL CREADA ===");
+                    System.out.println("\n=== DRAFT ACTUALIZADO ===");
                     System.out.println("IdDraft: " + data.getIdDraft());
-                    System.out.println("IdClient: " + data.getIdClient());
-                    System.out.println("Fecha: " + data.getReservation().getReservationDate());
-                    System.out.println("Sección: " + data.getReservation().getIdSection());
-
-                    if (data.getAuditoriumDraft() != null) {
-                        System.out.println("Evento: " + data.getAuditoriumDraft().getEventName());
-                        System.out.println("Asistentes: " + data.getAuditoriumDraft().getAttendeesCount());
-                        System.out.println("Observaciones: " + data.getAuditoriumDraft().getObservations());
-                    }
-
-                    if (data.getEquipmentList() != null) {
-                        System.out.println("\nEquipos guardados:");
-                        for (RXE item : data.getEquipmentList()) {
-                            System.out.println("- Equipo ID: " + item.getIdEquipment()
-                                    + " | Cantidad: " + item.getQuantity());
-                        }
-                    }
+                    System.out.println("Evento: " + data.getAuditoriumDraft().getEventName());
+                    System.out.println("Asistentes: " + data.getAuditoriumDraft().getAttendeesCount());
+                    System.out.println("Observaciones: " + data.getAuditoriumDraft().getObservations());
                 }
 
             } else {
@@ -118,7 +101,7 @@ public class TestClient {
             }
 
         } catch (Exception e) {
-            System.out.println("Error al crear reserva temporal de auditorio:");
+            System.out.println("Error al actualizar reserva temporal de auditorio:");
             e.printStackTrace();
         }
     }
