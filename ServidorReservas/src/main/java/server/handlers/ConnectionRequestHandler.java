@@ -4,7 +4,7 @@
  */
 package server.handlers;
 
-import model.Response;
+import service.Response;
 import server.ClientHandler;
 import server.Server;
 

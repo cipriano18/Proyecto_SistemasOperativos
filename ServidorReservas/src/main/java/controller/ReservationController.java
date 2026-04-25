@@ -2,10 +2,10 @@ package controller;
 
 import database.ReservationDAO;
 import java.util.List;
-import model.EquipmentReservationRequest;
+import dto.EquipmentReservationRequest;
 import model.RXE;
 import model.Reservation;
-import model.Response;
+import service.Response;
 
 public class ReservationController {
 

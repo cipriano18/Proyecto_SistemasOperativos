@@ -10,11 +10,11 @@ import database.ContactDAO;
 import model.User;
 import database.UserDAO;
 import model.Admin;
-import model.AdminRequest;
+import dto.AdminRequest;
 import model.Client;
-import model.ClientRequest;
+import dto.ClientRequest;
 import model.Contact;
-import model.Response;
+import service.Response;
 import utils.Validator;
 
 /**

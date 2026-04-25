@@ -7,7 +7,7 @@ package controller;
 import database.EquipmentDAO;
 import java.util.List;
 import model.Equipment;
-import model.Response;
+import service.Response;
 import utils.Validator;
 
 /**

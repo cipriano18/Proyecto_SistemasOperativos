@@ -5,10 +5,10 @@ import database.ReservationDAO;
 import java.util.ArrayList;
 import java.util.List;
 import model.CalendarBlock;
-import model.EquipmentReservationDraft;
-import model.EquipmentReservationDraftRequest;
-import model.EquipmentReservationRequest;
-import model.Response;
+import draft.EquipmentReservationDraft;
+import dto.EquipmentReservationDraftRequest;
+import dto.EquipmentReservationRequest;
+import service.Response;
 import model.RXE;
 import model.Reservation;
 

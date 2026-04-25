@@ -3,7 +3,7 @@ package utils;
 import java.util.ArrayList;
 import java.util.List;
 import model.Client;
-import model.ClientRequest;
+import dto.ClientRequest;
 import model.Contact;
 import model.User;
 

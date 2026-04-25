@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import model.Client;
-import model.ClientRequest;
+import dto.ClientRequest;
 import model.Contact;
 import model.User;
 

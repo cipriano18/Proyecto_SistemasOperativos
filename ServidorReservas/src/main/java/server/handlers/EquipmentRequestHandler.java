@@ -6,7 +6,7 @@ package server.handlers;
 
 import controller.EquipmentController;
 import model.Equipment;
-import model.Response;
+import service.Response;
 
 /**
  *

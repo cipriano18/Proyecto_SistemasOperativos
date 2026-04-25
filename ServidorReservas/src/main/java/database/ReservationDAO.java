@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
-import model.EquipmentReservationRequest;
+import dto.EquipmentReservationRequest;
 import model.CalendarBlock;
 /**
  *

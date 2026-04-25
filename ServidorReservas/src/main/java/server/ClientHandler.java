@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import model.Response;
+import service.Response;
 import server.handlers.ClientRequestHandler;
 import server.handlers.UserRequestHandler;
 import server.handlers.ConnectionRequestHandler;

@@ -10,9 +10,9 @@ import database.ReservationDAO;
 import database.UserDAO;
 import java.util.List;
 import model.Client;
-import model.ClientRequest;
+import dto.ClientRequest;
 import model.Contact;
-import model.Response;
+import service.Response;
 import model.User;
 import utils.Validator;
 

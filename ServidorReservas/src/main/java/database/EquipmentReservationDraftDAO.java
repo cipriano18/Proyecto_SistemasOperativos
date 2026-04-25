@@ -1,6 +1,6 @@
 package database;
 
-import model.EquipmentReservationDraft;
+import draft.EquipmentReservationDraft;
 import model.RXE;
 import model.Reservation;
 

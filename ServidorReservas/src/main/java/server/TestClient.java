@@ -6,9 +6,9 @@ import java.net.Socket;
 import java.util.Scanner;
 
 import model.Client;
-import model.ClientRequest;
+import dto.ClientRequest;
 import model.Contact;
-import model.Response;
+import service.Response;
 import model.User;
 
 public class TestClient {

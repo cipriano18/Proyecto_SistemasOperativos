@@ -6,7 +6,6 @@ package service;
 
 import java.io.IOException;
 import model.CalendarBlock;
-import model.Response;
 import server.ClientHandler;
 import server.Server;
 
