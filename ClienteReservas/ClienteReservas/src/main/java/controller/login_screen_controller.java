@@ -6,6 +6,7 @@ package controller;
 
 import com.auditorio.clientereservas.App;
 import components.PopUp;
+import dto.AdminRequest;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -76,6 +77,7 @@ public class login_screen_controller implements Initializable {
         }
 
         Response resp = AuthService.login(username, password);
+
         if (resp == null) {
             PopUp.warning(
                     "Error de conexión",
@@ -102,25 +104,51 @@ public class login_screen_controller implements Initializable {
             return;
         }
 
-        if (!(resp.getData() instanceof ClientRequest)) {
-            PopUp.warning(
-                    "Error inesperado",
-                    "Respuesta inválida del servidor",
-                    "No se pudo procesar la información recibida.",
-                    "dangerous.png",
-                    1,
-                    "Aceptar"
-            );
+        Object data = resp.getData();
+
+        if (data instanceof ClientRequest) {
+
+            ClientRequest clientData = (ClientRequest) data;
+            int role = clientData.getUser().getIdRole();
+
+            if (role != 3) {
+                PopUp.warning(
+                        "Acceso denegado",
+                        "No tiene permisos",
+                        "Este usuario no puede acceder como cliente.",
+                        "person_off.png",
+                        1,
+                        "Aceptar"
+                );
+                return;
+            }
+
+            Session.getInstance().setClient(clientData);
+            App.setRoot("home_screen");
             return;
         }
 
-        ClientRequest data = (ClientRequest) resp.getData();
+        if (data instanceof AdminRequest) {
 
-        if (data.getUser().getIdRole() != 3 && data.getUser().getIdRole() != 2 && data.getUser().getIdRole() != 1) {
+            AdminRequest adminData = (AdminRequest) data;
+            int role = adminData.getUser().getIdRole();
+
+            if (role == 1) {
+                Session.getInstance().setAdmin(adminData);
+                App.setRoot("register_admin_screen");
+                return;
+            }
+
+            if (role == 2) {
+                Session.getInstance().setAdmin(adminData);
+                App.setRoot("admin_profile_screen");
+                return;
+            }
+
             PopUp.warning(
                     "Acceso denegado",
                     "No tiene permisos",
-                    "Este usuario no puede acceder a esta aplicación.",
+                    "Este administrador no tiene un rol válido.",
                     "person_off.png",
                     1,
                     "Aceptar"
@@ -128,9 +156,14 @@ public class login_screen_controller implements Initializable {
             return;
         }
 
-        Session.getInstance().setClient(data);
-        App.setRoot("home_screen");
-
+        PopUp.warning(
+                "Error inesperado",
+                "Respuesta inválida del servidor",
+                "No se pudo procesar la información recibida.",
+                "dangerous.png",
+                1,
+                "Aceptar"
+        );
     }
 
     private void showError(String msg) {
