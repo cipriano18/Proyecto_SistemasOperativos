@@ -1,5 +1,8 @@
 package controller;
 
+import com.auditorio.clientereservas.App;
+import components.PopUp;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +20,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import model.CalendarBlock;
-import model.Response;
+import service.Response;
 import service.CalendarService;
 import utils.CalendarBuilder;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 public class device_schedule_screen_controller implements Initializable {
 
@@ -41,7 +46,7 @@ public class device_schedule_screen_controller implements Initializable {
     private TextField tf_year;
     @FXML
     private Button btn_search;
-
+    
     private final CalendarBuilder builder = new CalendarBuilder();
 
     @Override
@@ -58,11 +63,20 @@ public class device_schedule_screen_controller implements Initializable {
         });
 
         loadCalendar();
+
+        Platform.runLater(() -> {
+            Stage stage = (Stage) btn_search.getScene().getWindow();
+
+            stage.setOnCloseRequest(event -> {
+                CalendarService.exitReservationsView();
+            });
+        });
     }
 
     @FXML
-    private void GoToLogin(ActionEvent event) {
-        // Aquí puedes agregar la navegación al login
+    private void GoToLogin(ActionEvent event) throws IOException {
+        CalendarService.exitReservationsView();
+        App.setRoot("home_screen");
     }
 
     @FXML
@@ -131,13 +145,36 @@ public class device_schedule_screen_controller implements Initializable {
 
         Response response = CalendarService.getCalendarBlocks(month, year);
 
-        if (response.isSuccess()) {
-            List<CalendarBlock> blocks = (List<CalendarBlock>) response.getData();
-            builder.buildCalendar(month, year, grid_calendar, blocks);
-        } else {
-            System.out.println(response.getMessage());
+        if (response == null) {
+            PopUp.warning(
+                    "Error de conexión",
+                    "No se pudo obtener el calendario",
+                    "No se pudo contactar el servidor. Verifique su conexión o intente nuevamente.",
+                    "power_off.png",
+                    1,
+                    "Aceptar"
+            );
+
             builder.buildCalendar(month, year, grid_calendar, new ArrayList<>());
+            return;
         }
+
+        if (!response.isSuccess()) {
+            PopUp.warning(
+                    "Error al cargar calendario",
+                    "No se pudo obtener la información",
+                    response.getMessage() != null ? response.getMessage() : "Ocurrió un error inesperado.",
+                    "error.png",
+                    1,
+                    "Aceptar"
+            );
+
+            builder.buildCalendar(month, year, grid_calendar, new ArrayList<>());
+            return;
+        }
+
+        List<CalendarBlock> blocks = (List<CalendarBlock>) response.getData();
+        builder.buildCalendar(month, year, grid_calendar, blocks);
     }
 
     private void setupYearField() {

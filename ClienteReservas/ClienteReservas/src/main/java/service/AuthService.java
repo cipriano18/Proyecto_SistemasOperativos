@@ -6,7 +6,6 @@ package service;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import model.Response;
 import model.User;
 import network.ServerConnection;
 import network.SocketManager;
@@ -44,7 +43,7 @@ public class AuthService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new Response(false, "Error al conectar con el servidor: " + e.getMessage(), null);
+            return null;
         }
     }
 }

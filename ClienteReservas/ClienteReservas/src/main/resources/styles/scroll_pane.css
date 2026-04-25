@@ -1,0 +1,65 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 25 abr. 2026, 14:37:46
+    Author     : Alvaro Artavia
+*/
+
+/* Quitar fondo y bordes del ScrollPane */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Quitar fondo interno (viewport) */
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Quitar fondo de todo lo demás */
+.scroll-pane .content {
+    -fx-background-color: transparent;
+}
+
+/* Quitar scroll vertical COMPLETAMENTE */
+.scroll-pane .scroll-bar:vertical {
+    -fx-pref-width: 0;
+    -fx-opacity: 0;
+}
+
+/* Personalizar scroll horizontal */
+.scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-height: 8;
+}
+
+/* Track (la línea de fondo del scroll) */
+.scroll-pane .scroll-bar:horizontal .track {
+    -fx-background-color: transparent;
+}
+
+/* Thumb (la barrita que se mueve) */
+.scroll-pane .scroll-bar:horizontal .thumb {
+    -fx-background-color: #C8102E;
+    -fx-background-radius: 10;
+}
+
+/* Hover (cuando pasas mouse) */
+.scroll-pane .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #9E0F24;
+}
+
+/* Quitar botones del scroll */
+.scroll-pane .increment-button,
+.scroll-pane .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-pane .increment-arrow,
+.scroll-pane .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}

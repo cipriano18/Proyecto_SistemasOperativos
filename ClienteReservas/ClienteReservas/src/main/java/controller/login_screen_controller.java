@@ -5,10 +5,11 @@
 package controller;
 
 import com.auditorio.clientereservas.App;
+import components.PopUp;
+import dto.AdminRequest;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.animation.Animation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,8 +19,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import model.ClientRequest;
-import model.Response;
+import dto.ClientRequest;
+import service.Response;
 import service.AuthService;
 import session.Session;
 import utils.Animations;
@@ -77,16 +78,92 @@ public class login_screen_controller implements Initializable {
 
         Response resp = AuthService.login(username, password);
 
-        if (resp.isSuccess()) {
-            if (resp.getData() instanceof ClientRequest) {
-                ClientRequest data = (ClientRequest) resp.getData();
-                if (data.getUser().getIdRole() == 3) {
-                    Session.getInstance().setClient(data);
-                    App.setRoot("home_screen");
-                }
-            }
+        if (resp == null) {
+            PopUp.warning(
+                    "Error de conexión",
+                    "Verifique su conexión o intente nuevamente.",
+                    "Es posible que el servicio esté temporalmente no disponible o que exista un problema con su conexión a internet.\n"
+                    + "Por favor, intente nuevamente más tarde.",
+                    "power_off.png",
+                    1,
+                    "Aceptar"
+            );
+            return;
         }
 
+        if (!resp.isSuccess()) {
+            PopUp.warning(
+                    "Credenciales inválidas",
+                    "Usuario o contraseña incorrectos",
+                    resp.getMessage() != null ? resp.getMessage() : "Intente nuevamente.",
+                    "person_off.png",
+                    1,
+                    "Aceptar"
+            );
+            System.out.println(resp.getMessage());
+            return;
+        }
+
+        Object data = resp.getData();
+
+        if (data instanceof ClientRequest) {
+
+            ClientRequest clientData = (ClientRequest) data;
+            int role = clientData.getUser().getIdRole();
+
+            if (role != 3) {
+                PopUp.warning(
+                        "Acceso denegado",
+                        "No tiene permisos",
+                        "Este usuario no puede acceder como cliente.",
+                        "person_off.png",
+                        1,
+                        "Aceptar"
+                );
+                return;
+            }
+
+            Session.getInstance().setClient(clientData);
+            App.setRoot("home_screen");
+            return;
+        }
+
+        if (data instanceof AdminRequest) {
+
+            AdminRequest adminData = (AdminRequest) data;
+            int role = adminData.getUser().getIdRole();
+
+            if (role == 1) {
+                Session.getInstance().setAdmin(adminData);
+                App.setRoot("register_admin_screen");
+                return;
+            }
+
+            if (role == 2) {
+                Session.getInstance().setAdmin(adminData);
+                App.setRoot("admin_profile_screen");
+                return;
+            }
+
+            PopUp.warning(
+                    "Acceso denegado",
+                    "No tiene permisos",
+                    "Este administrador no tiene un rol válido.",
+                    "person_off.png",
+                    1,
+                    "Aceptar"
+            );
+            return;
+        }
+
+        PopUp.warning(
+                "Error inesperado",
+                "Respuesta inválida del servidor",
+                "No se pudo procesar la información recibida.",
+                "dangerous.png",
+                1,
+                "Aceptar"
+        );
     }
 
     private void showError(String msg) {
