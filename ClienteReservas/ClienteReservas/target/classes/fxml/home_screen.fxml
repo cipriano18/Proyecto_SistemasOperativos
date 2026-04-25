@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+
+<HBox minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" styleClass="hero-panel" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.home_screen_controller">
+   <children>
+      <VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="30.0" HBox.hgrow="ALWAYS">
+         <children>
+            <HBox alignment="CENTER">
+               <children>
+                  <VBox alignment="CENTER" spacing="6">
+                     <children>
+                        <Label fx:id="lbl_welcome" styleClass="hero-title" text="¿Qué hacemos " textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="Tw Cen MT Bold" size="36.0" />
+                           </font>
+                        </Label>
+                        <Label contentDisplay="CENTER" styleClass="hero-subtitle" text="Gestiona tus reservas de auditorios y equipos desde este panel de forma rápida y sencilla." textAlignment="CENTER" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <VBox alignment="CENTER" spacing="5.0">
+                     <children>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Button fx:id="btn_auditorium" mnemonicParsing="false" onAction="#GoToAuditorium" prefHeight="106.0" prefWidth="231.0" styleClass="btn-section">
+                                 <graphic>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <ImageView fitHeight="35.0" fitWidth="35.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/seating.png" />
+                                             </image>
+                                          </ImageView>
+                                          <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <Label styleClass="btn-title" text="Reservar auditorio" />
+                                                <Label styleClass="form-subtitle" text="Reserva un auditorio y&#10;el equipo necesario en&#10;una sola solicitud." />
+                                             </children>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="btn_devices" mnemonicParsing="false" onAction="#GoToDevices" prefHeight="106.0" prefWidth="231.0" styleClass="btn-section" textFill="#e8e5e5">
+                                 <graphic>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/video.png" />
+                                             </image>
+                                          </ImageView>
+                                          <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <Label styleClass="btn-title" text="Reservar equipos" />
+                                                <Label styleClass="form-subtitle" text="Solicita equipos como&#10;proyectores, micrófonos&#10;u otros disponibles." />
+                                             </children>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Button fx:id="btn_schedule" mnemonicParsing="false" onAction="#GoToSchedule" prefHeight="106.0" prefWidth="231.0" styleClass="btn-section">
+                                 <graphic>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/event_note.png" />
+                                             </image>
+                                          </ImageView>
+                                          <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <Label styleClass="btn-title" text="Mis reservas" />
+                                                <Label styleClass="form-subtitle" text="Consulta tus reservas&#10;activas e historial." />
+                                             </children>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="btn_profile" mnemonicParsing="false" onAction="#GoToProfile" prefHeight="106.0" prefWidth="231.0" styleClass="btn-section">
+                                 <graphic>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/user.png" />
+                                             </image>
+                                          </ImageView>
+                                          <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <Label styleClass="btn-title" text="Mi Perfil" />
+                                                <Label styleClass="form-subtitle" text="Visualiza y actualiza tu&#10;información personal." />
+                                             </children>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <HBox spacing="5.0">
+                           <children>
+                              <Button fx:id="btn_leave" mnemonicParsing="false" onAction="#GoToLogin" prefHeight="106.0" prefWidth="467.0" styleClass="btn-section" HBox.hgrow="ALWAYS">
+                                 <graphic>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <ImageView fitHeight="50.0" fitWidth="50.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/door.png" />
+                                             </image>
+                                          </ImageView>
+                                          <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <Label styleClass="btn-title" text="Salir" />
+                                                <Label styleClass="form-subtitle" text="Cerrar sesión del sistema." />
+                                             </children>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="40.0" left="40.0" right="20.0" top="40.0" />
+         </padding>
+      </VBox>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="405.0" minWidth="440.0" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+         <HBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </HBox.margin>
+         <content>
+            <VBox alignment="CENTER" prefWidth="345.0" style="-fx-background-color: white;">
+               <children>
+                  <VBox fx:id="vb_info" prefHeight="348.0" prefWidth="325.0" spacing="16">
+                     <children>
+                        <Label styleClass="field-label" text="INFORMACION GENERAL" />
+                        <Label fx:id="lbl_title" minWidth="300.0" styleClass="hero-title" text="Auditorio Ramón Cabezas Donaire" />
+                        <Label fx:id="lbl_info" minWidth="300.0" styleClass="form-subtitle" text="El Auditorio Ramón Cabezas Donaire, ubicado en el Campus Coto de la Universidad Nacional, es un espacio destinado a la realización de actividades académicas, culturales e institucionales. Cuenta con las condiciones necesarias para el desarrollo de conferencias, charlas, presentaciones y eventos universitarios, brindando un entorno adecuado para la comunidad estudiantil y docente." wrapText="true" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="40.0" right="40.0" top="40.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <ImageView fx:id="img_image1" fitHeight="197.0" fitWidth="407.0" opacity="0.7" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
+                     <image>
+                        <Image url="@../assets/auditorio.png" />
+                     </image>
+                     <effect>
+                        <InnerShadow choke="0.63" height="68.34" radius="33.4375" width="67.41">
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </InnerShadow>
+                     </effect>
+                  </ImageView>
+                  <VBox fx:id="vb_info1" prefHeight="167.0" prefWidth="345.0" spacing="16">
+                     <children>
+                        <Label fx:id="lbl_title1" minWidth="300.0" styleClass="hero-title" text="¿Por que ese nombre?" />
+                        <Label fx:id="lbl_info1" minWidth="300.0" styleClass="form-subtitle" text="El auditorio lleva su nombre en honor a Ramón Cabezas Donaire, quien donó el terreno donde hoy se ubica el Campus Coto de la Universidad Nacional, contribuyendo al desarrollo educativo de la región." wrapText="true" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="40.0" right="40.0" top="40.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <ImageView fx:id="img_image11" fitHeight="432.0" fitWidth="345.0" opacity="0.7" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/images.jpg" />
+                     </image>
+                     <effect>
+                        <InnerShadow choke="0.63" height="68.34" radius="33.4375" width="67.41">
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </InnerShadow>
+                     </effect>
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
+                  </ImageView>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+   <stylesheets>
+      <URL value="@../styles/main.css" />
+      <URL value="@../styles/text.css" />
+   </stylesheets>
+</HBox>

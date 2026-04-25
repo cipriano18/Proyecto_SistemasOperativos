@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package utils;
+package components;
 
 import com.auditorio.clientereservas.App;
 import components.PopUp;
@@ -25,8 +25,11 @@ import javafx.scene.paint.Color;
 import model.CalendarBlock;
 import model.Reservation;
 import service.CalendarService;
+import service.EquipmentReservationDraftService;
 import service.Response;
 import session.Session;
+import utils.CalendarConstants;
+import utils.DraftContainer;
 
 public class DayCard {
 
@@ -135,10 +138,11 @@ public class DayCard {
 
                 // Lista vacía
                 request.setEquipmentList(new ArrayList<>());
-                Response resp = CalendarService.startEquipmentDraft(request);
+                Response resp = EquipmentReservationDraftService.startEquipmentDraft(request);
 
                 if (resp != null && resp.isSuccess()) {
                     CalendarService.exitReservationsView();
+                    DraftContainer.getInstance().setDraftResponse(resp);
                     App.setRoot("device_form_screen");
                 } else {
                     String msg = (resp != null) ? resp.getMessage() : "No se pudo conectar al servidor";

@@ -107,38 +107,4 @@ public class CalendarService {
         }
     }
     
-    public static Response startEquipmentDraft(EquipmentReservationDraftRequest request) {
-    try {
-        SocketManager socketManager = SocketManager.getInstance();
-
-        if (!socketManager.isConnected()) {
-            socketManager.connect();
-        }
-
-        ServerConnection connection = socketManager.getConnection();
-        ObjectOutputStream out = connection.getObjectOutput();
-        ObjectInputStream in = connection.getObjectInput();
-
-        // 1. Enviar comando
-        out.writeObject("START_EQUIPMENT_DRAFT");
-        out.flush();
-
-        // 2. Enviar objeto
-        out.writeObject(request);
-        out.flush();
-
-        // 3. Leer respuesta
-        Object response = in.readObject();
-
-        if (response instanceof Response) {
-            return (Response) response;
-        }
-
-        return new Response(false, "Respuesta inesperada del servidor", null);
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return new Response(false, "Error al iniciar draft", null);
-    }
-}
 }

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" styleClass="hero-panel" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.login_screen_controller">
+
+    <!-- PANEL IZQUIERDO -->
+    <VBox minHeight="600.0" minWidth="380.0" prefHeight="820.0" prefWidth="1200.0" spacing="0" styleClass="hero-panel">
+        <padding><Insets bottom="40" left="40" right="40" top="40" /></padding>
+
+        <!-- Logo -->
+        <HBox alignment="CENTER_LEFT" spacing="12">
+         <children>
+            <ImageView fx:id="img_logo" fitHeight="84.0" fitWidth="308.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/logo_una.png" />
+               </image>
+            </ImageView>
+         </children>
+        </HBox>
+
+        <Region prefWidth="300.0" VBox.vgrow="ALWAYS" />
+
+        <!-- Contenido hero -->
+        <VBox fx:id="vb_info" spacing="16">
+            <Label styleClass="hero-badge" text="SISTEMA INSTITUCIONAL" />
+            <Label fx:id="lbl_title" minWidth="300.0" styleClass="hero-title" text="Reserva de Auditorio" textFill="WHITE" />
+            <Label fx:id="lbl_audInfo" minWidth="300.0" styleClass="hero-subtitle" text="Acceda al sistema de gestión de espacios académicos. Reserve y coordine los auditorios de la institución." wrapText="true" />
+        </VBox>
+
+        <Region minHeight="40" />
+
+        <!-- Footer hero -->
+        <Label style="-fx-font-size: 10px; -fx-text-fill: #FFB3BB;" text="© 2026 Universidad Nacional" textFill="WHITE" />
+    </VBox>
+
+    <!-- PANEL DERECHO -->
+    <VBox fx:id="vb_right" alignment="CENTER" minHeight="500.0" minWidth="465.0" prefHeight="594.0" prefWidth="465.0" styleClass="form-panel" HBox.hgrow="ALWAYS">
+        <padding><Insets bottom="40" left="60" right="60" top="60" /></padding>
+        <VBox alignment="CENTER_LEFT" maxWidth="366.0" minHeight="500.0" minWidth="366.0" prefWidth="366.0" spacing="0" style="-fx-alignment: center;">
+
+            <!-- Header -->
+            <VBox spacing="6">
+                <Label fx:id="lbl_welcome" styleClass="hero-title" text="Bienvenido de nuevo">
+               <font>
+                  <Font name="Tw Cen MT Bold" size="36.0" />
+               </font></Label>
+                <Label styleClass="form-subtitle" text="Ingrese sus credenciales para continuar." />
+            </VBox>
+
+            <Region minHeight="36" />
+
+            <!-- Username -->
+            <VBox spacing="6">
+                <Label styleClass="field-label" text="USUARIO" />
+                <TextField fx:id="tf_user" prefWidth="340" promptText="nombre.usuario" styleClass="text-field" />
+            </VBox>
+
+            <Region minHeight="16" />
+
+            <!-- Password -->
+            <VBox spacing="6">
+                <Label styleClass="field-label" text="CONTRASEÑA" />
+                <PasswordField fx:id="tf_pass" prefWidth="340" promptText="••••••••" styleClass="password-field" />
+            </VBox>
+
+            <Region minHeight="8" />
+
+            <!-- Mensaje error -->
+            <Label fx:id="messageLabel" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
+
+            <Region minHeight="20" />
+
+            <!-- Botón login -->
+            <Button fx:id="btn_login" alignment="CENTER" onAction="#handleLogin" prefWidth="340" styleClass="btn-primary" text="Iniciar Sesión" />
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <!-- Footer -->
+            <HBox alignment="CENTER">
+                <Label text="¿No tienes un usuario? " />
+                <Button fx:id="btn_register" onAction="#GoToRegister" styleClass="btn-link" text="Registrate aquí" />
+            </HBox>
+
+        </VBox>
+    </VBox>
+   <stylesheets>
+      <URL value="@../styles/main.css" />
+      <URL value="@../styles/text.css" />
+   </stylesheets>
+</HBox>
