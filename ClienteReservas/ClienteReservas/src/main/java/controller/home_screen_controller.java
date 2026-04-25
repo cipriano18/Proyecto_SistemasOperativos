@@ -16,7 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import model.ClientRequest;
+import dto.ClientRequest;
 import session.Session;
 
 /**

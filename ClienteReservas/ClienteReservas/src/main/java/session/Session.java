@@ -1,6 +1,6 @@
 package session;
 
-import model.ClientRequest;
+import dto.ClientRequest;
 
 public class Session {
 

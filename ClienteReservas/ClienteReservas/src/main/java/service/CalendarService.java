@@ -2,8 +2,7 @@ package service;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import model.CalendarRequest;
-import model.Response;
+import dto.CalendarRequest;
 import network.ServerConnection;
 import network.SocketManager;
 

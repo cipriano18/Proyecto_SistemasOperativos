@@ -6,7 +6,6 @@ package service;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import model.Response;
 import model.User;
 import network.ServerConnection;
 import network.SocketManager;

@@ -20,7 +20,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import model.CalendarBlock;
-import model.Response;
+import service.Response;
 import service.CalendarService;
 import utils.CalendarBuilder;
 

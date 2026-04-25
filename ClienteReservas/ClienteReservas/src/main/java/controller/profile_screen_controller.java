@@ -1,4 +1,4 @@
-package controller;
+ package controller;
 
 import com.auditorio.clientereservas.App;
 import components.PopUp;
@@ -19,9 +19,9 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.Client;
-import model.ClientRequest;
+import dto.ClientRequest;
 import model.Contact;
-import model.Response;
+import service.Response;
 import model.User;
 import service.ClientProfileService;
 import session.Session;

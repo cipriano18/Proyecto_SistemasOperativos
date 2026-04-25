@@ -3,12 +3,10 @@ model\CalendarBlock.class
 service\AuthService.class
 service\ClientProfileService.class
 network\ServerConnection.class
-model\ClientRequest.class
-model\Response.class
 model\User.class
 network\SocketManager.class
 session\Session.class
-model\CalendarRequest.class
+dto\CalendarRequest.class
 utils\CalendarConstants.class
 controller\device_schedule_screen_controller.class
 controller\profile_screen_controller.class
@@ -19,9 +17,11 @@ utils\Animations.class
 model\Contact.class
 model\Person.class
 components\PopUp.class
+service\Response.class
 utils\DayCard.class
 service\CalendarService.class
 com\auditorio\clientereservas\App.class
 controller\home_screen_controller.class
+dto\ClientRequest.class
 controller\register_screen_controller.class
 model\Admin.class
