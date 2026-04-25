@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import server.handlers.AuditoriumDraftRequestHandler;
 import service.Response;
 import server.handlers.ClientRequestHandler;
 import server.handlers.UserRequestHandler;
@@ -121,6 +122,9 @@ public class ClientHandler extends Thread {
                 case "CONFIRM_EQUIPMENT_DRAFT":
                 case "GET_CALENDAR_BLOCKS":
                     resp = ReservationDraftRequestHandler.handle(command, obj);
+                    break;
+                case "START_AUDITORIUM_DRAFT":
+                    resp = AuditoriumDraftRequestHandler.handle(command, obj);
                     break;
                 case "CREATE_EQUIPMENT":
                 case "UPDATE_EQUIPMENT":
