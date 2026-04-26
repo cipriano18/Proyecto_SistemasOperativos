@@ -13,7 +13,7 @@ import service.Response;
 
 public class AuditoriumDraftController {
 
-    public static Response getAuditoriumCalendarBlocks(int month, int year, int idClient) {
+    public static Response getAuditoriumCalendarBlocks(int month, int year, Integer idClient) {
 
         if (month <= 0 || month > 12) {
             return new Response(false, "El mes es inválido", null);
@@ -23,7 +23,7 @@ public class AuditoriumDraftController {
             return new Response(false, "El año es inválido", null);
         }
 
-        if (idClient <= 0) {
+        if (idClient != null && idClient <= 0) {
             return new Response(false, "El cliente es obligatorio", null);
         }
 
@@ -31,12 +31,14 @@ public class AuditoriumDraftController {
 
         List<CalendarBlock> reserved =
                 AuditoriumReservationDAO.getReservedAuditoriumBlocksByMonth(month, year);
-
-        List<CalendarBlock> blocked =
-                AuditoriumDraftDAO.getBlockedAuditoriumDraftsByMonth(month, year, idClient);
-
         result.addAll(reserved);
-        result.addAll(blocked);
+
+        // Solo se agregan los bloqueados si hay un cliente válido
+        if (idClient != null) {
+            List<CalendarBlock> blocked =
+                    AuditoriumDraftDAO.getBlockedAuditoriumDraftsByMonth(month, year, idClient);
+            result.addAll(blocked);
+        }
 
         return new Response(true, "Calendario de auditorio obtenido correctamente", result);
     }
