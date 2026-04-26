@@ -10,7 +10,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
@@ -19,7 +21,7 @@ import javafx.scene.layout.VBox;
  *
  * @author Alvaro Artavia
  */
-public class client_schedule_screen_controller implements Initializable {
+public class admin_manage_device_reservation_screen_controller implements Initializable {
 
     @FXML
     private Button btn_goback;
@@ -36,13 +38,21 @@ public class client_schedule_screen_controller implements Initializable {
     @FXML
     private VBox vb_list_reservation_auditorium;
     @FXML
-    private VBox vb_msg_new_acount1;
+    private Label lbl_create21;
     @FXML
-    private Label lbl_create1;
+    private ChoiceBox<?> chb_month;
     @FXML
-    private Label lbl_create11;
+    private Label lbl_create211;
     @FXML
-    private VBox vb_list_reservation_device;
+    private TextField tf_year;
+    @FXML
+    private Label lbl_create2111;
+    @FXML
+    private Button btn_serch;
+    @FXML
+    private Label lbl_create21111;
+    @FXML
+    private Button btn_clear_filter;
 
     /**
      * Initializes the controller class.
@@ -53,7 +63,15 @@ public class client_schedule_screen_controller implements Initializable {
     }    
 
     @FXML
-    private void GoToLogin(ActionEvent event) {
+    private void GoToHome(ActionEvent event) {
+    }
+
+    @FXML
+    private void ApplyFilter(ActionEvent event) {
+    }
+
+    @FXML
+    private void ClearFilter(ActionEvent event) {
     }
     
 }
