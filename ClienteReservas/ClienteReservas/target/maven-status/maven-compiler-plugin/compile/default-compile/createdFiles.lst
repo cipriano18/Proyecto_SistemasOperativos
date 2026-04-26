@@ -3,6 +3,7 @@ controller\login_screen_controller.class
 controller\register_admin_screen_controller.class
 service\AuthService.class
 network\ServerConnection.class
+controller\admin_manage_device_reservation_screen_controller.class
 components\DeviceCard.class
 dto\AuditoriumDraftRequest.class
 model\User.class
@@ -23,6 +24,7 @@ service\Response.class
 model\RXC.class
 dto\AdminRequest.class
 dto\ClientRequest.class
+components\ReservationCard$DeviceItem.class
 model\CalendarBlock.class
 components\DayCard.class
 service\ClientProfileService.class
@@ -33,11 +35,13 @@ session\Session.class
 dto\CalendarRequest.class
 dto\EquipmentReservationDraftRequest.class
 utils\CalendarConstants.class
+components\ReservationCard.class
 components\ListDeviceCard.class
 service\ReservationDraftService.class
 service\RegisterClient.class
 controller\device_form_screen_controller.class
 components\ListDeviceCard$1.class
+controller\admin_manage_auditorium_reservation_screen_controller.class
 controller\admin_profile_screen_controller.class
 model\Client.class
 model\Contact.class

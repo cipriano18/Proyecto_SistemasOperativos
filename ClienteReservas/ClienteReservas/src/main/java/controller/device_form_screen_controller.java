@@ -99,7 +99,7 @@ private void GoToHome(ActionEvent event) throws IOException {
             "Confirmación",
             "Salir de la reserva",
             "Si sale de esta pantalla, perderá la reserva actual y tendrá que iniciar el proceso desde cero. ¿Desea continuar?",
-            "warning.png",
+            "back_hand.png",
             2,
             "Salir"
     );
@@ -122,7 +122,7 @@ private void GoToHome(ActionEvent event) throws IOException {
                     "Error",
                     "No se pudo descartar",
                     resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
-                    "error.png",
+                    "dangerous.png",
                     1,
                     "Aceptar"
             );
@@ -145,7 +145,7 @@ private void AddDeviceToList(ActionEvent event) {
             "Aviso",
             "Sin equipos disponibles",
             "No hay equipos disponibles para agregar.",
-            "warning.png",
+            "devices_off.png",
             1,
             "Aceptar"
     );
@@ -173,7 +173,7 @@ private void AddDeviceToList(ActionEvent event) {
             "Aviso",
             "Equipos ya agregados",
             "Todos los dispositivos disponibles ya fueron agregados.",
-            "warning.png",
+            "devices_off.png",
             1,
             "Aceptar"
     );
@@ -198,7 +198,7 @@ private void AddDeviceToList(ActionEvent event) {
             "Confirmación",
             "Eliminar dispositivo",
             "¿Está seguro que desea eliminar este dispositivo de la lista?",
-            "warning.png",
+            "back_hand.png",
             2,
             "Eliminar"
     );
@@ -234,8 +234,8 @@ private void SaveReservation(ActionEvent event) {
                 "Error",
                 "Reserva no encontrada",
                 "No hay una reserva temporal activa para confirmar.",
-                "error.png",
-                1,
+                "dangerous.png",
+                1, 
                 "Aceptar"
         );
         return;
@@ -265,7 +265,7 @@ private void SaveReservation(ActionEvent event) {
                 "Aviso",
                 "Equipo requerido",
                 "Debe seleccionar al menos un equipo para confirmar la reserva.",
-                "warning.png",
+                "back_hand.png",
                 1,
                 "Aceptar"
         );
@@ -284,7 +284,7 @@ private void SaveReservation(ActionEvent event) {
                 "Error",
                 "No se pudo actualizar",
                 updateResp != null ? updateResp.getMessage() : "No se pudo conectar con el servidor.",
-                "error.png",
+                "back_hand.png",
                 1,
                 "Aceptar"
         );
@@ -301,14 +301,14 @@ private void SaveReservation(ActionEvent event) {
         PopUp.notification(
                 "Reserva confirmada",
                 "La reserva de equipos se confirmó correctamente.",
-                "success.png"
+                "check_circle.png"
         );
 
         Session.getInstance().setCurrentEquipmentDraftId(0);
         DraftContainer.getInstance().setDraftResponse(null);
 
         try {
-            App.setRoot("home_screen");
+            App.setRoot("device_schedule_screen");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -318,7 +318,8 @@ private void SaveReservation(ActionEvent event) {
                 "Error",
                 "No se pudo confirmar",
                 confirmResp != null ? confirmResp.getMessage() : "Error desconocido.",
-                "error.png",
+                "back_hand.png",
+                
                 1,
                 "Aceptar"
         );
