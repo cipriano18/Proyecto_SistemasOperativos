@@ -13,6 +13,9 @@ import server.handlers.UserRequestHandler;
 import server.handlers.ConnectionRequestHandler;
 import server.handlers.EquipmentRequestHandler;
 import server.handlers.ReservationDraftRequestHandler;
+import server.handlers.ReservationRequestHandler;
+import server.handlers.AuditoriumReservationHandler;
+
 public class ClientHandler extends Thread {
 
     private Socket socket;
@@ -110,17 +113,21 @@ public class ClientHandler extends Thread {
             Response resp;
 
             switch (command.toUpperCase()) {
-
+                // GESTION DE CLIENTES
                 case "CREATE_CLIENT":
                 case "UPDATE_CLIENT":
                 case "DELETE_CLIENT":
                     resp = ClientRequestHandler.handle(command, obj);
                     break;
+                    
+                // GESTION DE ADMINS    
                 case "CREATE_ADMIN":
                 case "UPDATE_ADMIN":
                 case "DELETE_ADMIN":
                     resp = AdminRequestHandler.handle(command, obj);
                     break;
+                    
+                // GESTION DE RESERVAS DE EQUIPO TEMPORALES   
                 case "START_EQUIPMENT_DRAFT":
                 case "UPDATE_EQUIPMENT_DRAFT":
                 case "GET_EQUIPMENT_DRAFT_BY_ID":
@@ -130,6 +137,8 @@ public class ClientHandler extends Thread {
                 case "GET_CALENDAR_BLOCKS":
                     resp = ReservationDraftRequestHandler.handle(command, obj);
                     break;
+                    
+                // GESTION DE RESERVAS DE AUDITORIO TEMPORALES     
                 case "START_AUDITORIUM_DRAFT":
                 case "UPDATE_AUDITORIUM_DRAFT":
                 case "GET_AUDITORIUM_DRAFT_BY_CLIENT_ID":
@@ -138,6 +147,25 @@ public class ClientHandler extends Thread {
                 case "GET_CALENDAR_AUDITORIUM":    
                     resp = AuditoriumDraftRequestHandler.handle(command, obj);
                     break;
+                    
+                // GESTION DE RESERVAS DE EQUIPO
+                case "UPDATE_EQUIPMENT_RESERVATION":
+                case "GET_RESERVATION_BY_ID":
+                case "GET_RESERVATIONS_BY_CLIENT_ID":
+                case "DELETE_RESERVATION_BY_ID":
+                case "DELETE_RESERVATIONS_BY_CLIENT_ID":
+                    resp = ReservationRequestHandler.handle(command, obj);
+                    break;
+                    
+                // GESTION DE RESERVAS DE AUDITORIO            
+                case "GET_AUDITORIUM_RESERVATION_BY_ID":
+                case "GET_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID":
+                case "DELETE_AUDITORIUM_RESERVATION_BY_ID":
+                case "DELETE_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID":
+                    resp = AuditoriumReservationHandler.handle(command, obj);
+                    break;  
+                    
+                // GESTION DE EQUIPOS  
                 case "CREATE_EQUIPMENT":
                 case "UPDATE_EQUIPMENT":
                 case "GET_EQUIPMENT":
@@ -146,9 +174,8 @@ public class ClientHandler extends Thread {
                 case "GET_AVAILABLE_EQUIPMENT":    
                     resp = EquipmentRequestHandler.handle(command, obj);
                     break;
-                case "LOGIN":
-                    resp = UserRequestHandler.handle(command, obj);
-                    break;
+                    
+                // VISTAS DE RESERVACION    
                 case "ENTER_RESERVATIONS_VIEW":
                     Integer idClient = (Integer) obj;
 
@@ -168,6 +195,11 @@ public class ClientHandler extends Thread {
                     logResponse(resp);
                     sendResponse(resp);
                     return;
+                 
+                // SESION     
+                case "LOGIN":
+                    resp = UserRequestHandler.handle(command, obj);
+                    break;    
                 case "LOGOUT":
                 case "CLOSE_CONNECTION":
                     resp = ConnectionRequestHandler.handle(command, this);

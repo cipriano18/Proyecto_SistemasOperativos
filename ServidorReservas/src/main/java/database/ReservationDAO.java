@@ -226,11 +226,12 @@ public class ReservationDAO {
         List<EquipmentReservationRequest> reservations = new ArrayList<>();
 
         String sql =
-                "SELECT r.id_reservation " +
-                "FROM AUD_Reservations r " +
-                "INNER JOIN AUD_RXC rxc ON r.id_reservation = rxc.id_reservation " +
-                "WHERE rxc.id_client = ? " +
-                "ORDER BY r.reservation_date DESC";
+            "SELECT r.id_reservation " +
+            "FROM AUD_Reservations r " +
+            "INNER JOIN AUD_RXC rxc ON r.id_reservation = rxc.id_reservation " +
+            "WHERE rxc.id_client = ? " +
+            "AND r.reservation_date >= CURDATE() " +  
+            "ORDER BY r.reservation_date ASC";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
