@@ -12,6 +12,7 @@ service\AdminProfileService.class
 model\CalendarRequest.class
 service\EquipmentService.class
 controller\device_schedule_screen_controller.class
+model\AuditoriumReservation.class
 controller\profile_screen_controller.class
 model\Reservation.class
 utils\CalendarBuilder.class
@@ -25,6 +26,7 @@ model\RXC.class
 dto\AdminRequest.class
 dto\ClientRequest.class
 components\ReservationCard$DeviceItem.class
+service\AuditoriumReservationService.class
 model\CalendarBlock.class
 components\DayCard.class
 service\ClientProfileService.class
@@ -45,6 +47,7 @@ controller\admin_manage_auditorium_reservation_screen_controller.class
 controller\admin_profile_screen_controller.class
 model\Client.class
 model\Contact.class
+dto\AuditoriumReservationRequest.class
 model\RXE.class
 service\AuditoriumDraftService.class
 draft\AuditoriumDraft.class

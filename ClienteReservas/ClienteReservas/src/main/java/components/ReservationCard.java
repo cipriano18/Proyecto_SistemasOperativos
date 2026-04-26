@@ -3,6 +3,7 @@ package components;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.io.InputStream;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -250,7 +251,7 @@ public class ReservationCard extends HBox {
             case 1:
                 return "/assets/morning.png";
             case 2:
-                return "/assets/afternoon.png";
+                return "/assets/day.png";
             case 3:
                 return "/assets/night.png";
             default:
@@ -259,7 +260,20 @@ public class ReservationCard extends HBox {
     }
 
     private Image loadImage(String path) {
-        return new Image(getClass().getResourceAsStream(path));
+        InputStream stream = getClass().getResourceAsStream(path);
+
+        if (stream == null) {
+            System.out.println("Recurso de imagen no encontrado: " + path);
+
+            InputStream fallbackStream = getClass().getResourceAsStream("/assets/unknown_item.png");
+            if (fallbackStream != null) {
+                return new Image(fallbackStream);
+            }
+
+            throw new IllegalStateException("No se encontró el recurso solicitado ni el fallback de imagen.");
+        }
+
+        return new Image(stream);
     }
 
     public static class DeviceItem {

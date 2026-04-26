@@ -1,57 +1,60 @@
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\components\ReservationCard.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Equipment.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\profile_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\admin_manage_auditorium_reservation_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\client_schedule_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\Response.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\components\PopUp.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Contact.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\components\DeviceCard.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\components\ListDeviceCard.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\auditorium_form_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\device_form_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\CalendarRequest.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\EquipmentReservationRequest.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\admin_profile_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\register_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\draft\EquipmentReservationDraft.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\com\auditorio\clientereservas\App.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\RXC.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\ClientProfileService.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\EquipmentReservationDraftRequest.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\Animations.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\components\DayCard.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Client.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\AuthService.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\draft\AuditoriumDraft.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\CalendarRequest.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\home_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\network\ServerConnection.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\EquipmentReservationService.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\RegisterClient.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\EquipmentReservationDraftService.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\admin_manage_device_reservation_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\ReservationDraftService.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\login_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\EquipmentService.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\AuditoriumDraftRequest.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\device_schedule_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\admin_home_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Person.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\CalendarBlock.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\AdminProfileService.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\ClientRequest.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Reservation.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\CalendarConstants.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\User.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\CalendarBuilder.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\AuditoriumDraftService.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\RegisterAdmin.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\AdminRequest.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\RXE.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\DraftContainer.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\register_admin_screen_controller.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Admin.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\CalendarService.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\network\SocketManager.java
-C:\Users\User\Desktop\UNA 1 CICLO 2026\Sistemas Operativos\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\session\Session.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\Response.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\EquipmentReservationDraftRequest.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\network\SocketManager.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\RegisterClient.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\ClientRequest.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\CalendarBlock.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\ClientProfileService.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\AuditoriumReservation.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\components\PopUp.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\components\DeviceCard.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\AuditoriumReservationService.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\EquipmentService.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\com\auditorio\clientereservas\App.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\profile_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\EquipmentReservationService.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\AuditoriumDraftRequest.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\register_admin_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Client.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\CalendarRequest.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\AuditoriumReservationRequest.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\CalendarConstants.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\register_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\RXC.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\client_schedule_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\CalendarBuilder.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\User.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\admin_home_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\admin_manage_device_reservation_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\draft\EquipmentReservationDraft.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\Animations.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\CalendarService.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\login_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\components\DayCard.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\AuditoriumDraftService.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\AuthService.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\draft\AuditoriumDraft.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\admin_profile_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\CalendarRequest.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\RegisterAdmin.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Reservation.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\EquipmentReservationRequest.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Equipment.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\components\ReservationCard.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\EquipmentReservationDraftService.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Admin.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Contact.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\Person.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\ReservationDraftService.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\components\ListDeviceCard.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\admin_manage_auditorium_reservation_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\network\ServerConnection.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\session\Session.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\utils\DraftContainer.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\model\RXE.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\auditorium_form_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\device_schedule_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\dto\AdminRequest.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\device_form_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\controller\home_screen_controller.java
+C:\Users\Reyner\Documents\UNA_SEMESTRES\2026\I_SEMESTRE_2026\SISTEMAS_OPERATIVOS\Proyecto_SistemasOperativos\ClienteReservas\ClienteReservas\src\main\java\service\AdminProfileService.java

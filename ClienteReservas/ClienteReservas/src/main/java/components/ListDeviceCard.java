@@ -20,16 +20,11 @@ public class ListDeviceCard extends HBox {
     private ChoiceBox<Equipment> chbDeviceType;
     private ChoiceBox<Integer> chbQuantity;
     private Button btnDeleteThis;
-    private Runnable onQuantityChange;
 
     public ListDeviceCard(List<Equipment> equipmentList) {
         buildComponent();
         setupEquipmentChoiceBox();
-        chbQuantity.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (onQuantityChange != null) {
-                onQuantityChange.run();
-            }
-        });
+
         chbDeviceType.getItems().setAll(equipmentList);
 
         chbDeviceType.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
@@ -145,9 +140,5 @@ public class ListDeviceCard extends HBox {
 
     public void setDeviceChoiceDisabled(boolean disabled) {
         chbDeviceType.setDisable(disabled);
-    }
-
-    public void setOnQuantityChange(Runnable action) {
-        this.onQuantityChange = action;
     }
 }

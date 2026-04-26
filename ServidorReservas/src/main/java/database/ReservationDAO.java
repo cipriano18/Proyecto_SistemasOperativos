@@ -229,8 +229,10 @@ public class ReservationDAO {
             "SELECT r.id_reservation " +
             "FROM AUD_Reservations r " +
             "INNER JOIN AUD_RXC rxc ON r.id_reservation = rxc.id_reservation " +
+            "LEFT JOIN AUD_AuditoriumReservations ar ON r.id_reservation = ar.id_reservation " +
             "WHERE rxc.id_client = ? " +
-            "AND r.reservation_date >= CURDATE() " +  
+            "AND ar.id_reservation IS NULL " + 
+            "AND r.reservation_date >= CURDATE() " +
             "ORDER BY r.reservation_date ASC";
 
         try (Connection conn = DBConnection.getConnection();

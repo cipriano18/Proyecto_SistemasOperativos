@@ -33,9 +33,11 @@ public class EquipmentService {
     public static Response deleteEquipment(Equipment equipment) {
         return sendRequest("DELETE_EQUIPMENT", equipment);
     }
+
     public static Response getAvailableEquipment(EquipmentReservationDraftRequest request) {
         return sendRequest("GET_AVAILABLE_EQUIPMENT", request);
     }
+
     private static Response sendRequest(String action, Object data) {
         try {
             SocketManager socketManager = SocketManager.getInstance();
@@ -51,10 +53,8 @@ public class EquipmentService {
             out.writeObject(action);
             out.flush();
 
-            if (data != null) {
-                out.writeObject(data);
-                out.flush();
-            }
+            out.writeObject(data);
+            out.flush();
 
             Object response = in.readObject();
 
@@ -68,7 +68,9 @@ public class EquipmentService {
             e.printStackTrace();
             return null;
         }
-    }public static Response getAvailableEquipmentByDateAndSection(java.sql.Date reservationDate, int idSection) {
+    }
+
+    public static Response getAvailableEquipmentByDateAndSection(java.sql.Date reservationDate, int idSection) {
         try {
             SocketManager socketManager = SocketManager.getInstance();
 

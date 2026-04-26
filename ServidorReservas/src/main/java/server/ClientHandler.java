@@ -14,7 +14,7 @@ import server.handlers.ConnectionRequestHandler;
 import server.handlers.EquipmentRequestHandler;
 import server.handlers.ReservationDraftRequestHandler;
 import server.handlers.ReservationRequestHandler;
-import server.handlers.AuditoriumReservationHandler;
+import server.handlers.AuditoriumReservationRequestHandler;
 
 public class ClientHandler extends Thread {
 
@@ -162,7 +162,7 @@ public class ClientHandler extends Thread {
                 case "GET_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID":
                 case "DELETE_AUDITORIUM_RESERVATION_BY_ID":
                 case "DELETE_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID":
-                    resp = AuditoriumReservationHandler.handle(command, obj);
+                    resp = AuditoriumReservationRequestHandler.handle(command, obj);
                     break;  
                     
                 // GESTION DE EQUIPOS  
