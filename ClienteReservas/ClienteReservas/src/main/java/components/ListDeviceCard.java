@@ -137,4 +137,8 @@ public class ListDeviceCard extends HBox {
     public void setOnDelete(Runnable action) {
         btnDeleteThis.setOnAction(e -> action.run());
     }
+
+    public void setDeviceChoiceDisabled(boolean disabled) {
+        chbDeviceType.setDisable(disabled);
+    }
 }

@@ -11,11 +11,15 @@ import draft.EquipmentReservationDraft;
 import dto.EquipmentReservationDraftRequest;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -111,12 +115,41 @@ private void GoToHome(ActionEvent event) throws IOException {
 @FXML
 private void AddDeviceToList(ActionEvent event) {
 
+    loadAvailableEquipment();
+
     if (availableEquipmentList == null || availableEquipmentList.isEmpty()) {
         System.out.println("No hay equipos disponibles para agregar");
         return;
     }
 
-    ListDeviceCard card = new ListDeviceCard(availableEquipmentList);
+    Set<Integer> usedIds = new HashSet<>();
+    for (Node n : vb_added_devices.getChildren()) {
+        if (n instanceof ListDeviceCard) {
+            Equipment selected = ((ListDeviceCard) n).getSelectedEquipment();
+            if (selected != null) {
+                usedIds.add(selected.getIdEquipment());
+            }
+        }
+    }
+
+    List<Equipment> filtered = availableEquipmentList.stream()
+            .filter(eq -> !usedIds.contains(eq.getIdEquipment()))
+            .collect(Collectors.toList());
+
+    if (filtered.isEmpty()) {
+        System.out.println("Todos los dispositivos disponibles ya fueron agregados");
+        return;
+    }
+
+    if (!vb_added_devices.getChildren().isEmpty()) {
+        Node last = vb_added_devices.getChildren()
+                .get(vb_added_devices.getChildren().size() - 1);
+        if (last instanceof ListDeviceCard) {
+            ((ListDeviceCard) last).setDeviceChoiceDisabled(true);
+        }
+    }
+
+    ListDeviceCard card = new ListDeviceCard(filtered);
 
     card.setOnDelete(() -> {
         vb_added_devices.getChildren().remove(card);
