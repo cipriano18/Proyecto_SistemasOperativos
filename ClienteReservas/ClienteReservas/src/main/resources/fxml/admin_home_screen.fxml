@@ -37,28 +37,6 @@
                      <children>
                         <HBox spacing="5.0">
                            <children>
-                              <Button fx:id="btn_devices" mnemonicParsing="false" onAction="#GoToDevices" prefHeight="106.0" prefWidth="231.0" styleClass="btn-section">
-                                 <graphic>
-                                    <HBox alignment="CENTER">
-                                       <children>
-                                          <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../assets/add_device.png" />
-                                             </image>
-                                          </ImageView>
-                                          <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-                                             <children>
-                                                <Label styleClass="btn-title" text="Equipos" />
-                                                <Label prefHeight="34.0" prefWidth="152.0" styleClass="form-subtitle" text="Agregue, edite y elimine&#10;equipos." />
-                                             </children>
-                                             <padding>
-                                                <Insets left="5.0" />
-                                             </padding>
-                                          </VBox>
-                                       </children>
-                                    </HBox>
-                                 </graphic>
-                              </Button>
                               <Button fx:id="btn_device_reservation" mnemonicParsing="false" onAction="#GoToDeviceReservations" prefHeight="106.0" prefWidth="231.0" styleClass="btn-section" textFill="#e8e5e5">
                                  <graphic>
                                     <HBox alignment="CENTER">
@@ -72,6 +50,28 @@
                                              <children>
                                                 <Label styleClass="btn-title" text="Reservas de equipos" />
                                                 <Label styleClass="form-subtitle" text="Elimine o visualice las&#10;reservas de los clientes." />
+                                             </children>
+                                             <padding>
+                                                <Insets left="5.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="btn_devices" mnemonicParsing="false" onAction="#GoToDevices" prefHeight="106.0" prefWidth="231.0" styleClass="btn-section">
+                                 <graphic>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/add_device.png" />
+                                             </image>
+                                          </ImageView>
+                                          <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <Label styleClass="btn-title" text="Equipos" />
+                                                <Label prefHeight="34.0" prefWidth="152.0" styleClass="form-subtitle" text="Agregue, edite y elimine&#10;equipos." />
                                              </children>
                                              <padding>
                                                 <Insets left="5.0" />
