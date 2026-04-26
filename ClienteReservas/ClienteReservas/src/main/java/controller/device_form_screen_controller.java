@@ -30,7 +30,7 @@ public class device_form_screen_controller implements Initializable {
     @FXML
     private ImageView img_logo;
     @FXML
-    private HBox hb_device_container;
+    private HBox hb_device_container;// este tiene que contener los componetes DeviceCard
     @FXML
     private VBox vb_device_card;
     @FXML
@@ -54,7 +54,7 @@ public class device_form_screen_controller implements Initializable {
     @FXML
     private Button btn_save_reservation;
     @FXML
-    private VBox vb_added_devices;
+    private VBox vb_added_devices; // aqui van los de ListDeviceCard
 
     /**
      * Initializes the controller class.
