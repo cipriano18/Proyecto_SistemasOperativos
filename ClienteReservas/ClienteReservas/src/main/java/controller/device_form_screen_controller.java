@@ -7,10 +7,12 @@ package controller;
 import com.auditorio.clientereservas.App;
 import components.DeviceCard;
 import components.ListDeviceCard;
+import components.PopUp;
 import draft.EquipmentReservationDraft;
 import dto.EquipmentReservationDraftRequest;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -26,6 +29,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.Equipment;
+import model.RXE;
+import service.EquipmentReservationDraftService;
 import service.EquipmentService;
 import service.ReservationDraftService;
 import service.Response;
@@ -90,10 +95,20 @@ loadAvailableEquipment();
 @FXML
 private void GoToHome(ActionEvent event) throws IOException {
 
-    int idClient = Session.getInstance().getClient().getClient().getIdClient();
+    boolean confirm = PopUp.warning(
+            "Confirmación",
+            "Salir de la reserva",
+            "Si sale de esta pantalla, perderá la reserva actual y tendrá que iniciar el proceso desde cero. ¿Desea continuar?",
+            "warning.png",
+            2,
+            "Salir"
+    );
 
-    System.out.println("Draft a descartar: " + currentDraftId);
-    System.out.println("Cliente del draft: " + idClient);
+    if (!confirm) {
+        return;
+    }
+
+    int idClient = Session.getInstance().getClient().getClient().getIdClient();
 
     if (currentDraftId > 0) {
         EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
@@ -102,7 +117,17 @@ private void GoToHome(ActionEvent event) throws IOException {
 
         Response resp = ReservationDraftService.discardEquipmentDraft(request);
 
-        System.out.println(resp != null ? resp.getMessage() : "Respuesta null");
+        if (resp == null || !resp.isSuccess()) {
+            PopUp.warning(
+                    "Error",
+                    "No se pudo descartar",
+                    resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
+                    "error.png",
+                    1,
+                    "Aceptar"
+            );
+            return;
+        }
 
         Session.getInstance().setCurrentEquipmentDraftId(0);
         DraftContainer.getInstance().setDraftResponse(null);
@@ -110,22 +135,29 @@ private void GoToHome(ActionEvent event) throws IOException {
 
     App.setRoot("device_schedule_screen");
 }
-
-
 @FXML
 private void AddDeviceToList(ActionEvent event) {
 
     loadAvailableEquipment();
 
     if (availableEquipmentList == null || availableEquipmentList.isEmpty()) {
-        System.out.println("No hay equipos disponibles para agregar");
-        return;
-    }
+    PopUp.warning(
+            "Aviso",
+            "Sin equipos disponibles",
+            "No hay equipos disponibles para agregar.",
+            "warning.png",
+            1,
+            "Aceptar"
+    );
+    return;
+}
 
     Set<Integer> usedIds = new HashSet<>();
+
     for (Node n : vb_added_devices.getChildren()) {
         if (n instanceof ListDeviceCard) {
             Equipment selected = ((ListDeviceCard) n).getSelectedEquipment();
+
             if (selected != null) {
                 usedIds.add(selected.getIdEquipment());
             }
@@ -137,13 +169,22 @@ private void AddDeviceToList(ActionEvent event) {
             .collect(Collectors.toList());
 
     if (filtered.isEmpty()) {
-        System.out.println("Todos los dispositivos disponibles ya fueron agregados");
-        return;
-    }
+    PopUp.warning(
+            "Aviso",
+            "Equipos ya agregados",
+            "Todos los dispositivos disponibles ya fueron agregados.",
+            "warning.png",
+            1,
+            "Aceptar"
+    );
+    return;
+}
 
+    // Bloquear la última card antes de agregar una nueva
     if (!vb_added_devices.getChildren().isEmpty()) {
         Node last = vb_added_devices.getChildren()
                 .get(vb_added_devices.getChildren().size() - 1);
+
         if (last instanceof ListDeviceCard) {
             ((ListDeviceCard) last).setDeviceChoiceDisabled(true);
         }
@@ -151,15 +192,138 @@ private void AddDeviceToList(ActionEvent event) {
 
     ListDeviceCard card = new ListDeviceCard(filtered);
 
-    card.setOnDelete(() -> {
-        vb_added_devices.getChildren().remove(card);
-    });
+  card.setOnDelete(() -> {
 
+    boolean confirm = PopUp.warning(
+            "Confirmación",
+            "Eliminar dispositivo",
+            "¿Está seguro que desea eliminar este dispositivo de la lista?",
+            "warning.png",
+            2,
+            "Eliminar"
+    );
+
+    if (!confirm) {
+        return;
+    }
+
+    vb_added_devices.getChildren().remove(card);
+
+    if (!vb_added_devices.getChildren().isEmpty()) {
+        Node newLast = vb_added_devices.getChildren()
+                .get(vb_added_devices.getChildren().size() - 1);
+
+        if (newLast instanceof ListDeviceCard) {
+            ((ListDeviceCard) newLast).setDeviceChoiceDisabled(false);
+        }
+    }
+});
+vb_added_devices.setMargin(card, new Insets(0, 0, 10, 0));
     vb_added_devices.getChildren().add(card);
 }
-    @FXML
-    private void SaveReservation(ActionEvent event) {
+@FXML
+private void SaveReservation(ActionEvent event) {
+
+    int idClient = Session.getInstance()
+            .getClient()
+            .getClient()
+            .getIdClient();
+
+    if (currentDraftId <= 0) {
+        PopUp.warning(
+                "Error",
+                "Reserva no encontrada",
+                "No hay una reserva temporal activa para confirmar.",
+                "error.png",
+                1,
+                "Aceptar"
+        );
+        return;
     }
+
+    List<RXE> equipmentList = new ArrayList<>();
+
+    for (Node node : vb_added_devices.getChildren()) {
+        if (node instanceof ListDeviceCard) {
+
+            ListDeviceCard card = (ListDeviceCard) node;
+            Equipment selected = card.getSelectedEquipment();
+
+            if (selected != null) {
+                RXE rxe = new RXE();
+
+                rxe.setIdEquipment(selected.getIdEquipment());
+                rxe.setQuantity(card.getSelectedQuantity());
+
+                equipmentList.add(rxe);
+            }
+        }
+    }
+
+    if (equipmentList.isEmpty()) {
+        PopUp.warning(
+                "Aviso",
+                "Equipo requerido",
+                "Debe seleccionar al menos un equipo para confirmar la reserva.",
+                "warning.png",
+                1,
+                "Aceptar"
+        );
+        return;
+    }
+
+    EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
+    request.setIdDraft(currentDraftId);
+    request.setIdClient(idClient);
+    request.setEquipmentList(equipmentList);
+
+    Response updateResp = EquipmentReservationDraftService.updateEquipmentDraft(request);
+
+    if (updateResp == null || !updateResp.isSuccess()) {
+        PopUp.warning(
+                "Error",
+                "No se pudo actualizar",
+                updateResp != null ? updateResp.getMessage() : "No se pudo conectar con el servidor.",
+                "error.png",
+                1,
+                "Aceptar"
+        );
+        return;
+    }
+
+    Response confirmResp = EquipmentReservationDraftService.confirmEquipmentDraft(
+            currentDraftId,
+            idClient
+    );
+
+    if (confirmResp != null && confirmResp.isSuccess()) {
+
+        PopUp.notification(
+                "Reserva confirmada",
+                "La reserva de equipos se confirmó correctamente.",
+                "success.png"
+        );
+
+        Session.getInstance().setCurrentEquipmentDraftId(0);
+        DraftContainer.getInstance().setDraftResponse(null);
+
+        try {
+            App.setRoot("home_screen");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    } else {
+        PopUp.warning(
+                "Error",
+                "No se pudo confirmar",
+                confirmResp != null ? confirmResp.getMessage() : "Error desconocido.",
+                "error.png",
+                1,
+                "Aceptar"
+        );
+    }
+}
 private void loadAvailableEquipment() {
 
     if (currentDraft == null || currentDraft.getReservation() == null) {

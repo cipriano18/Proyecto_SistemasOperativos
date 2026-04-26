@@ -11,6 +11,8 @@ public class EquipmentReservationDraft extends EquipmentReservationRequest imple
     private static final long serialVersionUID = 1L;
 
     private int idDraft;
+
+    
     private Timestamp createdAt;
     private Timestamp expiresAt;
 
@@ -52,5 +54,9 @@ public class EquipmentReservationDraft extends EquipmentReservationRequest imple
 
     public boolean isExpired() {
         return System.currentTimeMillis() > expiresAt.getTime();
+    }
+    @Override
+    public String toString() {
+        return "EquipmentReservationDraft{" + "idDraft=" + idDraft + ", createdAt=" + createdAt + ", expiresAt=" + expiresAt + '}';
     }
 }

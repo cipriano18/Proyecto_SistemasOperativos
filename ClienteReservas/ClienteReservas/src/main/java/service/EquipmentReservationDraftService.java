@@ -35,9 +35,13 @@ public class EquipmentReservationDraftService {
     }
 
     public static Response confirmEquipmentDraft(int idDraft, int idClient) {
-        int[] data = {idDraft, idClient};
-        return sendRequest("CONFIRM_EQUIPMENT_DRAFT", data);
-    }
+
+    EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
+    request.setIdDraft(idDraft);
+    request.setIdClient(idClient);
+
+    return sendRequest("CONFIRM_EQUIPMENT_DRAFT", request);
+}
 
     private static Response sendRequest(String action, Object data) {
         try {
