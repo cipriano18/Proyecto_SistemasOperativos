@@ -48,7 +48,7 @@ public class PopUp {
             AudioClip sound = new AudioClip(soundPath);
             sound.play();
         } catch (Exception e) {
-            System.out.println("No se pudo reproducir el sonido");
+            System.out.println("No se pudo reproducir el sonido predeterminado");
         }
 
         PauseTransition delay = new PauseTransition(Duration.seconds(3));

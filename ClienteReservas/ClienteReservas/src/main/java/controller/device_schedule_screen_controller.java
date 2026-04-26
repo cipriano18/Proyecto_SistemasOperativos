@@ -49,6 +49,13 @@ public class device_schedule_screen_controller implements Initializable {
     private Button btn_search;
     
     private final CalendarBuilder builder = new CalendarBuilder();
+    private final List<Integer> monthValues = new ArrayList<>();
+
+    private static final String[] MONTH_NAMES = {
+        "Enero", "Febrero", "Marzo", "Abril",
+        "Mayo", "Junio", "Julio", "Agosto",
+        "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    };
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -57,10 +64,18 @@ public class device_schedule_screen_controller implements Initializable {
         int currentYear = java.time.LocalDate.now().getYear();
         tf_year.setText(String.valueOf(currentYear));
 
+        tf_year.focusedProperty().addListener((obs, was, isNow) -> {
+            if (!isNow) {
+                clampYearAndRefresh();
+            }
+        });
+
         loadMonths();
 
         chb_month.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
-            loadCalendar();
+            if (newValue.intValue() >= 0) {
+                loadCalendar();
+            }
         });
 
         loadCalendar();
@@ -82,66 +97,73 @@ public class device_schedule_screen_controller implements Initializable {
 
     @FXML
     private void GetCalendar(ActionEvent event) {
-        loadCalendar();
+        clampYearAndRefresh();
     }
 
     private void loadMonths() {
         chb_month.getItems().clear();
+        monthValues.clear();
 
-        chb_month.getItems().addAll(
-                "Enero", "Febrero", "Marzo", "Abril",
-                "Mayo", "Junio", "Julio", "Agosto",
-                "Septiembre", "Octubre", "Noviembre", "Diciembre"
-        );
-
+        int currentYear = java.time.LocalDate.now().getYear();
         int currentMonth = java.time.LocalDate.now().getMonthValue();
-        chb_month.getSelectionModel().select(currentMonth - 1);
+        int yearTyped = parseYearOrCurrent();
+
+        int startMonth = (yearTyped == currentYear) ? currentMonth : 1;
+
+        for (int m = startMonth; m <= 12; m++) {
+            chb_month.getItems().add(MONTH_NAMES[m - 1]);
+            monthValues.add(m);
+        }
+
+        chb_month.getSelectionModel().selectFirst();
+    }
+
+    private int parseYearOrCurrent() {
+        int currentYear = java.time.LocalDate.now().getYear();
+        if (tf_year == null) {
+            return currentYear;
+        }
+        String text = tf_year.getText() == null ? "" : tf_year.getText().trim();
+        if (text.isEmpty()) {
+            return currentYear;
+        }
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return currentYear;
+        }
+    }
+
+    private void clampYearAndRefresh() {
+        int currentYear = java.time.LocalDate.now().getYear();
+        int yearTyped = parseYearOrCurrent();
+
+        if (yearTyped < currentYear) {
+            yearTyped = currentYear;
+        }
+
+        String desired = String.valueOf(yearTyped);
+        if (!desired.equals(tf_year.getText())) {
+            tf_year.setText(desired);
+        }
+
+        loadMonths();
     }
 
     private void loadCalendar() {
 
         int selectedIndex = chb_month.getSelectionModel().getSelectedIndex();
 
-        if (selectedIndex < 0) {
+        if (selectedIndex < 0 || selectedIndex >= monthValues.size()) {
             return;
         }
 
-        int month = selectedIndex + 1;
+        int month = monthValues.get(selectedIndex);
 
-        String yearText = tf_year.getText().trim();
-
-        if (yearText.isEmpty()) {
-            System.out.println("Debe ingresar un año");
-            builder.buildCalendar(month, java.time.LocalDate.now().getYear(), grid_calendar, new ArrayList<>());
-            return;
-        }
-
-        int year;
-
-        try {
-            year = Integer.parseInt(yearText);
-        } catch (NumberFormatException e) {
-            System.out.println("Año inválido");
-            builder.buildCalendar(month, java.time.LocalDate.now().getYear(), grid_calendar, new ArrayList<>());
-            return;
-        }
-
+        int year = parseYearOrCurrent();
         int currentYear = java.time.LocalDate.now().getYear();
-        int currentMonth = java.time.LocalDate.now().getMonthValue();
-
         if (year < currentYear) {
-            System.out.println("El año no puede ser menor al actual");
-            builder.buildCalendar(currentMonth, currentYear, grid_calendar, new ArrayList<>());
-            chb_month.getSelectionModel().select(currentMonth - 1);
-            tf_year.setText(String.valueOf(currentYear));
-            return;
-        }
-
-        if (year == currentYear && month < currentMonth) {
-            System.out.println("No se puede seleccionar un mes pasado");
-            builder.buildCalendar(currentMonth, currentYear, grid_calendar, new ArrayList<>());
-            chb_month.getSelectionModel().select(currentMonth - 1);
-            return;
+            year = currentYear;
         }
 
         String flowType = DraftContainer.getInstance().getFlowType();

@@ -1,4 +1,3 @@
-
 package components;
 
 import java.util.List;
@@ -13,31 +12,33 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
+import model.Equipment;
 
 public class ListDeviceCard extends HBox {
 
-    private Label lblDeviceTitle;
-    private Label lblQuantityTitle;
-
-    private ChoiceBox<String> chbDeviceType;
+    private ChoiceBox<Equipment> chbDeviceType;
     private ChoiceBox<Integer> chbQuantity;
-
     private Button btnDeleteThis;
 
-    public ListDeviceCard() {
+    public ListDeviceCard(List<Equipment> equipmentList) {
         buildComponent();
-    }
+        setupEquipmentChoiceBox();
 
-    public ListDeviceCard(List<String> deviceTypes, List<Integer> quantities) {
-        buildComponent();
+        chbDeviceType.getItems().setAll(equipmentList);
 
-        chbDeviceType.getItems().setAll(deviceTypes);
-        chbQuantity.getItems().setAll(quantities);
+        chbDeviceType.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                loadQuantities(newVal);
+            }
+        });
+
+        if (!equipmentList.isEmpty()) {
+            chbDeviceType.getSelectionModel().selectFirst();
+        }
     }
 
     private void buildComponent() {
-        // HBox principal
-        this.setId("hb_list_device_card");
         this.setAlignment(Pos.CENTER_LEFT);
         this.setPrefHeight(74);
         this.setPrefWidth(740);
@@ -47,10 +48,9 @@ public class ListDeviceCard extends HBox {
                 + "-fx-border-radius: 5; "
                 + "-fx-border-color: #e0e0e0;");
 
-        // VBox dispositivo
         VBox vbDevice = new VBox();
 
-        lblDeviceTitle = new Label("Dispositivo");
+        Label lblDeviceTitle = new Label("Dispositivo");
         lblDeviceTitle.getStyleClass().add("form-subtitle");
 
         chbDeviceType = new ChoiceBox<>();
@@ -61,10 +61,9 @@ public class ListDeviceCard extends HBox {
 
         vbDevice.getChildren().addAll(lblDeviceTitle, chbDeviceType);
 
-        // VBox cantidad
         VBox vbQuantity = new VBox();
 
-        lblQuantityTitle = new Label("Cantidad");
+        Label lblQuantityTitle = new Label("Cantidad");
         lblQuantityTitle.getStyleClass().add("form-subtitle");
 
         chbQuantity = new ChoiceBox<>();
@@ -75,15 +74,10 @@ public class ListDeviceCard extends HBox {
 
         vbQuantity.getChildren().addAll(lblQuantityTitle, chbQuantity);
 
-        // Espaciador
         Region spacer = new Region();
-        spacer.setPrefHeight(20);
-        spacer.setPrefWidth(338);
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Botón eliminar
         btnDeleteThis = new Button();
-        btnDeleteThis.setAlignment(Pos.CENTER);
         btnDeleteThis.setPrefHeight(38);
         btnDeleteThis.setPrefWidth(38);
         btnDeleteThis.setStyle("-fx-background-color: red; "
@@ -95,7 +89,6 @@ public class ListDeviceCard extends HBox {
         );
         deleteIcon.setFitHeight(24);
         deleteIcon.setFitWidth(24);
-        deleteIcon.setPickOnBounds(true);
         deleteIcon.setPreserveRatio(true);
 
         btnDeleteThis.setGraphic(deleteIcon);
@@ -103,19 +96,33 @@ public class ListDeviceCard extends HBox {
         this.getChildren().addAll(vbDevice, vbQuantity, spacer, btnDeleteThis);
     }
 
-    public ChoiceBox<String> getChbDeviceType() {
-        return chbDeviceType;
+    private void setupEquipmentChoiceBox() {
+        chbDeviceType.setConverter(new StringConverter<Equipment>() {
+            @Override
+            public String toString(Equipment eq) {
+                return eq == null ? "" : eq.getName();
+            }
+
+            @Override
+            public Equipment fromString(String string) {
+                return null;
+            }
+        });
     }
 
-    public ChoiceBox<Integer> getChbQuantity() {
-        return chbQuantity;
+    private void loadQuantities(Equipment eq) {
+        chbQuantity.getItems().clear();
+
+        for (int i = 1; i <= eq.getTotalQuantity(); i++) {
+            chbQuantity.getItems().add(i);
+        }
+
+        if (!chbQuantity.getItems().isEmpty()) {
+            chbQuantity.getSelectionModel().selectFirst();
+        }
     }
 
-    public Button getBtnDeleteThis() {
-        return btnDeleteThis;
-    }
-
-    public String getSelectedDeviceType() {
+    public Equipment getSelectedEquipment() {
         return chbDeviceType.getValue();
     }
 
@@ -123,7 +130,15 @@ public class ListDeviceCard extends HBox {
         return chbQuantity.getValue();
     }
 
+    public Button getBtnDeleteThis() {
+        return btnDeleteThis;
+    }
+
     public void setOnDelete(Runnable action) {
         btnDeleteThis.setOnAction(e -> action.run());
+    }
+
+    public void setDeviceChoiceDisabled(boolean disabled) {
+        chbDeviceType.setDisable(disabled);
     }
 }

@@ -31,17 +31,30 @@ public class CalendarBuilder {
         YearMonth yearMonth = YearMonth.of(year, month);
         int daysInMonth = yearMonth.lengthOfMonth();
 
+        LocalDate today = LocalDate.now();
+        int startDay = 1;
+        if (year == today.getYear() && month == today.getMonthValue()) {
+            startDay = today.getDayOfMonth();
+        }
+
+        int daysToShow = daysInMonth - startDay + 1;
+        if (daysToShow <= 0) {
+            return;
+        }
+
         configureColumns(grid);
-        configureRows(grid, daysInMonth);
+        configureRows(grid, daysToShow);
 
         DayCard dayCard = new DayCard();
 
-        for (int day = 1; day <= daysInMonth; day++) {
+        int idx = 0;
+        for (int day = startDay; day <= daysInMonth; day++) {
             LocalDate localDate = LocalDate.of(year, month, day);
             Date sqlDate = Date.valueOf(localDate);
 
-            int column = (day - 1) % COLUMNS;
-            int row = (day - 1) / COLUMNS;
+            int column = idx % COLUMNS;
+            int row = idx / COLUMNS;
+            idx++;
 
             grid.add(dayCard.createCard(day, sqlDate, blocks), column, row);
         }
