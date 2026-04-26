@@ -132,6 +132,7 @@ public class ClientHandler extends Thread {
                     break;
                 case "START_AUDITORIUM_DRAFT":
                 case "UPDATE_AUDITORIUM_DRAFT":
+                case "GET_AUDITORIUM_DRAFT_BY_CLIENT_ID":
                 case "DISCARD_AUDITORIUM_DRAFT":
                 case "CONFIRM_AUDITORIUM_DRAFT":
                 case "GET_CALENDAR_AUDITORIUM":    

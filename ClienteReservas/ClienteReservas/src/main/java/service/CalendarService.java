@@ -8,7 +8,7 @@ import network.SocketManager;
 
 public class CalendarService {
 
-    public static Response getCalendarBlocks(int month, int year) {
+    public static Response getCalendarBlocks(int month, int year, int idClient) {
         try {
             SocketManager socketManager = SocketManager.getInstance();
 
@@ -20,7 +20,7 @@ public class CalendarService {
             ObjectOutputStream out = connection.getObjectOutput();
             ObjectInputStream in = connection.getObjectInput();
 
-            CalendarRequest request = new CalendarRequest(month, year);
+            CalendarRequest request = new CalendarRequest(month, year, idClient);
 
             out.writeObject("GET_CALENDAR_BLOCKS");
             out.flush();
@@ -42,7 +42,7 @@ public class CalendarService {
         }
     }
 
-    public static Response getAuditoriumCalendarBlocks(int month, int year) {
+    public static Response getAuditoriumCalendarBlocks(int month, int year, int idClient) {
         try {
             SocketManager socketManager = SocketManager.getInstance();
 
@@ -54,7 +54,7 @@ public class CalendarService {
             ObjectOutputStream out = connection.getObjectOutput();
             ObjectInputStream in = connection.getObjectInput();
 
-            CalendarRequest request = new CalendarRequest(month, year);
+            CalendarRequest request = new CalendarRequest(month, year, idClient);
 
             out.writeObject("GET_CALENDAR_AUDITORIUM");
             out.flush();

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="500.0" prefWidth="760.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.auditorium_form_screen_controller">
+    <children>
+        <VBox alignment="TOP_LEFT" prefHeight="500.0" prefWidth="760.0" spacing="16.0" styleClass="hero-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <padding>
+                <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+            </padding>
+            <children>
+                <Label text="Reserva de auditorio" style="-fx-text-fill: white;" styleClass="hero-title" />
+                <Label text="Complete los datos del evento para crear la reserva temporal." styleClass="hero-subtitle" />
+                <HBox spacing="24.0">
+                    <children>
+                        <VBox spacing="6.0">
+                            <children>
+                                <Label text="Fecha seleccionada" styleClass="form-subtitle" />
+                                <Label fx:id="lbl_selected_date" styleClass="form-subtitle" />
+                            </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                            <children>
+                                <Label text="Sección seleccionada" styleClass="form-subtitle" />
+                                <Label fx:id="lbl_selected_section" styleClass="form-subtitle" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <VBox spacing="8.0">
+                    <children>
+                        <Label text="Nombre del evento" styleClass="form-subtitle" />
+                        <TextField fx:id="txt_event_name" promptText="Ej. Conferencia de bienvenida" />
+                    </children>
+                </VBox>
+                <VBox spacing="8.0">
+                    <children>
+                        <Label text="Cantidad de asistentes" styleClass="form-subtitle" />
+                        <TextField fx:id="txt_attendees_count" promptText="Ej. 120" />
+                    </children>
+                </VBox>
+                <VBox spacing="8.0">
+                    <children>
+                        <Label text="Observaciones" styleClass="form-subtitle" />
+                        <TextArea fx:id="txt_observations" prefHeight="160.0" promptText="Detalles adicionales del evento" wrapText="true" />
+                    </children>
+                </VBox>
+                <HBox spacing="10.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#goBack" text="Cancelar" />
+                        <Button mnemonicParsing="false" onAction="#saveAuditoriumDraft" text="Guardar reserva temporal" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

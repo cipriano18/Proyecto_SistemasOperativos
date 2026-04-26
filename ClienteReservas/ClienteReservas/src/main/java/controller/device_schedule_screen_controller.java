@@ -26,6 +26,7 @@ import utils.CalendarBuilder;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import utils.DraftContainer;
+import session.Session;
 
 public class device_schedule_screen_controller implements Initializable {
 
@@ -165,17 +166,22 @@ public class device_schedule_screen_controller implements Initializable {
         if (year < currentYear) {
             year = currentYear;
         }
-
+        
         String flowType = DraftContainer.getInstance().getFlowType();
+
+        int idClient = Session.getInstance()
+                .getClient()
+                .getClient()
+                .getIdClient();
 
         Response response;
 
         if ("AUDITORIUM".equals(flowType)) {
-            response = CalendarService.getAuditoriumCalendarBlocks(month, year);
+            response = CalendarService.getAuditoriumCalendarBlocks(month, year, idClient);
         } else {
-            response = CalendarService.getCalendarBlocks(month, year);
+            response = CalendarService.getCalendarBlocks(month, year, idClient);
         }
-
+        
         if (response == null) {
             PopUp.warning(
                     "Error de conexión",

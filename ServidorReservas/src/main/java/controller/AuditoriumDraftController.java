@@ -11,12 +11,9 @@ import model.RXE;
 import model.Reservation;
 import service.Response;
 
-/**
- *
- * @author Reyner
- */
 public class AuditoriumDraftController {
-    public static Response getAuditoriumCalendarBlocks(int month, int year) {
+
+    public static Response getAuditoriumCalendarBlocks(int month, int year, int idClient) {
 
         if (month <= 0 || month > 12) {
             return new Response(false, "El mes es inválido", null);
@@ -26,21 +23,24 @@ public class AuditoriumDraftController {
             return new Response(false, "El año es inválido", null);
         }
 
+        if (idClient <= 0) {
+            return new Response(false, "El cliente es obligatorio", null);
+        }
+
         List<CalendarBlock> result = new ArrayList<>();
 
-        // Reservas reales de auditorio
         List<CalendarBlock> reserved =
                 AuditoriumReservationDAO.getReservedAuditoriumBlocksByMonth(month, year);
 
-        // Drafts activos (bloquean)
         List<CalendarBlock> blocked =
-                AuditoriumDraftDAO.getBlockedAuditoriumDraftsByMonth(month, year);
+                AuditoriumDraftDAO.getBlockedAuditoriumDraftsByMonth(month, year, idClient);
 
         result.addAll(reserved);
         result.addAll(blocked);
 
         return new Response(true, "Calendario de auditorio obtenido correctamente", result);
     }
+
     public static Response startAuditoriumDraft(AuditoriumDraftRequest request) {
 
         if (request == null) {
@@ -63,20 +63,6 @@ public class AuditoriumDraftController {
 
         if (reservation.getIdSection() <= 0) {
             return new Response(false, "La sección es obligatoria", null);
-        }
-
-        AuditoriumDraft auditoriumDraft = request.getAuditoriumDraft();
-
-        if (auditoriumDraft == null) {
-            return new Response(false, "Los datos del auditorio son obligatorios", null);
-        }
-
-        if (auditoriumDraft.getEventName() == null || auditoriumDraft.getEventName().isBlank()) {
-            return new Response(false, "El nombre del evento es obligatorio", null);
-        }
-
-        if (auditoriumDraft.getAttendeesCount() < 0) {
-            return new Response(false, "La cantidad de asistentes no puede ser negativa", null);
         }
 
         List<RXE> equipmentList = request.getEquipmentList();
@@ -109,7 +95,7 @@ public class AuditoriumDraftController {
 
         return new Response(true, "Reserva temporal de auditorio creada correctamente", createdDraft);
     }
-    
+
     public static Response updateAuditoriumDraft(AuditoriumDraftRequest request) {
 
         if (request == null) {
@@ -164,7 +150,7 @@ public class AuditoriumDraftController {
 
         return new Response(true, "Reserva temporal de auditorio actualizada correctamente", request);
     }
-    
+
     public static Response discardAuditoriumDraft(int idDraft, int idClient) {
 
         if (idDraft <= 0) {
@@ -193,7 +179,22 @@ public class AuditoriumDraftController {
 
         return new Response(true, "Reserva temporal de auditorio descartada correctamente", draft);
     }
-    
+
+    public static Response getAuditoriumDraftByClientId(int idClient) {
+
+        if (idClient <= 0) {
+            return new Response(false, "El cliente es obligatorio", null);
+        }
+
+        AuditoriumDraftRequest draft = AuditoriumDraftDAO.getDraftByClientId(idClient);
+
+        if (draft == null) {
+            return new Response(false, "No hay reservas temporales activas para este cliente", null);
+        }
+
+        return new Response(true, "Reserva temporal de auditorio obtenida correctamente", draft);
+    }
+
     public static Response confirmAuditoriumDraft(int idDraft, int idClient) {
 
         if (idDraft <= 0) {

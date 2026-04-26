@@ -14,7 +14,7 @@ import model.Reservation;
 
 public class ReservationDraftController {
 
-    public static Response getCalendarBlocks(int month, int year) {
+    public static Response getCalendarBlocks(int month, int year, Integer idClient) {
 
         if (month <= 0 || month > 12) {
             return new Response(false, "El mes es inválido", null);
@@ -26,11 +26,15 @@ public class ReservationDraftController {
 
         List<CalendarBlock> result = new ArrayList<>();
 
+        // Siempre se agregan los reservados
         List<CalendarBlock> reserved = ReservationDAO.getReservedBlocksByMonth(month, year);
-        List<CalendarBlock> blocked = EquipmentReservationDraftDAO.getBlockedDraftsByMonth(month, year);
-
         result.addAll(reserved);
-        result.addAll(blocked);
+
+        // Solo se agregan los bloqueados si hay un cliente válido
+        if (idClient != null) {
+            List<CalendarBlock> blocked = EquipmentReservationDraftDAO.getBlockedDraftsByMonth(month, year, idClient);
+            result.addAll(blocked);
+        }
 
         return new Response(true, "Calendario obtenido correctamente", result);
     }

@@ -23,31 +23,32 @@ public class EquipmentReservationDraftDAO {
         return reservationSemaphores.computeIfAbsent(key, k -> new Semaphore(1, true));
     }
 
-    public static List<CalendarBlock> getBlockedDraftsByMonth(int month, int year) {
+    public static List<CalendarBlock> getBlockedDraftsByMonth(int month, int year, int idClient) {
 
         cleanupExpiredDrafts();
 
         List<CalendarBlock> blocks = new ArrayList<>();
 
-        String sql = "SELECT reservation_date, id_section "
+        String sql = "SELECT reservation_date, id_section, id_client "
                 + "FROM AUD_ReservationDrafts "
-                + "WHERE MONTH(reservation_date) = ? AND YEAR(reservation_date) = ? "
+                + "WHERE MONTH(reservation_date) = ? "
+                + "AND YEAR(reservation_date) = ? "
                 + "AND expires_at > NOW() "
                 + "ORDER BY reservation_date, id_section";
 
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, month);
             ps.setInt(2, year);
-
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 CalendarBlock block = new CalendarBlock();
                 block.setReservationDate(rs.getDate("reservation_date"));
                 block.setIdSection(rs.getInt("id_section"));
-                block.setStatus("BLOCKED");
-                blocks.add(block); 
+                block.setStatus(rs.getInt("id_client") == idClient ? "OWN_DRAFT" : "BLOCKED");
+                blocks.add(block);
             }
 
         } catch (SQLException e) {
@@ -78,6 +79,9 @@ public class EquipmentReservationDraftDAO {
             );
 
             if (existingDraft != null) {
+                if (existingDraft.getIdClient() == idClient) {
+                    return existingDraft;
+                }
                 return null;
             }
 

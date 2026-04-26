@@ -158,3 +158,12 @@
     -fx-background-radius: 5;
     -fx-border-radius: 5;
 }
+
+.section-own-draft {
+    -fx-background-color: #A9D6F5;
+    -fx-text-fill: #0B2E4F;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #5DADE2;
+    -fx-border-width: 1px;
+}

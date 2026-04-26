@@ -13,6 +13,7 @@ public class CalendarConstants {
     public static final String STATUS_AVAILABLE = "AVAILABLE";
     public static final String STATUS_RESERVED = "RESERVED";
     public static final String STATUS_BLOCKED = "BLOCKED";
+    public static final String STATUS_OWN_DRAFT = "OWN_DRAFT";
 
     private CalendarConstants() {
         // Evita que se creen objetos de esta clase

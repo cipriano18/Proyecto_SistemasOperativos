@@ -78,7 +78,7 @@ public class ReservationDraftRequestHandler {
                         request.getIdClient()
                 );
             }
-
+            
             case "GET_CALENDAR_BLOCKS": {
                 CalendarRequest request = (CalendarRequest) obj;
 
@@ -87,7 +87,8 @@ public class ReservationDraftRequestHandler {
 
                 return ReservationDraftController.getCalendarBlocks(
                         request.getMonth(),
-                        request.getYear()
+                        request.getYear(),
+                        request.getIdClient()
                 );
             }
 

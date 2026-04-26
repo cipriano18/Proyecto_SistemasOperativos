@@ -1,11 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package components;
 
 import com.auditorio.clientereservas.App;
-import components.PopUp;
+import draft.EquipmentReservationDraft;
+import dto.AuditoriumDraftRequest;
 import dto.EquipmentReservationDraftRequest;
 import java.io.IOException;
 import java.sql.Date;
@@ -20,10 +17,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import model.CalendarBlock;
 import model.Reservation;
+import service.AuditoriumDraftService;
 import service.CalendarService;
 import service.EquipmentReservationDraftService;
 import service.Response;
@@ -59,7 +61,7 @@ public class DayCard {
 
         header.getChildren().addAll(lblDia, space);
 
-        Label subtitle = new Label("Secciones del día:");
+        Label subtitle = new Label("Secciones del dia:");
         subtitle.getStyleClass().add("hero-subtitle");
 
         Button btnManana = createSectionButton(
@@ -123,35 +125,96 @@ public class DayCard {
 
         button.setOnAction(e -> {
             try {
-                EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
+                Reservation reservation = new Reservation();
+                reservation.setIdSection(idSection);
+                reservation.setReservationDate(date);
+
+                String flowType = DraftContainer.getInstance().getFlowType();
                 int idClient = Session.getInstance()
                         .getClient()
                         .getClient()
                         .getIdClient();
+
+                if ("AUDITORIUM".equals(flowType)) {
+                    Response existingDraftResp = AuditoriumDraftService.getAuditoriumDraftByClientId(idClient);
+
+                    if (isSameAuditoriumDraft(existingDraftResp, reservation)) {
+                        boolean continueDraft = PopUp.warning(
+                                "Reserva en proceso",
+                                "Se encontro una reserva temporal",
+                                "Parece que tenias una reserva en proceso, deseas continuar?",
+                                "question.png",
+                                2,
+                                "Continuar"
+                        );
+
+                        if (continueDraft) {
+                            DraftContainer.getInstance().setSelectedReservation(reservation);
+                            DraftContainer.getInstance().setDraftResponse(existingDraftResp);
+                            CalendarService.exitReservationsView();
+                            App.setRoot("auditorium_form_screen");
+                        }
+                        return;
+                    }
+
+                    AuditoriumDraftRequest request = new AuditoriumDraftRequest();
+                    request.setIdClient(idClient);
+                    request.setReservation(reservation);
+                    request.setEquipmentList(new ArrayList<>());
+
+                    Response resp = AuditoriumDraftService.startAuditoriumDraft(request);
+
+                    if (resp != null && resp.isSuccess()) {
+                        DraftContainer.getInstance().setSelectedReservation(reservation);
+                        DraftContainer.getInstance().setDraftResponse(resp);
+                        CalendarService.exitReservationsView();
+                        App.setRoot("auditorium_form_screen");
+                    } else {
+                        String msg = (resp != null) ? resp.getMessage() : "No se pudo conectar al servidor";
+
+                        PopUp.warning(
+                                "Error",
+                                "No se pudo iniciar la reserva",
+                                msg,
+                                "error.png",
+                                1,
+                                "Aceptar"
+                        );
+                    }
+                    return;
+                }
+
+                Response existingDraftResp = EquipmentReservationDraftService.getEquipmentDraftByClientId(idClient);
+
+                if (isSameEquipmentDraft(existingDraftResp, reservation)) {
+                    boolean continueDraft = PopUp.warning(
+                            "Reserva en proceso",
+                            "Se encontro una reserva temporal",
+                            "Parece que tenias una reserva en proceso, deseas continuar?",
+                            "question.png",
+                            2,
+                            "Continuar"
+                    );
+
+                    if (continueDraft) {
+                        CalendarService.exitReservationsView();
+                        DraftContainer.getInstance().setDraftResponse(existingDraftResp);
+                        App.setRoot("device_form_screen");
+                    }
+                    return;
+                }
+
+                EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
                 request.setIdClient(idClient);
-
-                // Reservation
-                Reservation reservation = new Reservation();
-                reservation.setIdSection(idSection);
-                reservation.setReservationDate(date);
                 request.setReservation(reservation);
-
-                // Lista vacía
                 request.setEquipmentList(new ArrayList<>());
+
                 Response resp = EquipmentReservationDraftService.startEquipmentDraft(request);
 
                 if (resp != null && resp.isSuccess()) {
                     CalendarService.exitReservationsView();
-                DraftContainer.getInstance().setDraftResponse(resp);
-
-                String flowType = DraftContainer.getInstance().getFlowType();
-
-                if ("AUDITORIUM".equals(flowType)) {
-                    App.setRoot("auditorium_form_screen");
-                } else {
+                    DraftContainer.getInstance().setDraftResponse(resp);
                     App.setRoot("device_form_screen");
-                }
-
                 } else {
                     String msg = (resp != null) ? resp.getMessage() : "No se pudo conectar al servidor";
 
@@ -168,10 +231,40 @@ public class DayCard {
             } catch (IOException ex) {
                 Logger.getLogger(DayCard.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         });
 
         return button;
+    }
+
+    private boolean isSameAuditoriumDraft(Response response, Reservation reservation) {
+        if (response == null || !response.isSuccess() || !(response.getData() instanceof AuditoriumDraftRequest)) {
+            return false;
+        }
+
+        AuditoriumDraftRequest draft = (AuditoriumDraftRequest) response.getData();
+        return sameReservation(draft.getReservation(), reservation);
+    }
+
+    private boolean isSameEquipmentDraft(Response response, Reservation reservation) {
+        if (response == null || !response.isSuccess() || !(response.getData() instanceof EquipmentReservationDraft)) {
+            return false;
+        }
+
+        EquipmentReservationDraft draft = (EquipmentReservationDraft) response.getData();
+        return sameReservation(draft.getReservation(), reservation);
+    }
+
+    private boolean sameReservation(Reservation existing, Reservation selected) {
+        if (existing == null || selected == null) {
+            return false;
+        }
+
+        if (existing.getReservationDate() == null || selected.getReservationDate() == null) {
+            return false;
+        }
+
+        return existing.getIdSection() == selected.getIdSection()
+                && existing.getReservationDate().equals(selected.getReservationDate());
     }
 
     private String getSectionStatus(Date date, int idSection, List<CalendarBlock> blocks) {
@@ -194,10 +287,10 @@ public class DayCard {
         button.getStyleClass().removeAll(
                 "section-available",
                 "section-reserved",
-                "section-blocked"
+                "section-blocked",
+                "section-own-draft"
         );
 
-        // IMPORTANTE: limpiar tooltip anterior
         Tooltip.uninstall(button, button.getTooltip());
 
         Tooltip tooltip = new Tooltip();
@@ -208,24 +301,29 @@ public class DayCard {
                 button.getStyleClass().add("section-reserved");
                 button.setDisable(true);
                 button.setOpacity(0);
-                tooltip.setText("Este espacio ya está reservado");
+                tooltip.setText("Este espacio ya esta reservado");
                 Tooltip.install(button, tooltip);
                 break;
 
             case CalendarConstants.STATUS_BLOCKED:
                 button.getStyleClass().add("section-blocked");
                 button.setDisable(true);
-
-                tooltip.setText("Este espacio está bloqueado");
+                tooltip.setText("Este espacio esta bloqueado");
                 Tooltip.install(button, tooltip);
+                break;
+
+            case CalendarConstants.STATUS_OWN_DRAFT:
+                button.getStyleClass().add("section-own-draft");
+                button.setDisable(false);
+                tooltip.setText("Tienes una reserva temporal en proceso");
+                button.setTooltip(tooltip);
                 break;
 
             default:
                 button.getStyleClass().add("section-available");
                 button.setDisable(false);
-
                 tooltip.setText("Disponible para reservar");
-                button.setTooltip(tooltip); // aquí sí sirve normal
+                button.setTooltip(tooltip);
                 break;
         }
     }

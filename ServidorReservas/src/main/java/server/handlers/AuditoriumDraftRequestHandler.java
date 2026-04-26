@@ -43,6 +43,15 @@ public class AuditoriumDraftRequestHandler {
                 return AuditoriumDraftController.updateAuditoriumDraft(request);
             }
 
+            case "GET_AUDITORIUM_DRAFT_BY_CLIENT_ID": {
+                Integer idClient = (Integer) obj;
+
+                System.out.println("---- GET_AUDITORIUM_DRAFT_BY_CLIENT_ID ----");
+                System.out.println("IdClient recibido: " + idClient);
+
+                return AuditoriumDraftController.getAuditoriumDraftByClientId(idClient);
+            }
+
             case "DISCARD_AUDITORIUM_DRAFT": {
                 AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 
@@ -85,7 +94,8 @@ public class AuditoriumDraftRequestHandler {
 
                 return AuditoriumDraftController.getAuditoriumCalendarBlocks(
                         calendarRequest.getMonth(),
-                        calendarRequest.getYear()
+                        calendarRequest.getYear(),
+                        calendarRequest.getIdClient()
                 );
             }
 

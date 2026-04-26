@@ -1,5 +1,6 @@
 package utils;
 
+import model.Reservation;
 import service.Response;
 
 public class DraftContainer {
@@ -8,6 +9,7 @@ public class DraftContainer {
 
     private Response temp_device_reservation;
     private String flowType; // "DEVICE" o "AUDITORIUM"
+    private Reservation selectedReservation;
 
     private DraftContainer() {
     }
@@ -35,6 +37,14 @@ public class DraftContainer {
         return flowType;
     }
 
+    public void setSelectedReservation(Reservation selectedReservation) {
+        this.selectedReservation = selectedReservation;
+    }
+
+    public Reservation getSelectedReservation() {
+        return selectedReservation;
+    }
+
     public void clearTempReservationDevice() {
         temp_device_reservation = null;
     }
@@ -46,5 +56,6 @@ public class DraftContainer {
     public void clearAll() {
         temp_device_reservation = null;
         flowType = null;
+        selectedReservation = null;
     }
 }

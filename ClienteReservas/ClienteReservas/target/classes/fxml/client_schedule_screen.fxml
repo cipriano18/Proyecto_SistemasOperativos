@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.client_schedule_screen_controller">
+   <children>
+      <HBox>
+         <children>
+            <Button fx:id="btn_goback" mnemonicParsing="false" onAction="#GoToLogin" prefHeight="196.0" prefWidth="94.0" styleClass="btn-back" stylesheets="@../styles/register.css">
+               <graphic>
+                  <ImageView fitHeight="36.0" fitWidth="61.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/back.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <HBox alignment="CENTER_LEFT" minHeight="100.0" minWidth="820.0" prefHeight="196.0" prefWidth="800.0" styleClass="hero-panel" HBox.hgrow="ALWAYS">
+               <children>
+                  <VBox fx:id="vb_info" alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                        <Label styleClass="hero-badge" text="SISTEMA INSTITUCIONAL" />
+                        <Label minWidth="300.0" styleClass="hero-title" text="Mis Reservas" textFill="WHITE" />
+                        <Label minWidth="300.0" styleClass="hero-subtitle" text="Gestione sus reservas y observe detalles de las mismas." wrapText="true" />
+                     </children>
+                  </VBox>
+                  <Region prefHeight="116.0" prefWidth="268.0" HBox.hgrow="ALWAYS" />
+                  <ImageView fx:id="img_logo" fitHeight="120.0" fitWidth="328.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/LOGO-UNA1-Blanco.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <padding>
+                  <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+               </padding>
+            </HBox>
+         </children>
+      </HBox>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+         <content>
+            <HBox cache="true" cacheHint="SCALE" minWidth="840.0" prefWidth="940.0">
+               <children>
+                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <VBox alignment="TOP_CENTER" minWidth="840.0" prefHeight="100.0" prefWidth="940.0" spacing="40.0">
+                     <children>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <ImageView fitHeight="100.0" fitWidth="100.0" opacity="0.71" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/auditorium.png" />
+                                 </image>
+                              </ImageView>
+                              <VBox fx:id="vb_msg_new_acount" alignment="BOTTOM_LEFT" spacing="6">
+                                 <children>
+                                    <Label fx:id="lbl_create" styleClass="hero-title" text="Reservas de Auditorio">
+                                       <font>
+                                          <Font name="Tw Cen MT Bold" size="36.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="lbl_create2" styleClass="form-subtitle" text="Reservas de hoy y futuras.">
+                                       <font>
+                                          <Font name="Tw Cen MT Bold" size="36.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <Separator prefWidth="200.0" />
+                        <VBox fx:id="vb_form1" spacing="20.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" minWidth="150.0" style="-fx-background-radius: 5; -fx-border-color: #e0e0e0; -fx-border-radius: 5;">
+                                 <children>
+                                    <ImageView fitHeight="50.0" fitWidth="50.0" opacity="0.6" pickOnBounds="true" preserveRatio="true">
+                                       <HBox.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </HBox.margin>
+                                       <image>
+                                          <Image url="@../assets/night.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Separator orientation="VERTICAL" prefHeight="200.0" />
+                                    <VBox prefHeight="92.0" prefWidth="633.0">
+                                       <children>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" spacing="40.0">
+                                             <children>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Label styleClass="field-label" text="FECHA" />
+                                                      <Label styleClass="hero-title-3" text="28/05/2026" />
+                                                   </children>
+                                                </VBox>
+                                                <Separator orientation="VERTICAL" prefHeight="200.0" />
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Label styleClass="field-label" text="BLOQUE" />
+                                                      <Label styleClass="hero-title-3" text="Noche" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <Label styleClass="hero-title-2" text="Equipos solicitados">
+                                             <VBox.margin>
+                                                <Insets left="10.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                          <VBox spacing="5.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <HBox maxHeight="29.0" maxWidth="150.0" spacing="5.0" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #e0e0e0;">
+                                                   <children>
+                                                      <Label text="Microfono" />
+                                                      <Region HBox.hgrow="ALWAYS" />
+                                                      <Separator orientation="VERTICAL" prefHeight="17.0" prefWidth="2.0" />
+                                                      <Label text="5">
+                                                         <HBox.margin>
+                                                            <Insets right="5.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </HBox>
+                                             </children>
+                                             <padding>
+                                                <Insets right="5.0" top="5.0" />
+                                             </padding>
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" />
+                                             </VBox.margin>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                    <Region prefHeight="72.0" prefWidth="358.0" HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: red;">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/remove.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <HBox.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <Separator prefWidth="200.0" />
+                        <HBox alignment="CENTER">
+                           <children>
+                              <ImageView fitHeight="100.0" fitWidth="100.0" opacity="0.71" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/devices.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets right="5.0" />
+                                 </HBox.margin>
+                              </ImageView>
+                              <VBox fx:id="vb_msg_new_acount1" alignment="BOTTOM_LEFT" spacing="6">
+                                 <children>
+                                    <Label fx:id="lbl_create1" styleClass="hero-title" text="Reservas de Equipos">
+                                       <font>
+                                          <Font name="Tw Cen MT Bold" size="36.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="lbl_create11" styleClass="form-subtitle" text="Reservas de equipos individuales de hoy y futuras">
+                                       <font>
+                                          <Font name="Tw Cen MT Bold" size="36.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <Separator prefWidth="200.0" />
+                        <VBox fx:id="vb_form11" spacing="20.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" minWidth="150.0" style="-fx-background-radius: 5; -fx-border-color: #e0e0e0; -fx-border-radius: 5;" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <ImageView fitHeight="50.0" fitWidth="50.0" opacity="0.6" pickOnBounds="true" preserveRatio="true">
+                                       <HBox.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </HBox.margin>
+                                       <image>
+                                          <Image url="@../assets/night.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Separator orientation="VERTICAL" prefHeight="200.0" />
+                                    <VBox prefHeight="92.0" prefWidth="633.0">
+                                       <children>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" spacing="40.0">
+                                             <children>
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Label styleClass="field-label" text="FECHA" />
+                                                      <Label styleClass="hero-title-3" text="12/04/2026" />
+                                                   </children>
+                                                </VBox>
+                                                <Separator orientation="VERTICAL" prefHeight="200.0" />
+                                                <VBox spacing="5.0">
+                                                   <children>
+                                                      <Label styleClass="field-label" text="BLOQUE" />
+                                                      <Label styleClass="hero-title-3" text="Noche" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <Label styleClass="hero-title-2" text="Equipos solicitados">
+                                             <VBox.margin>
+                                                <Insets left="10.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                          <VBox spacing="5.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <HBox maxHeight="29.0" maxWidth="150.0" spacing="5.0" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #e0e0e0;">
+                                                   <children>
+                                                      <Label text="Proyector" />
+                                                      <Region HBox.hgrow="ALWAYS" />
+                                                      <Separator orientation="VERTICAL" prefHeight="17.0" prefWidth="2.0" />
+                                                      <Label text="1">
+                                                         <HBox.margin>
+                                                            <Insets right="5.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox maxHeight="29.0" maxWidth="150.0" spacing="5.0" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #e0e0e0;">
+                                                   <children>
+                                                      <Label text="Microfono" />
+                                                      <Region HBox.hgrow="ALWAYS" />
+                                                      <Separator orientation="VERTICAL" prefHeight="17.0" prefWidth="2.0" />
+                                                      <Label text="5">
+                                                         <HBox.margin>
+                                                            <Insets right="5.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox maxHeight="29.0" maxWidth="150.0" spacing="5.0" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #e0e0e0;">
+                                                   <children>
+                                                      <Label text="Lab Movil" />
+                                                      <Region HBox.hgrow="ALWAYS" />
+                                                      <Separator orientation="VERTICAL" prefHeight="17.0" prefWidth="2.0" />
+                                                      <Label text="1">
+                                                         <HBox.margin>
+                                                            <Insets right="5.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                   </padding>
+                                                </HBox>
+                                             </children>
+                                             <padding>
+                                                <Insets right="5.0" top="5.0" />
+                                             </padding>
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" />
+                                             </VBox.margin>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                    <Region prefHeight="72.0" prefWidth="358.0" HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: red;">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../assets/remove.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                       <HBox.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                     </padding>
+                  </VBox>
+                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+         </content>
+      </ScrollPane>
+   </children>
+   <stylesheets>
+      <URL value="@../styles/main.css" />
+      <URL value="@../styles/text.css" />
+   </stylesheets>
+</VBox>
