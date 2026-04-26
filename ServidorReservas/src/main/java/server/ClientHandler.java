@@ -134,6 +134,7 @@ public class ClientHandler extends Thread {
                 case "UPDATE_AUDITORIUM_DRAFT":
                 case "DISCARD_AUDITORIUM_DRAFT":
                 case "CONFIRM_AUDITORIUM_DRAFT":
+                case "GET_CALENDAR_AUDITORIUM":    
                     resp = AuditoriumDraftRequestHandler.handle(command, obj);
                     break;
                 case "CREATE_EQUIPMENT":

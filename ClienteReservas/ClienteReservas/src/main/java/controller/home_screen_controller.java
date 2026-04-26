@@ -20,6 +20,9 @@ import dto.ClientRequest;
 import service.Response;
 import service.CalendarService;
 import session.Session;
+import utils.DraftContainer;
+import utils.DraftContainer;
+
 
 /**
  * FXML Controller class
@@ -94,17 +97,16 @@ public class home_screen_controller implements Initializable {
     }
 
     @FXML
-    private void GoToAuditorium(ActionEvent event) {
-    }
-
-    @FXML
-    private void GoToDevices(ActionEvent event) throws IOException {
+    private void GoToAuditorium(ActionEvent event) throws IOException {
         int idClient = Session.getInstance()
                 .getClient()
                 .getClient()
                 .getIdClient();
+
         Response resp = CalendarService.enterReservationsView(idClient);
+
         if (resp.isSuccess()) {
+            DraftContainer.getInstance().setFlowType("AUDITORIUM");
             App.setRoot("device_schedule_screen");
         } else {
             PopUp.warning(
@@ -117,7 +119,31 @@ public class home_screen_controller implements Initializable {
                     "Aceptar"
             );
         }
+    }
 
+    @FXML
+    private void GoToDevices(ActionEvent event) throws IOException {
+        int idClient = Session.getInstance()
+                .getClient()
+                .getClient()
+                .getIdClient();
+
+        Response resp = CalendarService.enterReservationsView(idClient);
+
+        if (resp.isSuccess()) {
+            DraftContainer.getInstance().setFlowType("DEVICE");
+            App.setRoot("device_schedule_screen");
+        } else {
+            PopUp.warning(
+                    "Error de conexión",
+                    "Verifique su conexión o intente nuevamente.",
+                    "Es posible que el servicio esté temporalmente no disponible o que exista un problema con su conexión a internet.\n"
+                    + "Por favor, intente nuevamente más tarde.",
+                    "power_off.png",
+                    1,
+                    "Aceptar"
+            );
+        }
     }
 
     @FXML

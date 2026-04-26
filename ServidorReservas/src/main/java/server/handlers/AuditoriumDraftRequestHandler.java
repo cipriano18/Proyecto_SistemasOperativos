@@ -2,17 +2,17 @@ package server.handlers;
 
 import controller.AuditoriumDraftController;
 import dto.AuditoriumDraftRequest;
+import dto.CalendarRequest;
 import service.Response;
 
 public class AuditoriumDraftRequestHandler {
 
     public static Response handle(String command, Object obj) {
 
-        AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
-
         switch (command.toUpperCase()) {
 
             case "START_AUDITORIUM_DRAFT": {
+                AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 
                 System.out.println("---- START_AUDITORIUM_DRAFT ----");
                 System.out.println("Objeto recibido: " + request);
@@ -27,6 +27,7 @@ public class AuditoriumDraftRequestHandler {
             }
 
             case "UPDATE_AUDITORIUM_DRAFT": {
+                AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 
                 System.out.println("---- UPDATE_AUDITORIUM_DRAFT ----");
                 System.out.println("Objeto recibido: " + request);
@@ -43,6 +44,7 @@ public class AuditoriumDraftRequestHandler {
             }
 
             case "DISCARD_AUDITORIUM_DRAFT": {
+                AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 
                 System.out.println("---- DISCARD_AUDITORIUM_DRAFT ----");
                 System.out.println("Objeto recibido: " + request);
@@ -59,6 +61,7 @@ public class AuditoriumDraftRequestHandler {
             }
 
             case "CONFIRM_AUDITORIUM_DRAFT": {
+                AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 
                 System.out.println("---- CONFIRM_AUDITORIUM_DRAFT ----");
                 System.out.println("Objeto recibido: " + request);
@@ -71,6 +74,18 @@ public class AuditoriumDraftRequestHandler {
                 return AuditoriumDraftController.confirmAuditoriumDraft(
                         request.getIdDraft(),
                         request.getIdClient()
+                );
+            }
+
+            case "GET_CALENDAR_AUDITORIUM": {
+                CalendarRequest calendarRequest = (CalendarRequest) obj;
+
+                System.out.println("---- GET_CALENDAR_AUDITORIUM ----");
+                System.out.println("Objeto recibido: " + calendarRequest);
+
+                return AuditoriumDraftController.getAuditoriumCalendarBlocks(
+                        calendarRequest.getMonth(),
+                        calendarRequest.getYear()
                 );
             }
 

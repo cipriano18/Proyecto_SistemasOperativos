@@ -1,9 +1,12 @@
 package controller;
 
 import database.AuditoriumDraftDAO;
+import database.AuditoriumReservationDAO;
 import draft.AuditoriumDraft;
 import dto.AuditoriumDraftRequest;
+import java.util.ArrayList;
 import java.util.List;
+import model.CalendarBlock;
 import model.RXE;
 import model.Reservation;
 import service.Response;
@@ -13,6 +16,31 @@ import service.Response;
  * @author Reyner
  */
 public class AuditoriumDraftController {
+    public static Response getAuditoriumCalendarBlocks(int month, int year) {
+
+        if (month <= 0 || month > 12) {
+            return new Response(false, "El mes es inválido", null);
+        }
+
+        if (year <= 0) {
+            return new Response(false, "El año es inválido", null);
+        }
+
+        List<CalendarBlock> result = new ArrayList<>();
+
+        // Reservas reales de auditorio
+        List<CalendarBlock> reserved =
+                AuditoriumReservationDAO.getReservedAuditoriumBlocksByMonth(month, year);
+
+        // Drafts activos (bloquean)
+        List<CalendarBlock> blocked =
+                AuditoriumDraftDAO.getBlockedAuditoriumDraftsByMonth(month, year);
+
+        result.addAll(reserved);
+        result.addAll(blocked);
+
+        return new Response(true, "Calendario de auditorio obtenido correctamente", result);
+    }
     public static Response startAuditoriumDraft(AuditoriumDraftRequest request) {
 
         if (request == null) {

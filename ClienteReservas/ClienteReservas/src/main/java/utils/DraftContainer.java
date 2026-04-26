@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package utils;
 
 import service.Response;
@@ -11,6 +7,7 @@ public class DraftContainer {
     private static DraftContainer instance;
 
     private Response temp_device_reservation;
+    private String flowType; // "DEVICE" o "AUDITORIUM"
 
     private DraftContainer() {
     }
@@ -22,18 +19,32 @@ public class DraftContainer {
         return instance;
     }
 
-    // SET
     public void setDraftResponse(Response draftResponse) {
         this.temp_device_reservation = draftResponse;
     }
 
-    // GET
     public Response getDraftResponse() {
         return temp_device_reservation;
     }
 
-    // LIMPIAR reserva de dispositivo temporal
+    public void setFlowType(String flowType) {
+        this.flowType = flowType;
+    }
+
+    public String getFlowType() {
+        return flowType;
+    }
+
     public void clearTempReservationDevice() {
         temp_device_reservation = null;
+    }
+
+    public void clearFlowType() {
+        flowType = null;
+    }
+
+    public void clearAll() {
+        temp_device_reservation = null;
+        flowType = null;
     }
 }

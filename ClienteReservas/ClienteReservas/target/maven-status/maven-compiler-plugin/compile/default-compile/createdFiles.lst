@@ -1,3 +1,4 @@
+controller\auditorium_form_screen_controller.class
 controller\login_screen_controller.class
 model\CalendarBlock.class
 controller\register_admin_screen_controller.class
@@ -13,9 +14,11 @@ network\SocketManager.class
 session\Session.class
 dto\CalendarRequest.class
 service\AdminProfileService.class
+model\CalendarRequest.class
 service\EquipmentService.class
 dto\EquipmentReservationDraftRequest.class
 utils\CalendarConstants.class
+components\ListDeviceCard.class
 controller\device_schedule_screen_controller.class
 controller\profile_screen_controller.class
 model\Reservation.class

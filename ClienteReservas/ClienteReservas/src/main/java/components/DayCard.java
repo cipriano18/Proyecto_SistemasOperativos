@@ -142,8 +142,16 @@ public class DayCard {
 
                 if (resp != null && resp.isSuccess()) {
                     CalendarService.exitReservationsView();
-                    DraftContainer.getInstance().setDraftResponse(resp);
+                DraftContainer.getInstance().setDraftResponse(resp);
+
+                String flowType = DraftContainer.getInstance().getFlowType();
+
+                if ("AUDITORIUM".equals(flowType)) {
+                    App.setRoot("auditorium_form_screen");
+                } else {
                     App.setRoot("device_form_screen");
+                }
+
                 } else {
                     String msg = (resp != null) ? resp.getMessage() : "No se pudo conectar al servidor";
 

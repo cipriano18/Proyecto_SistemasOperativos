@@ -25,6 +25,7 @@ import service.CalendarService;
 import utils.CalendarBuilder;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import utils.DraftContainer;
 
 public class device_schedule_screen_controller implements Initializable {
 
@@ -143,7 +144,15 @@ public class device_schedule_screen_controller implements Initializable {
             return;
         }
 
-        Response response = CalendarService.getCalendarBlocks(month, year);
+        String flowType = DraftContainer.getInstance().getFlowType();
+
+        Response response;
+
+        if ("AUDITORIUM".equals(flowType)) {
+            response = CalendarService.getAuditoriumCalendarBlocks(month, year);
+        } else {
+            response = CalendarService.getCalendarBlocks(month, year);
+        }
 
         if (response == null) {
             PopUp.warning(

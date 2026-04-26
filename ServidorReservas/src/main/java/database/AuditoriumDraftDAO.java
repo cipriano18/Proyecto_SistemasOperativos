@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import model.CalendarBlock;
 import model.RXE;
 import model.Reservation;
 
@@ -34,7 +35,46 @@ public class AuditoriumDraftDAO {
         String key = reservationDate.toString() + "|" + idSection;
         return auditoriumDraftSemaphores.computeIfAbsent(key, k -> new Semaphore(1, true));
     }
+    // Obtener drafts activos de auditorio por mes y año para mostrarlos como bloqueados en el calendario
+    public static List<CalendarBlock> getBlockedAuditoriumDraftsByMonth(int month, int year) {
 
+        cleanupExpiredDrafts();
+
+        List<CalendarBlock> blocks = new java.util.ArrayList<>();
+
+        String sql =
+                "SELECT d.reservation_date, d.id_section " +
+                "FROM AUD_ReservationDrafts d " +
+                "INNER JOIN AUD_AuditoriumDrafts ad " +
+                "ON d.id_draft = ad.id_draft " +
+                "WHERE MONTH(d.reservation_date) = ? " +
+                "AND YEAR(d.reservation_date) = ? " +
+                "AND d.expires_at > NOW() " +
+                "ORDER BY d.reservation_date, d.id_section";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                CalendarBlock block = new CalendarBlock();
+                block.setReservationDate(rs.getDate("reservation_date"));
+                block.setIdSection(rs.getInt("id_section"));
+                block.setStatus("BLOCKED");
+
+                blocks.add(block);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener drafts bloqueados de auditorio: " + e.getMessage());
+        }
+
+        return blocks;
+    }
     // Crear una reserva temporal de auditorio
     public static AuditoriumDraftRequest createDraft(AuditoriumDraftRequest request) {
 
