@@ -4,8 +4,11 @@
  */
 package controller;
 
+import com.auditorio.clientereservas.App;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -69,11 +72,13 @@ public class admin_home_screen_controller implements Initializable {
     }
 
     @FXML
-    private void GoToProfile(ActionEvent event) {
+    private void GoToProfile(ActionEvent event) throws IOException {
+        App.setRoot("admin_profile_screen");
     }
 
     @FXML
-    private void GoToLogin(ActionEvent event) {
+    private void GoToLogin(ActionEvent event) throws IOException {
+        App.setRoot("login_screen");
     }
     
 }

@@ -122,7 +122,7 @@ public class home_screen_controller implements Initializable {
 
     @FXML
     private void GoToSchedule(ActionEvent event) throws IOException {
-
+        App.setRoot("client_schedule_screen");
     }
 
     @FXML
