@@ -15,7 +15,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.device_form_screen_controller">
+<VBox minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.device_form_screen_controller">
    <children>
       <HBox>
          <children>
@@ -50,7 +50,7 @@
             </HBox>
          </children>
       </HBox>
-      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vvalue="0.34" VBox.vgrow="ALWAYS">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vvalue="0.19" VBox.vgrow="ALWAYS">
          <content>
             <HBox cache="true" cacheHint="SCALE" minWidth="840.0" prefWidth="940.0">
                <children>
@@ -106,6 +106,11 @@
                               </Separator>
                            </children>
                         </HBox>
+                        <Label styleClass="hero-title" text="Dispositivos agregados">
+                           <font>
+                              <Font name="Tw Cen MT Bold" size="36.0" />
+                           </font>
+                        </Label>
                         <VBox fx:id="vb_added_devices" minHeight="100.0" minWidth="100.0" prefWidth="760.0" VBox.vgrow="ALWAYS" />
                         <HBox alignment="CENTER" maxHeight="52.0" VBox.vgrow="ALWAYS">
                            <children>
