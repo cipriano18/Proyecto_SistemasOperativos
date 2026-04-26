@@ -243,7 +243,7 @@ public class client_schedule_screen_controller implements Initializable {
                 "¿Desea cancelar esta reserva de auditorio?",
                 "warning.png",
                 2,
-                "Cancelar reserva"
+                "Eliminar"
         );
 
         if (!confirm) {
@@ -287,8 +287,8 @@ public class client_schedule_screen_controller implements Initializable {
                 "Cancelar reserva",
                 "¿Desea cancelar esta reserva de equipos?",
                 "warning.png",
-                2,
-                "Cancelar reserva"
+                2, 
+                "Eliminar"
         );
 
         if (!confirm) {
