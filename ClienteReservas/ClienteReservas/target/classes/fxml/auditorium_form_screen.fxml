@@ -1,64 +1,198 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="760.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.auditorium_form_screen_controller">
+<VBox fillWidth="true" minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.auditorium_form_screen_controller">
+
     <children>
-        <VBox alignment="TOP_LEFT" prefHeight="500.0" prefWidth="760.0" spacing="16.0" styleClass="hero-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <padding>
-                <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-            </padding>
+
+        <HBox minWidth="840.0" prefWidth="940.0">
             <children>
-                <Label text="Reserva de auditorio" style="-fx-text-fill: white;" styleClass="hero-title" />
-                <Label text="Complete los datos del evento para crear la reserva temporal." styleClass="hero-subtitle" />
-                <HBox spacing="24.0">
+                <Button fx:id="btn_goback" mnemonicParsing="false" onAction="#goBack" prefHeight="196.0" prefWidth="94.0" styleClass="btn-back" stylesheets="@../styles/register.css">
+                    <graphic>
+                        <ImageView fitHeight="36.0" fitWidth="61.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../assets/back.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <HBox alignment="CENTER_LEFT" minHeight="100.0" minWidth="820.0" prefHeight="196.0" prefWidth="800.0" styleClass="hero-panel" HBox.hgrow="ALWAYS">
                     <children>
-                        <VBox spacing="6.0">
+                        <VBox fx:id="vb_info" alignment="CENTER_LEFT" spacing="5.0">
                             <children>
-                                <Label text="Fecha seleccionada" styleClass="form-subtitle" />
-                                <Label fx:id="lbl_selected_date" styleClass="form-subtitle" />
+                                <Label styleClass="hero-badge" text="SISTEMA INSTITUCIONAL" />
+                                <Label minWidth="300.0" styleClass="hero-title" text="Reserva de Auditorio" textFill="WHITE" />
+                                <Label minWidth="300.0" styleClass="hero-subtitle" text="Complete los datos del evento y seleccione los equipos que necesita." wrapText="true" />
                             </children>
                         </VBox>
-                        <VBox spacing="6.0">
-                            <children>
-                                <Label text="Sección seleccionada" styleClass="form-subtitle" />
-                                <Label fx:id="lbl_selected_section" styleClass="form-subtitle" />
-                            </children>
-                        </VBox>
+
+                        <Region prefHeight="116.0" prefWidth="318.0" HBox.hgrow="ALWAYS" />
+
+                        <ImageView fx:id="img_logo" fitHeight="120.0" fitWidth="328.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../assets/LOGO-UNA1-Blanco.png" />
+                            </image>
+                        </ImageView>
                     </children>
-                </HBox>
-                <VBox spacing="8.0">
-                    <children>
-                        <Label text="Nombre del evento" styleClass="form-subtitle" />
-                        <TextField fx:id="txt_event_name" promptText="Ej. Conferencia de bienvenida" />
-                    </children>
-                </VBox>
-                <VBox spacing="8.0">
-                    <children>
-                        <Label text="Cantidad de asistentes" styleClass="form-subtitle" />
-                        <TextField fx:id="txt_attendees_count" promptText="Ej. 120" />
-                    </children>
-                </VBox>
-                <VBox spacing="8.0">
-                    <children>
-                        <Label text="Observaciones" styleClass="form-subtitle" />
-                        <TextArea fx:id="txt_observations" prefHeight="160.0" promptText="Detalles adicionales del evento" wrapText="true" />
-                    </children>
-                </VBox>
-                <HBox spacing="10.0">
-                    <children>
-                        <Button mnemonicParsing="false" onAction="#goBack" text="Cancelar" />
-                        <Button mnemonicParsing="false" onAction="#saveAuditoriumDraft" text="Guardar reserva temporal" />
-                    </children>
+                    <padding>
+                        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                    </padding>
                 </HBox>
             </children>
-        </VBox>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vvalue="1.0" VBox.vgrow="ALWAYS">
+            <content>
+                <HBox minWidth="840.0" prefWidth="940.0">
+                    <children>
+                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+
+                        <VBox alignment="TOP_CENTER" minWidth="840.0" prefWidth="940.0" spacing="35.0">
+                            <padding>
+                                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                            </padding>
+
+                            <children>
+
+                                <VBox alignment="CENTER">
+                                    <children>
+                                        <ImageView fitHeight="78.0" fitWidth="171.0" opacity="0.76" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../assets/devices.png" />
+                                            </image>
+                                        </ImageView>
+
+                                        <Label styleClass="hero-title" text="Equipos disponibles">
+                                            <font>
+                                                <Font name="Tw Cen MT Bold" size="36.0" />
+                                            </font>
+                                        </Label>
+
+                                        <Label styleClass="form-subtitle" text="Seleccione los equipos que necesita para el auditorio." />
+                                    </children>
+                                </VBox>
+
+                                <HBox alignment="CENTER_LEFT" maxHeight="100.0">
+                                    <children>
+                                        <Separator opacity="0.22" orientation="VERTICAL" prefHeight="200.0">
+                                            <effect>
+                                                <DropShadow height="63.88" radius="42.5825" spread="0.95" width="108.45">
+                                                    <color>
+                                                        <Color red="1.0" green="1.0" blue="1.0" />
+                                                    </color>
+                                                </DropShadow>
+                                            </effect>
+                                        </Separator>
+
+                                        <ScrollPane fitToHeight="true" minHeight="100.0" minWidth="760.0" prefHeight="100.0" prefWidth="760.0" stylesheets="@../styles/scroll_pane.css" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                                            <content>
+                                                <HBox fx:id="hb_device_container" alignment="CENTER" spacing="30.0" style="-fx-background-radius: 15;">
+                                                    <padding>
+                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                    </padding>
+                                                </HBox>
+                                            </content>
+                                        </ScrollPane>
+
+                                        <Separator opacity="0.22" orientation="VERTICAL" prefHeight="200.0">
+                                            <effect>
+                                                <DropShadow height="63.88" radius="42.5825" spread="0.95" width="108.45">
+                                                    <color>
+                                                        <Color red="1.0" green="1.0" blue="1.0" />
+                                                    </color>
+                                                </DropShadow>
+                                            </effect>
+                                        </Separator>
+                                    </children>
+                                </HBox>
+
+                                <Label styleClass="hero-title" text="Equipos agregados">
+                                    <font>
+                                        <Font name="Tw Cen MT Bold" size="36.0" />
+                                    </font>
+                                </Label>
+
+                                <VBox fx:id="vb_added_devices" minHeight="100.0" prefWidth="760.0" VBox.vgrow="ALWAYS" />
+
+                                <HBox alignment="CENTER" maxHeight="52.0">
+                                    <children>
+                                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+
+                                        <Button fx:id="btn_add_device" alignment="CENTER" onAction="#AddDeviceToList" prefHeight="49.0" prefWidth="200.0" styleClass="btn-primary" text="Agregar otro">
+                                            <graphic>
+                                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../assets/add_circle.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                            <HBox.margin>
+                                                <Insets right="10.0" />
+                                            </HBox.margin>
+                                        </Button>
+                                    </children>
+                                </HBox>
+
+                                <Separator prefWidth="760.0" />
+
+                                <VBox alignment="CENTER_LEFT" prefWidth="760.0" spacing="10.0">
+                                    <children>
+                                        <Label styleClass="hero-title" text="Datos del evento">
+                                            <font>
+                                                <Font name="Tw Cen MT Bold" size="36.0" />
+                                            </font>
+                                        </Label>
+
+                                        <Label styleClass="form-subtitle" text="Fecha seleccionada" />
+                                        <Label fx:id="lbl_selected_date" styleClass="form-subtitle" />
+
+                                        <Label styleClass="form-subtitle" text="Sección seleccionada" />
+                                        <Label fx:id="lbl_selected_section" styleClass="form-subtitle" />
+
+                                        <Label styleClass="form-subtitle" text="Nombre del evento" />
+                                        <TextField fx:id="txt_event_name" prefHeight="40.0" promptText="Ej. Conferencia de bienvenida" />
+
+                                        <Label styleClass="form-subtitle" text="Cantidad de asistentes" />
+                                        <TextField fx:id="txt_attendees_count" prefHeight="40.0" promptText="Ej. 120" />
+
+                                        <Label styleClass="form-subtitle" text="Observaciones" />
+                                        <TextArea fx:id="txt_observations" prefHeight="150.0" promptText="Detalles adicionales del evento" styleClass="text-area" stylesheets="@../styles/main.css" wrapText="true" />
+                                    </children>
+                                </VBox>
+
+                                <Button fx:id="btn_save_reservation" alignment="CENTER" onAction="#saveAuditoriumReservation" prefHeight="49.0" prefWidth="769.0" styleClass="btn-primary" text="Guardar Reserva" />
+
+                                <Region prefHeight="80.0" prefWidth="200.0" />
+
+                            </children>
+                        </VBox>
+
+                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                    </children>
+                </HBox>
+            </content>
+        </ScrollPane>
     </children>
-</AnchorPane>
+
+    <stylesheets>
+        <URL value="@../styles/main.css" />
+        <URL value="@../styles/text.css" />
+    </stylesheets>
+</VBox>

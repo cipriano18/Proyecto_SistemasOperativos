@@ -1,6 +1,7 @@
 package service;
 
 import dto.AuditoriumDraftRequest;
+import dto.CalendarRequest;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import network.ServerConnection;
@@ -18,6 +19,14 @@ public class AuditoriumDraftService {
 
     public static Response getAuditoriumDraftByClientId(int idClient) {
         return sendRequest("GET_AUDITORIUM_DRAFT_BY_CLIENT_ID", idClient);
+    }
+
+    public static Response discardAuditoriumDraft(AuditoriumDraftRequest request) {
+        return sendRequest("DISCARD_AUDITORIUM_DRAFT", request);
+    }
+
+    public static Response confirmAuditoriumDraft(AuditoriumDraftRequest request) {
+        return sendRequest("CONFIRM_AUDITORIUM_DRAFT", request);
     }
 
     private static Response sendRequest(String action, Object data) {
