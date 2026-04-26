@@ -53,4 +53,10 @@ public class EquipmentReservationDraft extends EquipmentReservationRequest imple
     public boolean isExpired() {
         return System.currentTimeMillis() > expiresAt.getTime();
     }
+
+    @Override
+    public String toString() {
+        return "EquipmentReservationDraft{" + "idDraft=" + idDraft + ", createdAt=" + createdAt + ", expiresAt=" + expiresAt + '}';
+    }
+    
 }

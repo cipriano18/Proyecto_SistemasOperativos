@@ -9,6 +9,7 @@ public class Session {
 
     private ClientRequest client;
     private AdminRequest admin;
+    private int currentEquipmentDraftId;
 
     private Session() {
     }
@@ -59,4 +60,13 @@ public class Session {
         }
         return 0;
     }
+
+    public int getCurrentEquipmentDraftId() {
+        return currentEquipmentDraftId;
+    }
+
+    public void setCurrentEquipmentDraftId(int currentEquipmentDraftId) {
+        this.currentEquipmentDraftId = currentEquipmentDraftId;
+    }
+
 }
