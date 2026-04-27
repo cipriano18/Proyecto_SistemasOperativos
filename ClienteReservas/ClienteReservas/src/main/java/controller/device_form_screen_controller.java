@@ -86,6 +86,7 @@ public class device_form_screen_controller implements Initializable {
             System.out.println("ID draft guardado en Session: " + currentDraftId);
 
             loadAvailableEquipment();
+            loadDraftEquipmentCards();
 
         } else {
             currentDraftId = Session.getInstance().getCurrentEquipmentDraftId();
@@ -337,7 +338,55 @@ public class device_form_screen_controller implements Initializable {
             );
         }
     }
+private void loadDraftEquipmentCards() {
 
+    if (currentDraft == null || currentDraft.getEquipmentList() == null) {
+        return;
+    }
+
+    vb_added_devices.getChildren().clear();
+
+    for (RXE item : currentDraft.getEquipmentList()) {
+
+        List<Equipment> filtered = availableEquipmentList.stream()
+                .filter(eq -> eq.getIdEquipment() == item.getIdEquipment())
+                .collect(Collectors.toList());
+
+        if (filtered.isEmpty()) {
+            continue;
+        }
+
+        ListDeviceCard card = new ListDeviceCard(filtered);
+
+        card.setOnQuantityChange(() -> {
+            refreshDraftInServer();
+        });
+
+        card.setOnDelete(() -> {
+
+            boolean confirm = PopUp.warning(
+                    "Confirmación",
+                    "Eliminar dispositivo",
+                    "¿Está seguro que desea eliminar este dispositivo de la lista?",
+                    "back_hand.png",
+                    2,
+                    "Eliminar"
+            );
+
+            if (!confirm) {
+                return;
+            }
+
+            vb_added_devices.getChildren().remove(card);
+            refreshDraftInServer();
+        });
+
+        VBox.setMargin(card, new Insets(0, 0, 10, 0));
+        vb_added_devices.getChildren().add(card);
+
+        card.setSelectedQuantity(item.getQuantity());
+    }
+}
     private void loadAvailableEquipment() {
 
         if (currentDraft == null || currentDraft.getReservation() == null) {

@@ -150,4 +150,7 @@ public class ListDeviceCard extends HBox {
     public void setOnQuantityChange(Runnable action) {
         this.onQuantityChange = action;
     }
+    public void setSelectedQuantity(Integer quantity) {
+    chbQuantity.setValue(quantity);
+}
 }
