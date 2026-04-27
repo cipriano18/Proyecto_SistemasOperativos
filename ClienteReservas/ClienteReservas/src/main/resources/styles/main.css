@@ -303,3 +303,9 @@
 .table-view .corner {
     -fx-background-color: white;
 }
+
+/* PASSWORD FIELD */
+.password-field {
+    -fx-font-size: 12px;
+    -fx-font-family: "Segoe UI";
+}
