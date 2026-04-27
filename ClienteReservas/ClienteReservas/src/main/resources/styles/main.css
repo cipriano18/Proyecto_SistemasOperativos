@@ -207,3 +207,99 @@
 .text-area:focused .viewport {
     -fx-background-color: white;
 }
+
+/* ===== TABLE VIEW ===== */
+
+.table-view {
+    -fx-background-color: #f4f4f4;
+    -fx-background-radius: 10px;
+    -fx-border-color: #E0E0E3;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 0;
+}
+
+/* Fondo interno */
+.table-view .virtual-flow,
+.table-view .clipped-container,
+.table-view .sheet {
+    -fx-background-color: white;
+}
+
+/* Encabezado */
+.table-view .column-header-background {
+    -fx-background-color: #C8102E;
+    -fx-background-radius: 10px 10px 0 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #9E0F24 transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 10px 8px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Filas */
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #E9EAEC transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-cell-size: 42px;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #F7F7F8;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #FFE5E9;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #C8102E;
+}
+
+/* Celdas */
+.table-cell {
+    -fx-text-fill: #1C1C1E;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 8px 10px;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+}
+
+/* Placeholder */
+.table-view .placeholder .label {
+    -fx-text-fill: #5A5A5E;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+}
+
+/* Scroll */
+.table-view .scroll-bar:vertical .thumb,
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: #D6D6DA;
+    -fx-background-radius: 8px;
+}
+
+.table-view .scroll-bar:vertical .thumb:hover,
+.table-view .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #C8102E;
+}
+
+/* Esquina inferior derecha */
+.table-view .corner {
+    -fx-background-color: white;
+}
