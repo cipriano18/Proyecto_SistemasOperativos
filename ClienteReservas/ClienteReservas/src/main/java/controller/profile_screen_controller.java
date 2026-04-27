@@ -4,14 +4,11 @@ import com.auditorio.clientereservas.App;
 import components.PopUp;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -123,7 +120,7 @@ public class profile_screen_controller implements Initializable {
         User u = session.getUser();
         Contact ct = session.getContact();
 
-        lbl_card_name.setText(nullSafe(c.getfName()) + nullSafe(c.getmName()) + nullSafe(c.getfSurname()) + nullSafe(c.getmSurname()));
+        lbl_card_name.setText(nullSafe(c.getfName()) +" "+nullSafe(c.getmName()) +" "+ nullSafe(c.getfSurname()) +" "+ nullSafe(c.getmSurname()));
         lbl_card_ced.setText(nullSafe(c.getIdentityCard()));
         lbl_card_contact.setText(nullSafe(ct.getContactValue()));
 
