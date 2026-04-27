@@ -154,6 +154,7 @@ public class ClientHandler extends Thread {
                 case "GET_RESERVATIONS_BY_CLIENT_ID":
                 case "DELETE_RESERVATION_BY_ID":
                 case "DELETE_RESERVATIONS_BY_CLIENT_ID":
+                case "GET_EQUIPMENT_RESERVATIONS_BY_MONTH":    
                     resp = ReservationRequestHandler.handle(command, obj);
                     break;
                     

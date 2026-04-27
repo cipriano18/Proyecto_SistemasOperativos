@@ -61,6 +61,17 @@ public class ReservationRequestHandler {
 
                 return ReservationController.deleteReservationsByClientId(idClient);
             }
+            case "GET_EQUIPMENT_RESERVATIONS_BY_MONTH": {
+                int[] data = (int[]) obj;
+
+                int month = data[0];
+                int year = data[1];
+
+                System.out.println("---- GET_EQUIPMENT_RESERVATIONS_BY_MONTH ----");
+                System.out.println("Month: " + month + " Year: " + year);
+
+                return ReservationController.getEquipmentReservationsByMonth(month, year);
+            }
 
             default:
                 return new Response(false, "Comando de reservación no reconocido", null);

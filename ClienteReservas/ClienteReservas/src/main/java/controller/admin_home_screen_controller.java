@@ -64,7 +64,8 @@ public class admin_home_screen_controller implements Initializable {
     }
 
     @FXML
-    private void GoToDeviceReservations(ActionEvent event) {
+    private void GoToDeviceReservations(ActionEvent event) throws IOException {
+        App.setRoot("admin_manage_device_reservation_screen");
     }
 
     @FXML

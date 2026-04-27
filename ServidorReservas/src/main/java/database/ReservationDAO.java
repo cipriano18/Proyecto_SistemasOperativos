@@ -169,9 +169,11 @@ public class ReservationDAO {
     // Obtener una reservación completa (cabecera + cliente + equipos) por ID
     public static EquipmentReservationRequest getEquipmentReservationById(int idReservation) {
         String reservationSql =
-                "SELECT r.id_reservation, r.id_section, r.reservation_date, rxc.id_client " +
+                "SELECT r.id_reservation, r.id_section, r.reservation_date, rxc.id_client, " +
+                "       CONCAT(c.f_name, ' ', c.f_surname) AS client_name " +
                 "FROM AUD_Reservations r " +
                 "INNER JOIN AUD_RXC rxc ON r.id_reservation = rxc.id_reservation " +
+                "INNER JOIN AUD_Clients c ON rxc.id_client = c.id_client " +
                 "WHERE r.id_reservation = ?";
 
         String equipmentSql =
@@ -211,7 +213,12 @@ public class ReservationDAO {
                         }
                     }
 
-                    return new EquipmentReservationRequest(reservation, idClient, equipmentList);
+                    EquipmentReservationRequest request =
+                            new EquipmentReservationRequest(reservation, idClient, equipmentList);
+
+                    request.setClientName(rs.getString("client_name"));
+
+                    return request;
                 }
             }
 
@@ -252,6 +259,45 @@ public class ReservationDAO {
 
         } catch (SQLException e) {
             System.out.println("Error al obtener reservaciones por cliente: " + e.getMessage());
+        }
+
+        return reservations;
+    }
+    // Consulta las reservas de equipo por mes y año y devuelve a quien pertenece y la lista de equipos.
+    public static List<EquipmentReservationRequest> getEquipmentReservationsByMonth(int month, int year) {
+        List<EquipmentReservationRequest> reservations = new ArrayList<>();
+
+        String sql =
+                "SELECT r.id_reservation " +
+                "FROM AUD_Reservations r " +
+                "INNER JOIN AUD_RXC rxc ON r.id_reservation = rxc.id_reservation " +
+                "LEFT JOIN AUD_AuditoriumReservations ar ON r.id_reservation = ar.id_reservation " +
+                "WHERE MONTH(r.reservation_date) = ? " +
+                "AND YEAR(r.reservation_date) = ? " +
+                "AND r.reservation_date >= CURDATE() " +
+                "AND ar.id_reservation IS NULL " +
+                "ORDER BY r.reservation_date ASC, r.id_section ASC";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+
+                    EquipmentReservationRequest request =
+                            getEquipmentReservationById(rs.getInt("id_reservation"));
+
+                    if (request != null) {
+                        reservations.add(request);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener reservaciones de equipos por mes y año: " + e.getMessage());
         }
 
         return reservations;

@@ -10,6 +10,7 @@ public class EquipmentReservationRequest implements Serializable {
 
     private Reservation reservation;
     private int idClient;
+    private String clientName;
     private List<RXE> equipmentList;
 
     public EquipmentReservationRequest() {
@@ -35,6 +36,14 @@ public class EquipmentReservationRequest implements Serializable {
 
     public void setIdClient(int idClient) {
         this.idClient = idClient;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
     public List<RXE> getEquipmentList() {

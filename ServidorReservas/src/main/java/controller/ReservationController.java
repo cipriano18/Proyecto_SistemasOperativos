@@ -74,6 +74,34 @@ public class ReservationController {
 
         return new Response(true, "Reservaciones obtenidas correctamente", reservations);
     }
+    
+    public static Response getEquipmentReservationsByMonth(int month, int year) {
+
+        if (month <= 0 || month > 12) {
+            return new Response(false, "Mes inválido", null);
+        }
+
+        if (year <= 0) {
+            return new Response(false, "Año inválido", null);
+        }
+
+        List<EquipmentReservationRequest> reservations =
+                ReservationDAO.getEquipmentReservationsByMonth(month, year);
+
+        if (reservations == null || reservations.isEmpty()) {
+            return new Response(
+                    false,
+                    "No se encontraron reservaciones de equipos para el periodo indicado",
+                    null
+            );
+        }
+
+        return new Response(
+                true,
+                "Reservaciones de equipos obtenidas correctamente",
+                reservations
+        );
+    }
 
     public static Response deleteReservationById(int idReservation, int idClient) {
         if (idReservation <= 0) {

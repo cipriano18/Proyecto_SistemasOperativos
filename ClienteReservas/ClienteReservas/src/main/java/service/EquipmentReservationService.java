@@ -23,6 +23,11 @@ public class EquipmentReservationService {
     public static Response getReservationsByClientId(int idClient) {
         return sendRequest("GET_RESERVATIONS_BY_CLIENT_ID", idClient);
     }
+    
+    public static Response getEquipmentReservationsByMonth(int month, int year) {
+        int[] data = {month, year};
+        return sendRequest("GET_EQUIPMENT_RESERVATIONS_BY_MONTH", data);
+    }
 
     public static Response deleteReservationById(EquipmentReservationRequest request) {
         return sendRequest("DELETE_RESERVATION_BY_ID", request);

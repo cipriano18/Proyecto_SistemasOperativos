@@ -21,6 +21,7 @@ controller\admin_home_screen_controller.class
 service\EquipmentReservationDraftService.class
 model\Person.class
 components\PopUp.class
+components\DeviceFormDialog$DeviceFormAction.class
 service\Response.class
 model\RXC.class
 dto\AdminRequest.class
@@ -49,9 +50,11 @@ model\Client.class
 model\Contact.class
 dto\AuditoriumReservationRequest.class
 model\RXE.class
+controller\admin_device_screen_controller.class
 service\AuditoriumDraftService.class
 draft\AuditoriumDraft.class
 service\RegisterAdmin.class
+components\DeviceFormDialog.class
 draft\EquipmentReservationDraft.class
 service\CalendarService.class
 service\EquipmentReservationService.class

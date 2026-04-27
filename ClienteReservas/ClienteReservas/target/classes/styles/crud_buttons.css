@@ -1,0 +1,42 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 26 abr. 2026, 17:28:42
+    Author     : Alvaro Artavia
+*/
+
+.btn-danger {
+    -fx-background-color: #C8102E;
+    -fx-text-fill: white;
+        -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #9E0F24;
+}
+
+.btn-edit {
+    -fx-background-color: transparent;
+    -fx-text-fill: #C8102E;
+    -fx-border-color: #C8102E;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.btn-edit:hover {
+    -fx-background-color: #FFE5E9;
+}
+
+.btn-success {
+    -fx-background-color: #E63946;
+    -fx-text-fill: white;
+        -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.btn-success:hover {
+    -fx-background-color: #C8102E;
+}
