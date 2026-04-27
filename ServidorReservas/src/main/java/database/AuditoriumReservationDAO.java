@@ -2,12 +2,14 @@ package database;
 
 import draft.AuditoriumDraft;
 import dto.AuditoriumDraftRequest;
+import dto.AuditoriumReservationRequest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import model.AuditoriumReservation;
 import model.CalendarBlock;
 import model.RXE;
 import model.Reservation;
@@ -82,6 +84,55 @@ public class AuditoriumReservationDAO {
         }
 
         return equipmentList;
+    }
+
+    private static AuditoriumReservationRequest buildAuditoriumReservationRequest(int idReservation) {
+
+        String sql =
+                "SELECT r.id_reservation, r.reservation_date, r.id_section, " +
+                "       rxc.id_client, CONCAT(c.f_name, ' ', c.f_surname) AS client_name, " +
+                "       ar.id_auditorium_reservation, ar.event_name, ar.attendees_count, ar.observations " +
+                "FROM AUD_Reservations r " +
+                "INNER JOIN AUD_RXC rxc ON r.id_reservation = rxc.id_reservation " +
+                "INNER JOIN AUD_Clients c ON rxc.id_client = c.id_client " +
+                "INNER JOIN AUD_AuditoriumReservations ar ON r.id_reservation = ar.id_reservation " +
+                "WHERE r.id_reservation = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idReservation);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Reservation reservation = new Reservation();
+                    reservation.setIdReservation(rs.getInt("id_reservation"));
+                    reservation.setReservationDate(rs.getDate("reservation_date"));
+                    reservation.setIdSection(rs.getInt("id_section"));
+
+                    AuditoriumReservation auditoriumReservation = new AuditoriumReservation();
+                    auditoriumReservation.setIdAuditoriumReservation(rs.getInt("id_auditorium_reservation"));
+                    auditoriumReservation.setIdReservation(rs.getInt("id_reservation"));
+                    auditoriumReservation.setEventName(rs.getString("event_name"));
+                    auditoriumReservation.setAttendeesCount(rs.getInt("attendees_count"));
+                    auditoriumReservation.setObservations(rs.getString("observations"));
+
+                    AuditoriumReservationRequest request = new AuditoriumReservationRequest();
+                    request.setReservation(reservation);
+                    request.setIdClient(rs.getInt("id_client"));
+                    request.setClientName(rs.getString("client_name"));
+                    request.setAuditoriumReservation(auditoriumReservation);
+                    request.setEquipmentList(getEquipmentByReservationId(idReservation));
+
+                    return request;
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener reserva de auditorio completa por ID: " + e.getMessage());
+        }
+
+        return null;
     }
     
     public static AuditoriumDraftRequest getAuditoriumReservationById(int idReservation) {
@@ -160,6 +211,43 @@ public class AuditoriumReservationDAO {
 
         } catch (SQLException e) {
             System.out.println("Error al obtener reservaciones de auditorio por cliente: " + e.getMessage());
+        }
+
+        return reservations;
+    }
+
+    public static List<AuditoriumReservationRequest> getAuditoriumReservationsByMonth(int month, int year) {
+        List<AuditoriumReservationRequest> reservations = new ArrayList<>();
+
+        String sql =
+                "SELECT r.id_reservation " +
+                "FROM AUD_Reservations r " +
+                "INNER JOIN AUD_RXC rxc ON r.id_reservation = rxc.id_reservation " +
+                "INNER JOIN AUD_AuditoriumReservations ar ON r.id_reservation = ar.id_reservation " +
+                "WHERE MONTH(r.reservation_date) = ? " +
+                "AND YEAR(r.reservation_date) = ? " +
+                "AND r.reservation_date >= CURDATE() " +
+                "ORDER BY r.reservation_date ASC, r.id_section ASC";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    AuditoriumReservationRequest request =
+                            buildAuditoriumReservationRequest(rs.getInt("id_reservation"));
+
+                    if (request != null) {
+                        reservations.add(request);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener reservaciones de auditorio por mes y año: " + e.getMessage());
         }
 
         return reservations;

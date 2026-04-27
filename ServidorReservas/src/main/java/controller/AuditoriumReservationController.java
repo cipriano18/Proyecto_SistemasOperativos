@@ -2,6 +2,7 @@ package controller;
 
 import database.AuditoriumReservationDAO;
 import dto.AuditoriumDraftRequest;
+import dto.AuditoriumReservationRequest;
 import java.util.List;
 import service.Response;
 
@@ -41,6 +42,34 @@ public class AuditoriumReservationController {
         }
 
         return new Response(true, "Reservaciones de auditorio obtenidas correctamente", reservations);
+    }
+
+    public static Response getAuditoriumReservationsByMonth(int month, int year) {
+
+        if (month <= 0 || month > 12) {
+            return new Response(false, "Mes inválido", null);
+        }
+
+        if (year <= 0) {
+            return new Response(false, "Año inválido", null);
+        }
+
+        List<AuditoriumReservationRequest> reservations =
+                AuditoriumReservationDAO.getAuditoriumReservationsByMonth(month, year);
+
+        if (reservations == null || reservations.isEmpty()) {
+            return new Response(
+                    false,
+                    "No se encontraron reservaciones de auditorio para el periodo indicado",
+                    null
+            );
+        }
+
+        return new Response(
+                true,
+                "Reservaciones de auditorio obtenidas correctamente",
+                reservations
+        );
     }
 
     public static Response deleteAuditoriumReservationById(int idReservation, int idClient) {

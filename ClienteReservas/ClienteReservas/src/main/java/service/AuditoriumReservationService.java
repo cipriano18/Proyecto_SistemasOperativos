@@ -16,6 +16,11 @@ public class AuditoriumReservationService {
         return sendRequest("GET_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID", idClient);
     }
 
+    public static Response getAuditoriumReservationsByMonth(int month, int year) {
+        int[] data = {month, year};
+        return sendRequest("GET_AUDITORIUM_RESERVATIONS_BY_MONTH", data);
+    }
+
     public static Response deleteAuditoriumReservationById(AuditoriumDraftRequest request) {
         return sendRequest("DELETE_AUDITORIUM_RESERVATION_BY_ID", request);
     }

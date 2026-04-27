@@ -11,6 +11,7 @@ public class AuditoriumReservationRequest implements Serializable {
 
     private Reservation reservation;
     private int idClient;
+    private String clientName;
     private AuditoriumReservation auditoriumReservation;
     private List<RXE> equipmentList;
 
@@ -38,6 +39,14 @@ public class AuditoriumReservationRequest implements Serializable {
 
     public void setIdClient(int idClient) {
         this.idClient = idClient;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
     public AuditoriumReservation getAuditoriumReservation() {

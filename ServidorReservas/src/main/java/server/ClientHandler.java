@@ -161,6 +161,7 @@ public class ClientHandler extends Thread {
                 // GESTION DE RESERVAS DE AUDITORIO            
                 case "GET_AUDITORIUM_RESERVATION_BY_ID":
                 case "GET_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID":
+                case "GET_AUDITORIUM_RESERVATIONS_BY_MONTH":
                 case "DELETE_AUDITORIUM_RESERVATION_BY_ID":
                 case "DELETE_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID":
                     resp = AuditoriumReservationRequestHandler.handle(command, obj);

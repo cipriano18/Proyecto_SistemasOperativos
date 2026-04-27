@@ -32,6 +32,18 @@ public class AuditoriumReservationHandler {
                 return AuditoriumReservationController.getAuditoriumReservationsByClientId(idClient);
             }
 
+            case "GET_AUDITORIUM_RESERVATIONS_BY_MONTH": {
+                int[] data = (int[]) obj;
+
+                int month = data[0];
+                int year = data[1];
+
+                System.out.println("---- GET_AUDITORIUM_RESERVATIONS_BY_MONTH ----");
+                System.out.println("Month: " + month + " Year: " + year);
+
+                return AuditoriumReservationController.getAuditoriumReservationsByMonth(month, year);
+            }
+
             case "DELETE_AUDITORIUM_RESERVATION_BY_ID": {
                 AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 

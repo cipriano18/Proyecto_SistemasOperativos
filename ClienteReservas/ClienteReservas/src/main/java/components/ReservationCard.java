@@ -53,6 +53,19 @@ public class ReservationCard extends HBox {
         buildCard(date, blockType, devices, cancelAction, false, null, true, eventName, attendeesCount, observations);
     }
 
+    public ReservationCard(
+            LocalDate date,
+            int blockType,
+            List<DeviceItem> devices,
+            Runnable cancelAction,
+            String clientName,
+            String eventName,
+            int attendeesCount,
+            String observations
+    ) {
+        buildCard(date, blockType, devices, cancelAction, true, clientName, true, eventName, attendeesCount, observations);
+    }
+
     private void buildCard(
             LocalDate date,
             int blockType,
@@ -86,7 +99,7 @@ public class ReservationCard extends HBox {
         mainSeparator.setPrefHeight(200);
 
         VBox contentBox = new VBox();
-        contentBox.setPrefHeight(showAuditoriumInfo ? 165 : (showClientInfo ? 136 : 92));
+        contentBox.setPrefHeight(showAuditoriumInfo && showClientInfo ? 190 : (showAuditoriumInfo ? 165 : (showClientInfo ? 136 : 92)));
         contentBox.setPrefWidth(showAuditoriumInfo ? 760 : (showClientInfo ? 903 : 633));
 
         HBox infoBox = new HBox();
@@ -109,7 +122,7 @@ public class ReservationCard extends HBox {
                 blockBox
         );
 
-        if (showClientInfo) {
+        if (showClientInfo && !showAuditoriumInfo) {
             Separator clientSeparator = new Separator();
             clientSeparator.setOrientation(Orientation.VERTICAL);
             clientSeparator.setPrefHeight(200);
@@ -125,6 +138,21 @@ public class ReservationCard extends HBox {
         }
 
         if (showAuditoriumInfo) {
+            if (showClientInfo) {
+                Separator clientSeparator = new Separator();
+                clientSeparator.setOrientation(Orientation.VERTICAL);
+                clientSeparator.setPrefHeight(200);
+
+                VBox clientBox = createInfoBox(
+                        "CLIENTE",
+                        clientName != null && !clientName.trim().isEmpty()
+                                ? clientName
+                                : "Sin nombre"
+                );
+
+                infoBox.getChildren().addAll(clientSeparator, clientBox);
+            }
+
             Separator eventSeparator = new Separator();
             eventSeparator.setOrientation(Orientation.VERTICAL);
             eventSeparator.setPrefHeight(200);
