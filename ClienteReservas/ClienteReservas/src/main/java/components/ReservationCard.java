@@ -27,7 +27,7 @@ public class ReservationCard extends HBox {
             List<DeviceItem> devices,
             Runnable cancelAction
     ) {
-        buildCard(date, blockType, devices, cancelAction, false, null);
+        buildCard(date, blockType, devices, cancelAction, false, null, false, null, 0, null);
     }
 
     public ReservationCard(
@@ -38,7 +38,19 @@ public class ReservationCard extends HBox {
             boolean showClientInfo,
             String clientName
     ) {
-        buildCard(date, blockType, devices, cancelAction, showClientInfo, clientName);
+        buildCard(date, blockType, devices, cancelAction, showClientInfo, clientName, false, null, 0, null);
+    }
+
+    public ReservationCard(
+            LocalDate date,
+            int blockType,
+            List<DeviceItem> devices,
+            Runnable cancelAction,
+            String eventName,
+            int attendeesCount,
+            String observations
+    ) {
+        buildCard(date, blockType, devices, cancelAction, false, null, true, eventName, attendeesCount, observations);
     }
 
     private void buildCard(
@@ -47,7 +59,11 @@ public class ReservationCard extends HBox {
             List<DeviceItem> devices,
             Runnable cancelAction,
             boolean showClientInfo,
-            String clientName
+            String clientName,
+            boolean showAuditoriumInfo,
+            String eventName,
+            int attendeesCount,
+            String observations
     ) {
         this.setAlignment(Pos.CENTER_LEFT);
         this.setMinWidth(150);
@@ -70,13 +86,13 @@ public class ReservationCard extends HBox {
         mainSeparator.setPrefHeight(200);
 
         VBox contentBox = new VBox();
-        contentBox.setPrefHeight(showClientInfo ? 136 : 92);
-        contentBox.setPrefWidth(showClientInfo ? 903 : 633);
+        contentBox.setPrefHeight(showAuditoriumInfo ? 165 : (showClientInfo ? 136 : 92));
+        contentBox.setPrefWidth(showAuditoriumInfo ? 760 : (showClientInfo ? 903 : 633));
 
         HBox infoBox = new HBox();
         infoBox.setPrefHeight(100);
         infoBox.setPrefWidth(200);
-        infoBox.setSpacing(40);
+        infoBox.setSpacing(30);
         VBox.setMargin(infoBox, new Insets(10, 0, 10, 10));
 
         VBox dateBox = createInfoBox("FECHA", formatDate(date));
@@ -108,6 +124,49 @@ public class ReservationCard extends HBox {
             infoBox.getChildren().addAll(clientSeparator, clientBox);
         }
 
+        if (showAuditoriumInfo) {
+            Separator eventSeparator = new Separator();
+            eventSeparator.setOrientation(Orientation.VERTICAL);
+            eventSeparator.setPrefHeight(200);
+
+            VBox eventBox = createInfoBox(
+                    "EVENTO",
+                    eventName != null && !eventName.trim().isEmpty()
+                            ? eventName
+                            : "Sin nombre"
+            );
+
+            Separator attendeesSeparator = new Separator();
+            attendeesSeparator.setOrientation(Orientation.VERTICAL);
+            attendeesSeparator.setPrefHeight(200);
+
+            VBox attendeesBox = createInfoBox(
+                    "ASISTENTES",
+                    attendeesCount > 0 ? String.valueOf(attendeesCount) : "No indicado"
+            );
+
+            infoBox.getChildren().addAll(
+                    eventSeparator,
+                    eventBox,
+                    attendeesSeparator,
+                    attendeesBox
+            );
+        }
+
+        Label observationsLabel = null;
+
+        if (showAuditoriumInfo) {
+            observationsLabel = new Label(
+                    "Observaciones: "
+                    + (observations != null && !observations.trim().isEmpty()
+                    ? observations
+                    : "Sin observaciones")
+            );
+            observationsLabel.getStyleClass().add("field-label");
+            observationsLabel.setWrapText(true);
+            VBox.setMargin(observationsLabel, new Insets(0, 10, 8, 10));
+        }
+
         Label devicesTitle = new Label("Equipos solicitados");
         devicesTitle.getStyleClass().add("hero-title-2");
         VBox.setMargin(devicesTitle, new Insets(0, 0, 0, 10));
@@ -119,8 +178,13 @@ public class ReservationCard extends HBox {
 
         loadDevices(devices);
 
+        contentBox.getChildren().add(infoBox);
+
+        if (observationsLabel != null) {
+            contentBox.getChildren().add(observationsLabel);
+        }
+
         contentBox.getChildren().addAll(
-                infoBox,
                 devicesTitle,
                 vboxDeviceList
         );
@@ -168,6 +232,7 @@ public class ReservationCard extends HBox {
 
         Label valueLabel = new Label(value);
         valueLabel.getStyleClass().add("hero-title-3");
+        valueLabel.setWrapText(true);
 
         box.getChildren().addAll(titleLabel, valueLabel);
 

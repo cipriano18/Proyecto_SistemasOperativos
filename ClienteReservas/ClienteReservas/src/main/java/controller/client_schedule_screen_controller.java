@@ -3,6 +3,7 @@ package controller;
 import com.auditorio.clientereservas.App;
 import components.PopUp;
 import components.ReservationCard;
+import draft.AuditoriumDraft;
 import dto.AuditoriumDraftRequest;
 import dto.EquipmentReservationRequest;
 import java.io.IOException;
@@ -127,13 +128,17 @@ public class client_schedule_screen_controller implements Initializable {
             List<ReservationCard.DeviceItem> devices =
                     buildDeviceItems(request.getEquipmentList(), equipmentNames);
 
+            AuditoriumDraft auditoriumDraft = request.getAuditoriumDraft();
+
             ReservationCard card = new ReservationCard(
                     reservation.getReservationDate().toLocalDate(),
                     reservation.getIdSection(),
                     devices,
-                    () -> cancelAuditoriumReservation(request)
+                    () -> cancelAuditoriumReservation(request),
+                    auditoriumDraft != null ? auditoriumDraft.getEventName() : null,
+                    auditoriumDraft != null ? auditoriumDraft.getAttendeesCount() : 0,
+                    auditoriumDraft != null ? auditoriumDraft.getObservations() : null
             );
-
             vb_list_reservation_auditorium.getChildren().add(card);
         }
 
