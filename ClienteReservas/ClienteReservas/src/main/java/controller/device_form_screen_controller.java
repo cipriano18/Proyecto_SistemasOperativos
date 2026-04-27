@@ -426,40 +426,41 @@ private void loadDraftEquipmentCards() {
         }
     }
 
-    private void refreshDraftInServer() {
+   private void refreshDraftInServer() {
 
-        int idClient = Session.getInstance()
-                .getClient()
-                .getClient()
-                .getIdClient();
+    int idClient = Session.getInstance()
+            .getClient()
+            .getClient()
+            .getIdClient();
 
-        if (currentDraftId <= 0) {
-            return;
-        }
+    if (currentDraftId <= 0) {
+        return;
+    }
 
-        List<RXE> equipmentList = new ArrayList<>();
+    List<RXE> equipmentList = new ArrayList<>();
 
-        for (Node node : vb_added_devices.getChildren()) {
-            if (node instanceof ListDeviceCard) {
+    for (Node node : vb_added_devices.getChildren()) {
+        if (node instanceof ListDeviceCard) {
 
-                ListDeviceCard c = (ListDeviceCard) node;
-                Equipment eq = c.getSelectedEquipment();
+            ListDeviceCard c = (ListDeviceCard) node;
+            Equipment eq = c.getSelectedEquipment();
+            Integer quantity = c.getSelectedQuantity();
 
-                if (eq != null) {
-                    RXE rxe = new RXE();
-                    rxe.setIdEquipment(eq.getIdEquipment());
-                    rxe.setQuantity(c.getSelectedQuantity());
+            if (eq != null && quantity != null) {
+                RXE rxe = new RXE();
+                rxe.setIdEquipment(eq.getIdEquipment());
+                rxe.setQuantity(quantity);
 
-                    equipmentList.add(rxe);
-                }
+                equipmentList.add(rxe);
             }
         }
-
-        EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
-        request.setIdDraft(currentDraftId);
-        request.setIdClient(idClient);
-        request.setEquipmentList(equipmentList);
-
-        EquipmentReservationDraftService.updateEquipmentDraft(request);
     }
+
+    EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
+    request.setIdDraft(currentDraftId);
+    request.setIdClient(idClient);
+    request.setEquipmentList(equipmentList);
+
+    EquipmentReservationDraftService.updateEquipmentDraft(request);
+}
 }
