@@ -141,7 +141,7 @@ public class login_screen_controller implements Initializable {
 
             if (role == 2) {
                 Session.getInstance().setAdmin(adminData);
-                App.setRoot("admin_profile_screen");
+                App.setRoot("admin_home_screen");
                 return;
             }
 
