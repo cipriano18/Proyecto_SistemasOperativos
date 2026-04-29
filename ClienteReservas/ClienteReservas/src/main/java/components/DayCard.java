@@ -6,8 +6,10 @@ import dto.AuditoriumDraftRequest;
 import dto.EquipmentReservationDraftRequest;
 import java.io.IOException;
 import java.sql.Date;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Insets;
@@ -49,17 +51,23 @@ public class DayCard {
         GridPane.setMargin(card, new Insets(10));
 
         HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
         header.setPrefHeight(50);
         header.setPadding(new Insets(5));
+        header.setSpacing(8);
 
         Label lblDia = new Label(String.valueOf(number));
         lblDia.getStyleClass().add("hero-title");
         lblDia.setTextFill(Color.WHITE);
 
+        Label lblNombreDia = new Label(getDayName(date));
+        lblNombreDia.getStyleClass().add("hero-subtitle");
+        lblNombreDia.setTextFill(Color.WHITE);
+
         Region space = new Region();
         HBox.setHgrow(space, Priority.ALWAYS);
 
-        header.getChildren().addAll(lblDia, space);
+        header.getChildren().addAll(lblDia, lblNombreDia, space);
 
         Label subtitle = new Label("Secciones del dia:");
         subtitle.getStyleClass().add("hero-subtitle");
@@ -331,4 +339,13 @@ public class DayCard {
                 break;
         }
     }
+
+    private String getDayName(Date date) {
+        String dayName = date.toLocalDate()
+                .getDayOfWeek()
+                .getDisplayName(TextStyle.FULL, new Locale("es", "ES"));
+
+        return dayName.substring(0, 1).toUpperCase() + dayName.substring(1);
+    }
 }
+
