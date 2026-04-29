@@ -151,7 +151,7 @@
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
             <GridPane fx:id="grid_calendar" alignment="CENTER" stylesheets="@../styles/main.css">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="185.0" />
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />

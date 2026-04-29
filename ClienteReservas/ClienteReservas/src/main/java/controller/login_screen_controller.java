@@ -223,7 +223,7 @@ private void setEyeIcon(String imageName) {
 
     icon.setFitWidth(24);
     icon.setFitHeight(24);
-    icon.setPreserveRatio(true);
+    //icon.setPreserveRatio(true);
 
     btn_show_pass.setGraphic(icon);
 }

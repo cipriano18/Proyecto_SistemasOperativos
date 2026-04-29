@@ -58,7 +58,7 @@
             </children>
         </HBox>
 
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vvalue="0.78" VBox.vgrow="ALWAYS">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vvalue="0.16" VBox.vgrow="ALWAYS">
             <content>
                 <HBox minWidth="840.0" prefWidth="940.0">
                     <children>
@@ -121,9 +121,14 @@
                                               <Label styleClass="hero-title-3" text="Cantidad de asistentes" />
                                               <TextField fx:id="txt_attendees_count" prefHeight="40.0" promptText="Ej. 120">
                                        <VBox.margin>
-                                          <Insets bottom="10.0" />
+                                          <Insets />
                                        </VBox.margin>
                                     </TextField>
+                                    <Label styleClass="form-subtitle" text="200 asientos es la cantidad máxima.">
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" left="5.0" />
+                                       </VBox.margin>
+                                    </Label>
       
                                               <Label styleClass="hero-title-3" text="Observaciones" />
                                               <TextArea fx:id="txt_observations" prefHeight="150.0" promptText="Detalles adicionales del evento" styleClass="text-area" stylesheets="@../styles/main.css" wrapText="true" />
