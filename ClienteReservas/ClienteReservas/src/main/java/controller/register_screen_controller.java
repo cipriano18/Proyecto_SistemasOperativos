@@ -14,9 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -57,12 +55,6 @@ public class register_screen_controller implements Initializable {
     @FXML
     private Label msg_card;
     @FXML
-    private RadioButton rdb_mail;
-    @FXML
-    private ToggleGroup tg_contact_tipe;
-    @FXML
-    private RadioButton rdb_phone;
-    @FXML
     private Label lbl_contact_type;
     @FXML
     private TextField tf_contact;
@@ -93,10 +85,6 @@ public class register_screen_controller implements Initializable {
     @FXML
     private VBox vb_form1;
     @FXML
-    private HBox hb_form2;
-    @FXML
-    private Label lbl_form2;
-    @FXML
     private VBox vb_title3;
     @FXML
     private HBox hb_form3;
@@ -117,10 +105,6 @@ public class register_screen_controller implements Initializable {
         Animations anim1 = new Animations();
         anim1.appear(lbl_form1, 100, 2, 100);
         anim1.appear(vb_form1, 100, 2, 100);
-        //form2
-        Animations anim2 = new Animations();
-        anim2.appear(lbl_form2, 100, 2, 1000);
-        anim2.appear(hb_form2, 100, 2, 1000);
         //form3
         Animations anim3 = new Animations();
         anim3.appear(vb_title3, 100, 2, 2000);
@@ -130,20 +114,6 @@ public class register_screen_controller implements Initializable {
     @FXML
     private void GoToLogin(ActionEvent event) throws IOException {
         App.setRoot("login_screen");
-    }
-
-    @FXML
-    private void ChangeToMail(ActionEvent event) {
-        lbl_contact_type.setText("CORREO ELECTRÓNICO");
-        tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
-        contactType = "EMAIL";
-    }
-
-    @FXML
-    private void ChangeToPhone(ActionEvent event) {
-        lbl_contact_type.setText("TELÉFONO");
-        tf_contact.setPromptText("82892226");
-        contactType = "PHONE";
     }
 
     private static final String NAME_REGEX = "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$";
@@ -233,6 +203,7 @@ public class register_screen_controller implements Initializable {
                     "Debe completar todos los campos obligatorios.",
                     "back_hand.png",
                     1,
+                    2,
                     "Aceptar"
             );
             return;
@@ -249,14 +220,19 @@ public class register_screen_controller implements Initializable {
             PopUp.notification(
                     "Cliente registrado",
                     "Inicia sesión con tus nuevas credenciales para continuar.",
-                    "check_circle.png"
+                    "check_circle.png",
+                    2
             );
             App.setRoot("login_screen");
         } else {
-            PopUp.notification(
+            PopUp.warning(
                     "Error de registro",
+                    "Faltan datos",
                     "Verifica los campos digitados.",
-                    "error.png"
+                    "back_hand.png",
+                    1,
+                    1,
+                    "Aceptar"
             );
             routeServerError(resp.getMessage());
         }

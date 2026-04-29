@@ -189,6 +189,7 @@ public class device_schedule_screen_controller implements Initializable {
                     "No se pudo contactar el servidor. Verifique su conexión o intente nuevamente.",
                     "power_off.png",
                     1,
+                    1,
                     "Aceptar"
             );
 
@@ -202,6 +203,7 @@ public class device_schedule_screen_controller implements Initializable {
                     "No se pudo obtener la información",
                     response.getMessage() != null ? response.getMessage() : "Ocurrió un error inesperado.",
                     "error.png",
+                    1,
                     1,
                     "Aceptar"
             );

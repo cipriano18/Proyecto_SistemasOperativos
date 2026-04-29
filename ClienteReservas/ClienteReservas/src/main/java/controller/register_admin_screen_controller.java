@@ -24,38 +24,58 @@ public class register_admin_screen_controller implements Initializable {
 
     private String contactType = "EMAIL";
 
-    @FXML private Button btn_goback;
-    @FXML private VBox vb_info;
-    @FXML private ImageView img_logo;
-    @FXML private VBox vb_msg_new_acount;
-    @FXML private Label lbl_create;
-    @FXML private Label lbl_create2;
-    @FXML private Label lbl_form1;
-    @FXML private VBox vb_form1;
-    @FXML private TextField tf_first_name;
-    @FXML private Label msg_name;
-    @FXML private TextField tf_second_name;
-    @FXML private TextField tf_first_surname;
-    @FXML private Label msg_surname;
-    @FXML private TextField tf_second_surname;
-    @FXML private Label msg_Sec_surname;
-    @FXML private TextField tf_id_card;
-    @FXML private Label msg_card;
-    @FXML private Label lbl_form2;
-    @FXML private HBox hb_form2;
-    @FXML private RadioButton rdb_mail;
-    @FXML private ToggleGroup tg_contact_tipe;
-    @FXML private RadioButton rdb_phone;
-    @FXML private Label lbl_contact_type;
-    @FXML private TextField tf_contact;
-    @FXML private Label msg_contact;
-    @FXML private VBox vb_title3;
-    @FXML private HBox hb_form3;
-    @FXML private TextField tf_user;
-    @FXML private Label msg_user;
-    @FXML private TextField tf_pass;
-    @FXML private Label msg_pass;
-    @FXML private Button btn_register;
+    @FXML
+    private Button btn_goback;
+    @FXML
+    private VBox vb_info;
+    @FXML
+    private ImageView img_logo;
+    @FXML
+    private VBox vb_msg_new_acount;
+    @FXML
+    private Label lbl_create;
+    @FXML
+    private Label lbl_create2;
+    @FXML
+    private Label lbl_form1;
+    @FXML
+    private VBox vb_form1;
+    @FXML
+    private TextField tf_first_name;
+    @FXML
+    private Label msg_name;
+    @FXML
+    private TextField tf_second_name;
+    @FXML
+    private TextField tf_first_surname;
+    @FXML
+    private Label msg_surname;
+    @FXML
+    private TextField tf_second_surname;
+    @FXML
+    private Label msg_Sec_surname;
+    @FXML
+    private TextField tf_id_card;
+    @FXML
+    private Label msg_card;
+    @FXML
+    private TextField tf_contact;
+    @FXML
+    private Label msg_contact;
+    @FXML
+    private VBox vb_title3;
+    @FXML
+    private HBox hb_form3;
+    @FXML
+    private TextField tf_user;
+    @FXML
+    private Label msg_user;
+    @FXML
+    private TextField tf_pass;
+    @FXML
+    private Label msg_pass;
+    @FXML
+    private Button btn_register;
 
     private static final String NAME_REGEX = "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$";
     private static final String ID_CARD_REGEX = "^[A-Za-z0-9]{9,20}$";
@@ -77,26 +97,8 @@ public class register_admin_screen_controller implements Initializable {
         anim1.appear(vb_form1, 100, 2, 100);
 
         Animations anim2 = new Animations();
-        anim2.appear(lbl_form2, 100, 2, 1000);
-        anim2.appear(hb_form2, 100, 2, 1000);
-
-        Animations anim3 = new Animations();
-        anim3.appear(vb_title3, 100, 2, 2000);
-        anim3.appear(hb_form3, 100, 2, 2000);
-    }
-
-    @FXML
-    private void ChangeToMail(ActionEvent event) {
-        lbl_contact_type.setText("CORREO ELECTRÓNICO");
-        tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
-        contactType = "EMAIL";
-    }
-
-    @FXML
-    private void ChangeToPhone(ActionEvent event) {
-        lbl_contact_type.setText("TELÉFONO");
-        tf_contact.setPromptText("82892226");
-        contactType = "PHONE";
+        anim2.appear(vb_title3, 100, 2, 2000);
+        anim2.appear(hb_form3, 100, 2, 2000);
     }
 
     @FXML
@@ -149,9 +151,12 @@ public class register_admin_screen_controller implements Initializable {
         if (contactValue.isEmpty()) {
             showError(msg_contact, "El contacto es obligatorio");
             hasErrors = true;
-        } else if ("PHONE".equals(contactType) && !contactValue.matches(PHONE_REGEX)) {
+        } else if ("PHONE".equals(contactType)
+                && !contactValue.matches(PHONE_REGEX)) {
+
             showError(msg_contact, "El teléfono debe contener exactamente 8 dígitos");
             hasErrors = true;
+
         } else if ("EMAIL".equals(contactType) && !contactValue.matches(EMAIL_REGEX)) {
             showError(msg_contact, "El correo debe tener un formato válido");
             hasErrors = true;
@@ -180,6 +185,7 @@ public class register_admin_screen_controller implements Initializable {
                     "Debe completar todos los campos obligatorios.",
                     "back_hand.png",
                     1,
+                    2,
                     "Aceptar"
             );
             return;
@@ -196,14 +202,19 @@ public class register_admin_screen_controller implements Initializable {
             PopUp.notification(
                     "Administrador registrado",
                     "El administrador fue creado correctamente.",
-                    "check_circle.png"
+                    "check_circle.png",
+                    2
             );
             App.setRoot("super_admin_home_screen");
         } else {
-            PopUp.notification(
+            PopUp.warning(
                     "Error de registro",
-                    "Verifica los campos digitados.",
-                    "error.png"
+                    "Faltan datos",
+                    "Verifica los campos digitados",
+                    "error.png",
+                    1,
+                    1,
+                    "Aceptar"
             );
             routeServerError(resp != null ? resp.getMessage() : "Error al conectar con el servidor");
         }

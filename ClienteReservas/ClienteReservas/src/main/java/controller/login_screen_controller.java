@@ -92,6 +92,7 @@ public class login_screen_controller implements Initializable {
                     + "Por favor, intente nuevamente más tarde.",
                     "power_off.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -103,6 +104,7 @@ public class login_screen_controller implements Initializable {
                     "Usuario o contraseña incorrectos",
                     resp.getMessage() != null ? resp.getMessage() : "Intente nuevamente.",
                     "person_off.png",
+                    1,
                     1,
                     "Aceptar"
             );
@@ -123,6 +125,7 @@ public class login_screen_controller implements Initializable {
                         "No tiene permisos",
                         "Este usuario no puede acceder como cliente.",
                         "person_off.png",
+                        1,
                         1,
                         "Aceptar"
                 );
@@ -157,6 +160,7 @@ public class login_screen_controller implements Initializable {
                     "Este administrador no tiene un rol válido.",
                     "person_off.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -167,6 +171,7 @@ public class login_screen_controller implements Initializable {
                 "Respuesta inválida del servidor",
                 "No se pudo procesar la información recibida.",
                 "dangerous.png",
+                1,
                 1,
                 "Aceptar"
         );

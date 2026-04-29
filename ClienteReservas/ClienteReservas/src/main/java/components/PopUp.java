@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -22,19 +23,20 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.scene.media.AudioClip;
+import javafx.scene.paint.Color;
 
 public class PopUp {
 
     private static final double WIDTH = 650;
 
-    public static void notification(String title, String info, String icon) {
+    public static void notification(String title, String info, String icon, int type) {
         Stage stage = new Stage();
         stage.initStyle(StageStyle.UNDECORATED);
         stage.setAlwaysOnTop(true);
         VBox root = new VBox();
         root.setPadding(new Insets(0));
         root.setPrefWidth(Region.USE_COMPUTED_SIZE);
-        root.getChildren().add(createHeader(title, info, icon));
+        root.getChildren().add(createHeader(title, info, icon, type));
 
         Scene scene = new Scene(root);
         addStyles(scene);
@@ -62,6 +64,7 @@ public class PopUp {
             String body,
             String icon,
             int buttons,
+            int type,
             String buttonConfirmText
     ) {
         Stage stage = new Stage();
@@ -76,7 +79,7 @@ public class PopUp {
         root.setMinHeight(300);
         root.setMaxHeight(300);
 
-        HBox header = createHeader(title, titleInfo, icon);
+        HBox header = createHeader(title, titleInfo, icon, type);
         HBox bodyContent = createBody(stage, result, body, buttons, buttonConfirmText);
 
         root.getChildren().addAll(header, bodyContent);
@@ -97,12 +100,24 @@ public class PopUp {
         return result.get();
     }
 
-    private static HBox createHeader(String title, String info, String icon) {
+    private static HBox createHeader(String title, String info, String icon, int type) {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPrefHeight(105);
         header.setPrefWidth(Region.USE_COMPUTED_SIZE);
-        header.getStyleClass().add("hero-panel");
+        switch (type) {
+            case 1:
+                header.getStyleClass().add("hero-panel");//errores
+                break;
+            case 2:
+                header.getStyleClass().add("hero-blue");//exitos
+                break;
+            case 3:
+                header.getStyleClass().add("hero-yellow");//preguntas
+                break;
+            default:
+                header.getStyleClass().add("hero-panel");//por defecto
+        }
 
         ImageView iconView = new ImageView();
         iconView.setFitHeight(70);
@@ -148,7 +163,11 @@ public class PopUp {
     ) {
         HBox bodyRoot = new HBox();
         VBox.setVgrow(bodyRoot, Priority.ALWAYS);
-
+        bodyRoot.getStyleClass().add("-fx-background-color: #A7A7A9");
+        bodyRoot.setStyle(
+                "-fx-border-color: #c7c7c7;"
+                + "-fx-border-width: 1.5;"
+        );
         HBox leftBox = new HBox();
         leftBox.setAlignment(Pos.BOTTOM_LEFT);
         HBox.setMargin(leftBox, new Insets(20, 0, 20, 20));

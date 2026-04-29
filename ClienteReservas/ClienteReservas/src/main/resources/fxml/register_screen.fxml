@@ -4,11 +4,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
@@ -18,7 +16,7 @@
 
 <VBox minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.register_screen_controller">
    <children>
-      <HBox>
+      <HBox maxHeight="150.0">
          <children>
             <Button fx:id="btn_goback" mnemonicParsing="false" onAction="#GoToLogin" prefHeight="196.0" prefWidth="94.0" styleClass="btn-back" stylesheets="@../styles/register.css">
                <graphic>
@@ -74,6 +72,24 @@
                               <Font name="Tw Cen MT Bold" size="17.0" />
                            </font>
                         </Label>
+                        <HBox alignment="TOP_CENTER" spacing="80.0">
+                           <children>
+                              <VBox spacing="6">
+                                 <children>
+                                    <Label styleClass="field-label" text="CÉDULA" />
+                                    <TextField fx:id="tf_id_card" prefWidth="340.0" promptText="Cédula" styleClass="text-field" />
+                                    <Label fx:id="msg_card" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="6">
+                                 <children>
+                                    <Label styleClass="field-label" text="CORREO ELECTRÓNICO" />
+                                    <TextField fx:id="tf_contact" prefWidth="340.0" promptText="ejemplo.una@est.una.ac.cr" styleClass="text-field" />
+                                    <Label fx:id="msg_contact" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
                         <VBox fx:id="vb_form1" spacing="20.0" VBox.vgrow="ALWAYS">
                            <children>
                               <HBox alignment="TOP_CENTER" spacing="80.0">
@@ -111,52 +127,8 @@
                                     </VBox>
                                  </children>
                               </HBox>
-                              <HBox alignment="TOP_CENTER" spacing="80.0">
-                                 <children>
-                                    <VBox spacing="6">
-                                       <children>
-                                          <Label styleClass="field-label" text="CÉDULA" />
-                                          <TextField fx:id="tf_id_card" prefWidth="340.0" promptText="Cédula" styleClass="text-field" />
-                                          <Label fx:id="msg_card" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
-                                       </children>
-                                    </VBox>
-                                    <Region prefHeight="68.0" prefWidth="337.0" />
-                                 </children>
-                              </HBox>
                            </children>
                         </VBox>
-                        <Separator prefWidth="200.0" />
-                        <Label fx:id="lbl_form2" styleClass="hero-title-2" text="Contacto">
-                           <font>
-                              <Font name="Tw Cen MT Bold" size="17.0" />
-                           </font>
-                        </Label>
-                        <HBox fx:id="hb_form2" alignment="TOP_CENTER" spacing="80.0">
-                           <children>
-                              <VBox prefHeight="68.0" prefWidth="345.0" spacing="6">
-                                 <children>
-                                    <Label styleClass="field-label" text="TIPO DE CONTACTO" />
-                                    <HBox alignment="CENTER_LEFT" spacing="40.0" VBox.vgrow="ALWAYS">
-                                       <children>
-                                          <RadioButton fx:id="rdb_mail" mnemonicParsing="false" onAction="#ChangeToMail" selected="true" text="Correo Electrónico">
-                                             <toggleGroup>
-                                                <ToggleGroup fx:id="tg_contact_tipe" />
-                                             </toggleGroup>
-                                          </RadioButton>
-                                          <RadioButton fx:id="rdb_phone" mnemonicParsing="false" onAction="#ChangeToPhone" text="Teléfono" toggleGroup="$tg_contact_tipe" />
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                              <VBox spacing="6">
-                                 <children>
-                                    <Label fx:id="lbl_contact_type" styleClass="field-label" text="CORREO ELECTRÓNICO" />
-                                    <TextField fx:id="tf_contact" prefWidth="340.0" promptText="ejemplo.una@est.una.ac.cr" styleClass="text-field" />
-                                    <Label fx:id="msg_contact" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </HBox>
                         <Separator prefWidth="200.0" />
                         <VBox fx:id="vb_title3" alignment="TOP_CENTER">
                            <children>

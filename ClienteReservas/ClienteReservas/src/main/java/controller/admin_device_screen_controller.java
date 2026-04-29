@@ -82,6 +82,7 @@ private void DeleteDevice(ActionEvent event) {
                 "Debe seleccionar un equipo de la tabla antes de eliminar.",
                 "back_hand.png",
                 1,
+                2,
                 "Aceptar"
         );
         return;
@@ -93,6 +94,7 @@ private void DeleteDevice(ActionEvent event) {
             "¿Está seguro que desea eliminar el equipo seleccionado?",
             "back_hand.png",
             2,
+            3,
             "Eliminar"
     );
 
@@ -106,7 +108,8 @@ private void DeleteDevice(ActionEvent event) {
         PopUp.notification(
                 "Equipo eliminado",
                 "El equipo se eliminó correctamente.",
-                "check_circle.png"
+                "check_circle.png",
+                2
         );
 
         selectedEquipment = null;
@@ -119,6 +122,7 @@ private void DeleteDevice(ActionEvent event) {
                 "No se pudo eliminar el equipo",
                 resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
                 "dangerous.png",
+                1,
                 1,
                 "Aceptar"
         );
@@ -135,6 +139,7 @@ private void EditDevice(ActionEvent event) {
                 "Debe seleccionar un equipo de la tabla antes de editar.",
                 "back_hand.png",
                 1,
+                2,
                 "Aceptar"
         );
         return;
@@ -158,7 +163,8 @@ private void EditDevice(ActionEvent event) {
                     PopUp.notification(
                             "Equipo actualizado",
                             "El equipo se actualizó correctamente.",
-                            "check_circle.png"
+                            "check_circle.png",
+                            2
                     );
 
                     chb_selected_device.clear();
@@ -171,6 +177,7 @@ private void EditDevice(ActionEvent event) {
                             "No se pudo actualizar el equipo",
                             resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
                             "dangerous.png",
+                            1,
                             1,
                             "Aceptar"
                     );
@@ -203,7 +210,8 @@ private void EditDevice(ActionEvent event) {
                     PopUp.notification(
                             "Equipo creado",
                             "El equipo se registró correctamente.",
-                            "check_circle.png"
+                            "check_circle.png",
+                            3
                     );
 
   loadEquipmentTable();
@@ -213,6 +221,7 @@ private void EditDevice(ActionEvent event) {
                             "No se pudo crear el equipo",
                             resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
                             "dangerous.png",
+                            1,
                             1,
                             "Aceptar"
                     );
@@ -249,6 +258,7 @@ private void GetSelectedDevice(MouseEvent event) {
                     "No se pudieron cargar los equipos",
                     resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
                     "dangerous.png",
+                    1,
                     1,
                     "Aceptar"
             );

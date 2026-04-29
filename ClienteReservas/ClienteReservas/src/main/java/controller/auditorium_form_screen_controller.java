@@ -89,6 +89,7 @@ public class auditorium_form_screen_controller implements Initializable {
                     "Seleccione una fecha y sección antes de continuar con la reserva de auditorio.",
                     "error.png",
                     1,
+                    1,
                     "Aceptar"
             );
 
@@ -125,6 +126,7 @@ public class auditorium_form_screen_controller implements Initializable {
                     "No hay equipos disponibles para agregar.",
                     "warning.png",
                     1,
+                    2,
                     "Aceptar"
             );
             return;
@@ -153,6 +155,7 @@ public class auditorium_form_screen_controller implements Initializable {
                     "Todos los equipos disponibles ya fueron agregados.",
                     "warning.png",
                     1,
+                    2,
                     "Aceptar"
             );
             return;
@@ -177,6 +180,7 @@ public class auditorium_form_screen_controller implements Initializable {
                     "¿Está seguro que desea eliminar este equipo de la lista?",
                     "warning.png",
                     2,
+                    3,
                     "Eliminar"
             );
 
@@ -209,6 +213,7 @@ public class auditorium_form_screen_controller implements Initializable {
                 "Si sale de esta pantalla, perderá la reserva actual y tendrá que iniciar el proceso desde cero. ¿Desea continuar?",
                 "warning.png",
                 2,
+                3,
                 "Salir"
         );
 
@@ -231,6 +236,7 @@ public class auditorium_form_screen_controller implements Initializable {
                         "No se pudo descartar",
                         resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
                         "error.png",
+                        1,
                         1,
                         "Aceptar"
                 );
@@ -321,6 +327,7 @@ public class auditorium_form_screen_controller implements Initializable {
                     "Ingrese el nombre del evento para crear la reserva temporal de auditorio.",
                     "error.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -337,6 +344,7 @@ public class auditorium_form_screen_controller implements Initializable {
                     "Ingrese una cantidad válida de asistentes.",
                     "error.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -349,6 +357,7 @@ public class auditorium_form_screen_controller implements Initializable {
                     "La cantidad de asistentes debe ser mayor a cero.",
                     "error.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -360,6 +369,7 @@ public class auditorium_form_screen_controller implements Initializable {
                     "No se encontró el draft de auditorio",
                     "Intente seleccionar nuevamente la fecha y sección desde el calendario.",
                     "error.png",
+                    1,
                     1,
                     "Aceptar"
             );
@@ -408,6 +418,7 @@ public class auditorium_form_screen_controller implements Initializable {
                     updateResp != null ? updateResp.getMessage() : "No se pudo conectar con el servidor.",
                     "error.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -420,6 +431,7 @@ public class auditorium_form_screen_controller implements Initializable {
                 "Una vez confirmada, la reserva será definitiva.",
                 "warning.png",
                 2,
+                3,
                 "Confirmar"
         );
 
@@ -435,7 +447,8 @@ public class auditorium_form_screen_controller implements Initializable {
             PopUp.notification(
                     "Reserva confirmada",
                     "La reserva de auditorio se confirmó correctamente.",
-                    "success.png"
+                    "success.png",
+                    2
             );
 
             DraftContainer.getInstance().clearAll();
@@ -452,6 +465,7 @@ public class auditorium_form_screen_controller implements Initializable {
                     "No se pudo confirmar",
                     confirmResp != null ? confirmResp.getMessage() : "Error desconocido.",
                     "error.png",
+                    1,
                     1,
                     "Aceptar"
             );

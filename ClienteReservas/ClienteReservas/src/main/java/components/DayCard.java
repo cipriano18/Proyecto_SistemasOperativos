@@ -145,6 +145,7 @@ public class DayCard {
                                 "Parece que tenias una reserva en proceso, deseas continuar?",
                                 "question.png",
                                 2,
+                                3,
                                 "Continuar"
                         );
 
@@ -178,6 +179,7 @@ public class DayCard {
                                 msg,
                                 "error.png",
                                 1,
+                                1,
                                 "Aceptar"
                         );
                     }
@@ -193,6 +195,7 @@ public class DayCard {
                             "Parece que tenias una reserva en proceso, deseas continuar?",
                             "question.png",
                             2,
+                            3,
                             "Continuar"
                     );
 
@@ -223,6 +226,7 @@ public class DayCard {
                             "No se pudo iniciar la reserva",
                             msg,
                             "error.png",
+                            1,
                             1,
                             "Aceptar"
                     );

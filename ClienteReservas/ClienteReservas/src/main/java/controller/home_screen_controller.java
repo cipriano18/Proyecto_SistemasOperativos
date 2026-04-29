@@ -21,7 +21,6 @@ import service.Response;
 import service.CalendarService;
 import session.Session;
 import utils.DraftContainer;
-import utils.DraftContainer;
 
 
 /**
@@ -75,6 +74,7 @@ public class home_screen_controller implements Initializable {
                     "Su sesión ha expirado o no es válida. Por favor, inicie sesión nuevamente.",
                     "error.png",
                     1,
+                    1,
                     "Ir al login"
             );
 
@@ -116,6 +116,7 @@ public class home_screen_controller implements Initializable {
                     + "Por favor, intente nuevamente más tarde.",
                     "power_off.png",
                     1,
+                    1,
                     "Aceptar"
             );
         }
@@ -140,6 +141,7 @@ public class home_screen_controller implements Initializable {
                     "Es posible que el servicio esté temporalmente no disponible o que exista un problema con su conexión a internet.\n"
                     + "Por favor, intente nuevamente más tarde.",
                     "power_off.png",
+                    1,
                     1,
                     "Aceptar"
             );

@@ -263,6 +263,7 @@ public class profile_screen_controller implements Initializable {
                     "Debe completar todos los campos requeridos antes de continuar.",
                     "back_hand.png",
                     1,
+                    2,
                     "Aceptar"
             );
             return;
@@ -293,7 +294,8 @@ public class profile_screen_controller implements Initializable {
             PopUp.notification(
                     "Cliente actualizado",
                     "Se aplicaron los cambios correctamente.",
-                    "check_circle.png"
+                    "check_circle.png",
+                    2
             );
             Session.getInstance().setClient(request);
             App.setRoot("profile_screen");
@@ -303,6 +305,7 @@ public class profile_screen_controller implements Initializable {
                     "El servidor negó tus cambios.",
                     "Es posible que alguno de los datos incumpla formatos o ya esté ocupado.",
                     "power_off.png",
+                    1,
                     1,
                     "Aceptar"
             );
@@ -321,6 +324,7 @@ public class profile_screen_controller implements Initializable {
                     "No se encontró una sesión activa. Por favor, inicie sesión nuevamente.",
                     "person_off.png",
                     1,
+                    1,
                     "Aceptar"
             );
 
@@ -334,6 +338,7 @@ public class profile_screen_controller implements Initializable {
                 "Esta acción eliminará su cuenta de forma permanente y no se puede deshacer.",
                 "question.png",
                 2,
+                3,
                 "Eliminar"
         );
 
@@ -350,6 +355,7 @@ public class profile_screen_controller implements Initializable {
                     "No se pudo contactar el servidor. Intente nuevamente.",
                     "power_off.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -360,7 +366,8 @@ public class profile_screen_controller implements Initializable {
             PopUp.notification(
                     "Cliente Eliminado",
                     "Todas las credenciales fueron eliminadas del sistema.",
-                    "check_circle.png"
+                    "check_circle.png",
+                    2
             );
             Session.getInstance().clear();
             App.setRoot("profile_screen");
@@ -373,6 +380,7 @@ public class profile_screen_controller implements Initializable {
                 "No se pudo eliminar la cuenta",
                 resp.getMessage() != null ? resp.getMessage() : "Ocurrió un error inesperado.",
                 "error.png",
+                1,
                 1,
                 "Aceptar"
         );

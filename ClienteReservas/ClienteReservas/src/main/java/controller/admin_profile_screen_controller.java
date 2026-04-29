@@ -53,12 +53,6 @@ public class admin_profile_screen_controller implements Initializable {
     @FXML private TextField tf_second_surname;
     @FXML private Label msg_Sec_surname;
     @FXML private TextField tf_id_card;
-    @FXML private Label lbl_form2;
-    @FXML private HBox hb_form2;
-    @FXML private RadioButton rdb_mail;
-    @FXML private ToggleGroup tg_contact_tipe;
-    @FXML private RadioButton rdb_phone;
-    @FXML private Label lbl_contact_type;
     @FXML private TextField tf_contact;
     @FXML private Label msg_contact;
     @FXML private VBox vb_title3;
@@ -117,16 +111,6 @@ public class admin_profile_screen_controller implements Initializable {
             String type = ct.getType() == null ? "EMAIL" : ct.getType().toUpperCase();
             contactType = type;
             tf_contact.setText(nullSafe(ct.getContactValue()));
-
-            if ("PHONE".equals(type)) {
-                rdb_phone.setSelected(true);
-                lbl_contact_type.setText("TELÉFONO");
-                tf_contact.setPromptText("82892226");
-            } else {
-                rdb_mail.setSelected(true);
-                lbl_contact_type.setText("CORREO ELECTRÓNICO");
-                tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
-            }
         }
 
         Animations anim = new Animations();
@@ -141,12 +125,8 @@ public class admin_profile_screen_controller implements Initializable {
         anim1.appear(vb_form1, 100, 2, 100);
 
         Animations anim2 = new Animations();
-        anim2.appear(lbl_form2, 100, 2, 900);
-        anim2.appear(hb_form2, 100, 2, 900);
-
-        Animations anim3 = new Animations();
-        anim3.appear(vb_title3, 100, 2, 1800);
-        anim3.appear(hb_form3, 100, 2, 1800);
+        anim2.appear(vb_title3, 100, 2, 1800);
+        anim2.appear(hb_form3, 100, 2, 1800);
     }
 
     private String nullSafe(String s) {
@@ -156,20 +136,6 @@ public class admin_profile_screen_controller implements Initializable {
     @FXML
     private void GoBack(ActionEvent event) throws IOException {
         App.setRoot("admin_home_screen");
-    }
-
-    @FXML
-    private void ChangeToMail(ActionEvent event) {
-        lbl_contact_type.setText("CORREO ELECTRÓNICO");
-        tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
-        contactType = "EMAIL";
-    }
-
-    @FXML
-    private void ChangeToPhone(ActionEvent event) {
-        lbl_contact_type.setText("TELÉFONO");
-        tf_contact.setPromptText("82892226");
-        contactType = "PHONE";
     }
 
     @FXML
@@ -246,6 +212,7 @@ public class admin_profile_screen_controller implements Initializable {
                     "Debe completar todos los campos requeridos antes de continuar.",
                     "back_hand.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -292,7 +259,8 @@ public class admin_profile_screen_controller implements Initializable {
             PopUp.notification(
                     "Administrador actualizado",
                     "Se aplicaron los cambios correctamente.",
-                    "check_circle.png"
+                    "check_circle.png",
+                    2
             );
 
             Session.getInstance().setAdmin(request);
@@ -304,6 +272,7 @@ public class admin_profile_screen_controller implements Initializable {
                     "El servidor negó tus cambios.",
                     resp != null ? resp.getMessage() : "No se pudo contactar el servidor.",
                     "power_off.png",
+                    1,
                     1,
                     "Aceptar"
             );
@@ -324,6 +293,7 @@ public class admin_profile_screen_controller implements Initializable {
                     "No se encontró una sesión activa. Por favor, inicie sesión nuevamente.",
                     "person_off.png",
                     1,
+                    1,
                     "Aceptar"
             );
 
@@ -337,6 +307,7 @@ public class admin_profile_screen_controller implements Initializable {
                 "Esta acción eliminará la cuenta del administrador de forma permanente y no se puede deshacer.",
                 "question.png",
                 2,
+                3,
                 "Eliminar"
         );
 
@@ -353,6 +324,7 @@ public class admin_profile_screen_controller implements Initializable {
                     "No se pudo contactar el servidor. Intente nuevamente.",
                     "power_off.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -362,7 +334,8 @@ public class admin_profile_screen_controller implements Initializable {
             PopUp.notification(
                     "Administrador eliminado",
                     "Todas las credenciales fueron eliminadas del sistema.",
-                    "check_circle.png"
+                    "check_circle.png",
+                    2
             );
 
             Session.getInstance().clear();
@@ -375,6 +348,7 @@ public class admin_profile_screen_controller implements Initializable {
                 "No se pudo eliminar el administrador",
                 resp.getMessage() != null ? resp.getMessage() : "Ocurrió un error inesperado.",
                 "error.png",
+                1,
                 1,
                 "Aceptar"
         );

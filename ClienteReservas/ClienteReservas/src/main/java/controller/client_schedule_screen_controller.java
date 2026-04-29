@@ -248,6 +248,7 @@ public class client_schedule_screen_controller implements Initializable {
                 "¿Desea cancelar esta reserva de auditorio?",
                 "warning.png",
                 2,
+                3,
                 "Eliminar"
         );
 
@@ -270,7 +271,8 @@ public class client_schedule_screen_controller implements Initializable {
             PopUp.notification(
                     "Reserva cancelada",
                     "La reserva de auditorio fue cancelada correctamente.",
-                    "success.png"
+                    "success.png",
+                    2
             );
             loadReservations();
             return;
@@ -282,6 +284,7 @@ public class client_schedule_screen_controller implements Initializable {
                 response != null ? response.getMessage() : "No se pudo conectar con el servidor.",
                 "error.png",
                 1,
+                1,
                 "Aceptar"
         );
     }
@@ -292,7 +295,8 @@ public class client_schedule_screen_controller implements Initializable {
                 "Cancelar reserva",
                 "¿Desea cancelar esta reserva de equipos?",
                 "warning.png",
-                2, 
+                2,
+                3,
                 "Eliminar"
         );
 
@@ -315,7 +319,8 @@ public class client_schedule_screen_controller implements Initializable {
             PopUp.notification(
                     "Reserva cancelada",
                     "La reserva de equipos fue cancelada correctamente.",
-                    "success.png"
+                    "success.png",
+                    2
             );
             loadReservations();
             return;
@@ -326,6 +331,7 @@ public class client_schedule_screen_controller implements Initializable {
                 "No se pudo cancelar la reserva",
                 response != null ? response.getMessage() : "No se pudo conectar con el servidor.",
                 "error.png",
+                1,
                 1,
                 "Aceptar"
         );
@@ -343,6 +349,7 @@ public class client_schedule_screen_controller implements Initializable {
                 "No se pudieron cargar las reservas",
                 message,
                 "error.png",
+                1,
                 1,
                 "Aceptar"
         );

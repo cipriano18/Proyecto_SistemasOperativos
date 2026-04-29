@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" styleClass="hero-panel" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.login_screen_controller">
+<HBox minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" styleClass="hero-panel" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.login_screen_controller">
 
     <!-- PANEL IZQUIERDO -->
     <VBox minHeight="600.0" minWidth="380.0" prefHeight="820.0" prefWidth="1200.0" spacing="0" styleClass="hero-panel">
@@ -64,16 +64,25 @@
             <!-- Username -->
             <VBox spacing="6">
                 <Label styleClass="field-label" text="USUARIO" />
-                <TextField fx:id="tf_user" prefWidth="340" promptText="nombre.usuario" styleClass="text-field" />
+                <TextField fx:id="tf_user" maxHeight="50.0" maxWidth="295.0" minHeight="50.0" minWidth="295.0" prefHeight="50.0" prefWidth="295.0" promptText="nombre.usuario" styleClass="text-field" />
             </VBox>
 
             <Region minHeight="16" />
 
-            <!-- Password -->
             <VBox spacing="6">
-                <Label styleClass="field-label" text="CONTRASEÑA" />
-                <PasswordField fx:id="tf_pass" prefWidth="340" promptText="••••••••" styleClass="password-field" />
-            </VBox>
+    <Label styleClass="field-label" text="CONTRASEÑA" />
+
+    <HBox alignment="CENTER_LEFT" spacing="5">
+        <children>
+
+          <PasswordField fx:id="tf_pass" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="295" promptText="••••••••" styleClass="password-field" />
+
+<TextField fx:id="tf_pass_visible" managed="false" prefWidth="295" promptText="••••••••" styleClass="password-field" visible="false" />
+
+           <Button fx:id="btn_show_pass" minHeight="38" minWidth="38" onAction="#togglePassword" prefHeight="38" prefWidth="65.0" style="-fx-background-color: transparent; -fx-cursor: hand;" text="" />
+        </children>
+    </HBox>
+</VBox>
 
             <Region minHeight="8" />
 
@@ -81,9 +90,13 @@
             <Label fx:id="messageLabel" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
 
             <Region minHeight="20" />
-
-            <!-- Botón login -->
-            <Button fx:id="btn_login" alignment="CENTER" onAction="#handleLogin" prefWidth="340" styleClass="btn-primary" text="Iniciar Sesión" />
+         <HBox>
+            <children>
+      
+                  <!-- Botón login -->
+                  <Button fx:id="btn_login" alignment="CENTER" onAction="#handleLogin" prefWidth="340.0" styleClass="btn-primary" text="Iniciar Sesión" />
+            </children>
+         </HBox>
 
             <Region VBox.vgrow="ALWAYS" />
 

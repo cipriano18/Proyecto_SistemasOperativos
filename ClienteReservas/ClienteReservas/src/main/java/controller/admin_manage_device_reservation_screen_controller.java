@@ -220,6 +220,7 @@ public class admin_manage_device_reservation_screen_controller implements Initia
                 "¿Desea cancelar esta reserva de equipos?",
                 "warning.png",
                 2,
+                3,
                 "Eliminar"
         );
 
@@ -247,7 +248,8 @@ public class admin_manage_device_reservation_screen_controller implements Initia
             PopUp.notification(
                     "Reserva cancelada",
                     "La reserva de equipos fue cancelada correctamente.",
-                    "success.png"
+                    "success.png",
+                    2
             );
 
             loadReservationsByMonth();
@@ -259,6 +261,7 @@ public class admin_manage_device_reservation_screen_controller implements Initia
                 "No se pudo cancelar la reserva",
                 response != null ? response.getMessage() : "No se pudo conectar con el servidor.",
                 "error.png",
+                1,
                 1,
                 "Aceptar"
         );
@@ -351,6 +354,7 @@ public class admin_manage_device_reservation_screen_controller implements Initia
                 "No se pudieron cargar las reservas",
                 message,
                 "error.png",
+                1,
                 1,
                 "Aceptar"
         );

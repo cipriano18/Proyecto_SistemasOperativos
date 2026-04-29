@@ -103,6 +103,7 @@ public class device_form_screen_controller implements Initializable {
                 "Si sale de esta pantalla, perderá la reserva actual y tendrá que iniciar el proceso desde cero. ¿Desea continuar?",
                 "back_hand.png",
                 2,
+                3,
                 "Salir"
         );
 
@@ -125,6 +126,7 @@ public class device_form_screen_controller implements Initializable {
                         "No se pudo descartar",
                         resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
                         "dangerous.png",
+                        1,
                         1,
                         "Aceptar"
                 );
@@ -150,6 +152,7 @@ public class device_form_screen_controller implements Initializable {
                     "No hay equipos disponibles para agregar.",
                     "devices_off.png",
                     1,
+                    2,
                     "Aceptar"
             );
             return;
@@ -178,6 +181,7 @@ public class device_form_screen_controller implements Initializable {
                     "Todos los dispositivos disponibles ya fueron agregados.",
                     "devices_off.png",
                     1,
+                    2,
                     "Aceptar"
             );
             return;
@@ -208,6 +212,7 @@ public class device_form_screen_controller implements Initializable {
                     "¿Está seguro que desea eliminar este dispositivo de la lista?",
                     "back_hand.png",
                     2,
+                    3,
                     "Eliminar"
             );
 
@@ -250,6 +255,7 @@ public class device_form_screen_controller implements Initializable {
                     "No hay una reserva temporal activa para confirmar.",
                     "dangerous.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -281,6 +287,7 @@ public class device_form_screen_controller implements Initializable {
                     "Debe seleccionar al menos un equipo para confirmar la reserva.",
                     "back_hand.png",
                     1,
+                    2,
                     "Aceptar"
             );
             return;
@@ -300,6 +307,7 @@ public class device_form_screen_controller implements Initializable {
                     updateResp != null ? updateResp.getMessage() : "No se pudo conectar con el servidor.",
                     "back_hand.png",
                     1,
+                    1,
                     "Aceptar"
             );
             return;
@@ -315,7 +323,8 @@ public class device_form_screen_controller implements Initializable {
             PopUp.notification(
                     "Reserva confirmada",
                     "La reserva de equipos se confirmó correctamente.",
-                    "check_circle.png"
+                    "check_circle.png",
+                    2
             );
 
             Session.getInstance().setCurrentEquipmentDraftId(0);
@@ -333,6 +342,7 @@ public class device_form_screen_controller implements Initializable {
                     "No se pudo confirmar",
                     confirmResp != null ? confirmResp.getMessage() : "Error desconocido.",
                     "back_hand.png",
+                    1,
                     1,
                     "Aceptar"
             );
@@ -370,6 +380,7 @@ private void loadDraftEquipmentCards() {
                     "¿Está seguro que desea eliminar este dispositivo de la lista?",
                     "back_hand.png",
                     2,
+                    3,
                     "Eliminar"
             );
 
