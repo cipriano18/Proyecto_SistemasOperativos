@@ -158,7 +158,7 @@
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="180.0" />
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="240.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="250.0" vgrow="SOMETIMES" />
                     <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
                     <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
                     <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
@@ -167,15 +167,16 @@
                      <children>
                         <VBox alignment="CENTER" maxWidth="200.0" prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="-fx-background-radius: 5; -fx-border-radius: 5;" styleClass="hero-panel" stylesheets="@../styles/main.css" GridPane.halignment="CENTER">
                            <children>
-                              <HBox prefHeight="50.0" prefWidth="155.0">
+                              <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="155.0">
                                  <children>
-                                    <Label prefHeight="17.0" prefWidth="58.0" styleClass="hero-title" stylesheets="@../styles/text.css" text="1" textFill="WHITE" HBox.hgrow="ALWAYS" />
-                                    <Region prefHeight="90.0" prefWidth="106.0" HBox.hgrow="ALWAYS" />
+                                    <Label prefHeight="43.0" prefWidth="24.0" styleClass="hero-title" stylesheets="@../styles/text.css" text="1" textFill="WHITE" HBox.hgrow="ALWAYS" />
+                                    <Label styleClass="hero-subtitle" text="Martes" />
                                  </children>
                                  <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    <Insets left="5.0" right="5.0" top="5.0" />
                                  </padding>
                               </HBox>
+                              <Separator opacity="0.36" prefWidth="200.0" />
                               <Label styleClass="hero-subtitle" text="Secciones del día:" />
                               <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="160.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-border-radius: 5;">
                                  <graphic>

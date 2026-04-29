@@ -16,6 +16,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -68,7 +69,8 @@ public class DayCard {
         HBox.setHgrow(space, Priority.ALWAYS);
 
         header.getChildren().addAll(lblDia, lblNombreDia, space);
-
+        
+        Separator separator = new Separator();
         Label subtitle = new Label("Secciones del dia:");
         subtitle.getStyleClass().add("hero-subtitle");
 
@@ -96,7 +98,7 @@ public class DayCard {
                 blocks
         );
 
-        card.getChildren().addAll(header, subtitle, btnManana, btnTarde, btnNoche);
+        card.getChildren().addAll(header, separator, subtitle, btnManana, btnTarde, btnNoche);
 
         return card;
     }
