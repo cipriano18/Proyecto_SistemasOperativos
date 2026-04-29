@@ -45,6 +45,7 @@ public class DayCard {
         card.setPrefWidth(180);
         card.setPrefHeight(200);
         card.setMaxWidth(200);
+        card.setMinWidth(145);
         card.getStyleClass().add("hero-panel");
         card.setStyle("-fx-background-radius: 5; -fx-border-radius: 5;");
         card.setPadding(new Insets(10, 10, 15, 10));
