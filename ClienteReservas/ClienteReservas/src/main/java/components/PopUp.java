@@ -80,7 +80,7 @@ public class PopUp {
         root.setMaxHeight(300);
 
         HBox header = createHeader(title, titleInfo, icon, type);
-        HBox bodyContent = createBody(stage, result, body, buttons, buttonConfirmText);
+        HBox bodyContent = createBody(stage, result, body, buttons, type, buttonConfirmText);
 
         root.getChildren().addAll(header, bodyContent);
 
@@ -159,6 +159,7 @@ public class PopUp {
             AtomicBoolean result,
             String body,
             int buttons,
+            int type,
             String buttonConfirmText
     ) {
         HBox bodyRoot = new HBox();
@@ -195,7 +196,7 @@ public class PopUp {
         buttonBox.setPadding(new Insets(0, 20, 0, 0));
 
         if (buttons == 2) {
-            Button btnCancel = createButton("Cancelar");
+            Button btnCancel = createButton("Cancelar", type);
             btnCancel.setPrefWidth(67);
             btnCancel.setOnAction(e -> {
                 result.set(false);
@@ -205,7 +206,7 @@ public class PopUp {
             buttonBox.getChildren().add(btnCancel);
         }
 
-        Button btnConfirm = createButton(buttonConfirmText);
+        Button btnConfirm = createButton(buttonConfirmText, type);
         btnConfirm.setPrefWidth(89);
         btnConfirm.setOnAction(e -> {
             result.set(true);
@@ -221,12 +222,24 @@ public class PopUp {
         return bodyRoot;
     }
 
-    private static Button createButton(String text) {
+    private static Button createButton(String text, int type) {
         Button button = new Button();
         button.setPrefHeight(44);
         button.setMinWidth(90);
         button.setStyle("-fx-background-radius: 0; -fx-border-radius: 0;");
-        button.getStyleClass().add("hero-panel");
+        switch (type) {
+            case 1:
+                button.getStyleClass().add("hero-panel");
+                break;
+            case 2:
+                button.getStyleClass().add("hero-blue");
+                break;
+            case 3:
+                button.getStyleClass().add("hero-yellow");
+                break;
+            default:
+                button.getStyleClass().add("hero-panel");
+        }
 
         Label label = new Label(text);
         label.getStyleClass().add("hero-subtitle");
