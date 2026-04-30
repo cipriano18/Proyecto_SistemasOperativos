@@ -66,8 +66,12 @@ public class auditorium_form_screen_controller implements Initializable {
     private Reservation selectedReservation;
     private List<Equipment> availableEquipmentList;
 
+    private boolean loadingData = false;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        loadingData = true;
 
         Response draftResponse = DraftContainer.getInstance().getDraftResponse();
 
@@ -103,15 +107,46 @@ public class auditorium_form_screen_controller implements Initializable {
         lbl_selected_date.setText(formatDate(selectedReservation.getReservationDate()));
         lbl_selected_section.setText(formatSection(selectedReservation.getIdSection()));
 
+        loadAuditoriumDraftData();
+
+        loadAvailableEquipment();
+        loadDraftEquipmentCards();
+
+        addAutosaveListeners();
+
+        loadingData = false;
+    }
+
+    private void loadAuditoriumDraftData() {
+
         if (currentDraft != null && currentDraft.getAuditoriumDraft() != null) {
             AuditoriumDraft draft = currentDraft.getAuditoriumDraft();
 
             txt_event_name.setText(draft.getEventName() != null ? draft.getEventName() : "");
-            txt_attendees_count.setText(String.valueOf(draft.getAttendeesCount()));
+
+            if (draft.getAttendeesCount() > 0) {
+                txt_attendees_count.setText(String.valueOf(draft.getAttendeesCount()));
+            } else {
+                txt_attendees_count.setText("");
+            }
+
             txt_observations.setText(draft.getObservations() != null ? draft.getObservations() : "");
         }
+    }
 
-        loadAvailableEquipment();
+    private void addAutosaveListeners() {
+
+        txt_event_name.textProperty().addListener((obs, oldValue, newValue) -> {
+            refreshAuditoriumDraftInServer();
+        });
+
+        txt_attendees_count.textProperty().addListener((obs, oldValue, newValue) -> {
+            refreshAuditoriumDraftInServer();
+        });
+
+        txt_observations.textProperty().addListener((obs, oldValue, newValue) -> {
+            refreshAuditoriumDraftInServer();
+        });
     }
 
     @FXML
@@ -172,6 +207,10 @@ public class auditorium_form_screen_controller implements Initializable {
 
         ListDeviceCard card = new ListDeviceCard(filtered);
 
+        card.setOnQuantityChange(() -> {
+            refreshAuditoriumDraftInServer();
+        });
+
         card.setOnDelete(() -> {
 
             boolean confirm = PopUp.warning(
@@ -198,10 +237,167 @@ public class auditorium_form_screen_controller implements Initializable {
                     ((ListDeviceCard) newLast).setDeviceChoiceDisabled(false);
                 }
             }
+
+            refreshAuditoriumDraftInServer();
         });
 
         VBox.setMargin(card, new Insets(0, 0, 10, 0));
         vb_added_devices.getChildren().add(card);
+
+        refreshAuditoriumDraftInServer();
+    }
+
+    private void loadDraftEquipmentCards() {
+
+        if (currentDraft == null || currentDraft.getEquipmentList() == null) {
+            return;
+        }
+
+        if (availableEquipmentList == null) {
+            return;
+        }
+
+        vb_added_devices.getChildren().clear();
+
+        for (RXE item : currentDraft.getEquipmentList()) {
+
+            List<Equipment> filtered = availableEquipmentList.stream()
+                    .filter(eq -> eq.getIdEquipment() == item.getIdEquipment())
+                    .collect(Collectors.toList());
+
+            if (filtered.isEmpty()) {
+                continue;
+            }
+
+            ListDeviceCard card = new ListDeviceCard(filtered);
+
+            card.setOnQuantityChange(() -> {
+                refreshAuditoriumDraftInServer();
+            });
+
+            card.setOnDelete(() -> {
+
+                boolean confirm = PopUp.warning(
+                        "Confirmación",
+                        "Eliminar equipo",
+                        "¿Está seguro que desea eliminar este equipo de la lista?",
+                        "warning.png",
+                        2,
+                        3,
+                        "Eliminar"
+                );
+
+                if (!confirm) {
+                    return;
+                }
+
+                vb_added_devices.getChildren().remove(card);
+
+                if (!vb_added_devices.getChildren().isEmpty()) {
+                    Node newLast = vb_added_devices.getChildren()
+                            .get(vb_added_devices.getChildren().size() - 1);
+
+                    if (newLast instanceof ListDeviceCard) {
+                        ((ListDeviceCard) newLast).setDeviceChoiceDisabled(false);
+                    }
+                }
+
+                refreshAuditoriumDraftInServer();
+            });
+
+            VBox.setMargin(card, new Insets(0, 0, 10, 0));
+            vb_added_devices.getChildren().add(card);
+
+            card.setSelectedQuantity(item.getQuantity());
+        }
+
+        if (!vb_added_devices.getChildren().isEmpty()) {
+            Node last = vb_added_devices.getChildren()
+                    .get(vb_added_devices.getChildren().size() - 1);
+
+            if (last instanceof ListDeviceCard) {
+                ((ListDeviceCard) last).setDeviceChoiceDisabled(false);
+            }
+        }
+    }
+
+    private void refreshAuditoriumDraftInServer() {
+
+        if (loadingData) {
+            return;
+        }
+
+        if (currentDraft == null || currentDraft.getIdDraft() <= 0) {
+            return;
+        }
+
+        String eventName = txt_event_name.getText() != null
+                ? txt_event_name.getText().trim()
+                : "";
+
+        String attendeesText = txt_attendees_count.getText() != null
+                ? txt_attendees_count.getText().trim()
+                : "";
+
+        String observations = txt_observations.getText() != null
+                ? txt_observations.getText().trim()
+                : "";
+
+        int attendeesCount = 0;
+
+        try {
+            if (!attendeesText.isEmpty()) {
+                attendeesCount = Integer.parseInt(attendeesText);
+            }
+        } catch (NumberFormatException e) {
+            return;
+        }
+
+        List<RXE> equipmentList = getEquipmentListFromCards();
+
+        AuditoriumDraft auditoriumDraft = new AuditoriumDraft();
+        auditoriumDraft.setEventName(eventName);
+        auditoriumDraft.setAttendeesCount(attendeesCount);
+        auditoriumDraft.setObservations(observations);
+
+        AuditoriumDraftRequest request = new AuditoriumDraftRequest();
+        request.setIdDraft(currentDraft.getIdDraft());
+        request.setIdClient(currentDraft.getIdClient());
+        request.setReservation(selectedReservation);
+        request.setAuditoriumDraft(auditoriumDraft);
+        request.setEquipmentList(equipmentList);
+
+        Response resp = AuditoriumDraftService.updateAuditoriumDraft(request);
+
+        if (resp != null && resp.isSuccess()) {
+            currentDraft.setAuditoriumDraft(auditoriumDraft);
+            currentDraft.setEquipmentList(equipmentList);
+            currentDraft.setReservation(selectedReservation);
+        }
+    }
+
+    private List<RXE> getEquipmentListFromCards() {
+
+        List<RXE> equipmentList = new ArrayList<>();
+
+        for (Node node : vb_added_devices.getChildren()) {
+            if (node instanceof ListDeviceCard) {
+
+                ListDeviceCard card = (ListDeviceCard) node;
+                Equipment selected = card.getSelectedEquipment();
+                Integer quantity = card.getSelectedQuantity();
+
+                if (selected != null && quantity != null) {
+                    RXE rxe = new RXE();
+                    rxe.setIdEquipment(selected.getIdEquipment());
+                    rxe.setQuantity(quantity);
+
+                    equipmentList.add(rxe);
+                }
+            }
+        }
+
+        return equipmentList;
     }
 
     @FXML
@@ -221,7 +417,6 @@ public class auditorium_form_screen_controller implements Initializable {
             return;
         }
 
-        // validar que exista draft
         if (currentDraft != null && currentDraft.getIdDraft() > 0) {
 
             AuditoriumDraftRequest request = new AuditoriumDraftRequest();
@@ -240,11 +435,10 @@ public class auditorium_form_screen_controller implements Initializable {
                         1,
                         "Aceptar"
                 );
-                return; 
+                return;
             }
         }
 
-        // limpiar frontend
         DraftContainer.getInstance().clearAll();
 
         App.setRoot("home_screen");
@@ -308,6 +502,7 @@ public class auditorium_form_screen_controller implements Initializable {
 
     @FXML
     private void saveAuditoriumReservation(ActionEvent event) {
+
         String eventName = txt_event_name.getText() != null
                 ? txt_event_name.getText().trim()
                 : "";
@@ -376,26 +571,8 @@ public class auditorium_form_screen_controller implements Initializable {
             return;
         }
 
-        // Equipos
-        List<RXE> equipmentList = new ArrayList<>();
+        List<RXE> equipmentList = getEquipmentListFromCards();
 
-        for (Node node : vb_added_devices.getChildren()) {
-            if (node instanceof ListDeviceCard) {
-
-                ListDeviceCard card = (ListDeviceCard) node;
-                Equipment selected = card.getSelectedEquipment();
-
-                if (selected != null) {
-                    RXE rxe = new RXE();
-                    rxe.setIdEquipment(selected.getIdEquipment());
-                    rxe.setQuantity(card.getSelectedQuantity());
-
-                    equipmentList.add(rxe);
-                }
-            }
-        }
-
-        // Draft
         AuditoriumDraft auditoriumDraft = new AuditoriumDraft();
         auditoriumDraft.setEventName(eventName);
         auditoriumDraft.setAttendeesCount(attendeesCount);
@@ -408,7 +585,6 @@ public class auditorium_form_screen_controller implements Initializable {
         request.setAuditoriumDraft(auditoriumDraft);
         request.setEquipmentList(equipmentList);
 
-        // 1. Guardar cambios (UPDATE)
         Response updateResp = AuditoriumDraftService.updateAuditoriumDraft(request);
 
         if (updateResp == null || !updateResp.isSuccess()) {
@@ -424,7 +600,6 @@ public class auditorium_form_screen_controller implements Initializable {
             return;
         }
 
-        // 2. Confirmación del usuario
         boolean confirm = PopUp.warning(
                 "Confirmar reserva",
                 "¿Desea confirmar la reserva?",
@@ -439,7 +614,6 @@ public class auditorium_form_screen_controller implements Initializable {
             return;
         }
 
-        //  3. Confirmar en servidor
         Response confirmResp = AuditoriumDraftService.confirmAuditoriumDraft(request);
 
         if (confirmResp != null && confirmResp.isSuccess()) {
