@@ -10,8 +10,10 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -99,34 +101,22 @@ public class ReservationCard extends HBox {
         mainSeparator.setPrefHeight(200);
 
         VBox contentBox = new VBox();
-        contentBox.setPrefHeight(showAuditoriumInfo && showClientInfo ? 190 : (showAuditoriumInfo ? 165 : (showClientInfo ? 136 : 92)));
-        contentBox.setPrefWidth(showAuditoriumInfo ? 760 : (showClientInfo ? 903 : 633));
+        contentBox.setMinWidth(0);
+        contentBox.setMinHeight(Region.USE_PREF_SIZE);
+        HBox.setHgrow(contentBox, Priority.ALWAYS);
 
-        HBox infoBox = new HBox();
-        infoBox.setPrefHeight(100);
-        infoBox.setPrefWidth(200);
-        infoBox.setSpacing(30);
-        VBox.setMargin(infoBox, new Insets(10, 0, 10, 10));
+        FlowPane infoBox = new FlowPane();
+        infoBox.setHgap(20);
+        infoBox.setVgap(10);
+        infoBox.setOrientation(Orientation.HORIZONTAL);
+        VBox.setMargin(infoBox, new Insets(10, 10, 10, 10));
 
         VBox dateBox = createInfoBox("FECHA", formatDate(date));
-
-        Separator dateBlockSeparator = new Separator();
-        dateBlockSeparator.setOrientation(Orientation.VERTICAL);
-        dateBlockSeparator.setPrefHeight(200);
-
         VBox blockBox = createInfoBox("BLOQUE", getBlockName(blockType));
 
-        infoBox.getChildren().addAll(
-                dateBox,
-                dateBlockSeparator,
-                blockBox
-        );
+        infoBox.getChildren().addAll(dateBox, blockBox);
 
         if (showClientInfo && !showAuditoriumInfo) {
-            Separator clientSeparator = new Separator();
-            clientSeparator.setOrientation(Orientation.VERTICAL);
-            clientSeparator.setPrefHeight(200);
-
             VBox clientBox = createInfoBox(
                     "CLIENTE",
                     clientName != null && !clientName.trim().isEmpty()
@@ -134,15 +124,11 @@ public class ReservationCard extends HBox {
                             : "Sin nombre"
             );
 
-            infoBox.getChildren().addAll(clientSeparator, clientBox);
+            infoBox.getChildren().add(clientBox);
         }
 
         if (showAuditoriumInfo) {
             if (showClientInfo) {
-                Separator clientSeparator = new Separator();
-                clientSeparator.setOrientation(Orientation.VERTICAL);
-                clientSeparator.setPrefHeight(200);
-
                 VBox clientBox = createInfoBox(
                         "CLIENTE",
                         clientName != null && !clientName.trim().isEmpty()
@@ -150,12 +136,8 @@ public class ReservationCard extends HBox {
                                 : "Sin nombre"
                 );
 
-                infoBox.getChildren().addAll(clientSeparator, clientBox);
+                infoBox.getChildren().add(clientBox);
             }
-
-            Separator eventSeparator = new Separator();
-            eventSeparator.setOrientation(Orientation.VERTICAL);
-            eventSeparator.setPrefHeight(200);
 
             VBox eventBox = createInfoBox(
                     "EVENTO",
@@ -164,21 +146,12 @@ public class ReservationCard extends HBox {
                             : "Sin nombre"
             );
 
-            Separator attendeesSeparator = new Separator();
-            attendeesSeparator.setOrientation(Orientation.VERTICAL);
-            attendeesSeparator.setPrefHeight(200);
-
             VBox attendeesBox = createInfoBox(
                     "ASISTENTES",
                     attendeesCount > 0 ? String.valueOf(attendeesCount) : "No indicado"
             );
 
-            infoBox.getChildren().addAll(
-                    eventSeparator,
-                    eventBox,
-                    attendeesSeparator,
-                    attendeesBox
-            );
+            infoBox.getChildren().addAll(eventBox, attendeesBox);
         }
 
         Label observationsLabel = null;
@@ -218,8 +191,7 @@ public class ReservationCard extends HBox {
         );
 
         Region spacer = new Region();
-        spacer.setPrefHeight(72);
-        spacer.setPrefWidth(358);
+        spacer.setMinWidth(20);
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button btnCancelReservation = new Button();
@@ -254,6 +226,7 @@ public class ReservationCard extends HBox {
 
     private VBox createInfoBox(String title, String value) {
         VBox box = new VBox(5);
+        box.setMinWidth(Region.USE_PREF_SIZE);
 
         Label titleLabel = new Label(title);
         titleLabel.getStyleClass().add("field-label");
@@ -261,6 +234,11 @@ public class ReservationCard extends HBox {
         Label valueLabel = new Label(value);
         valueLabel.getStyleClass().add("hero-title-3");
         valueLabel.setWrapText(true);
+        valueLabel.setMinWidth(Region.USE_PREF_SIZE);
+        valueLabel.setMaxWidth(260);
+        if (value != null && !value.isEmpty()) {
+            valueLabel.setTooltip(new Tooltip(value));
+        }
 
         box.getChildren().addAll(titleLabel, valueLabel);
 
