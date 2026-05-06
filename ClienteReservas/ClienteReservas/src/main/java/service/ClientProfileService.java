@@ -1,22 +1,22 @@
 package service;
 
-import model.Client;
+import dto.ClientRequest;
 import network.ResponseStore;
 import network.ServerConnection;
 import network.SocketManager;
 
 /**
  *
- * @author cipriano
+ * @author Cipriano
  */
 public class ClientProfileService {
 
-    public static Response update(Client client) {
-        return send("UPDATE_CLIENT", client);
+    public static Response update(ClientRequest request) {
+        return send("UPDATE_CLIENT", request);
     }
 
-    public static Response getClient(int idClient) {
-        return send("GET_CLIENT", idClient);
+    public static Response delete(ClientRequest request) {
+        return send("DELETE_CLIENT", request);
     }
 
     private static Response send(String command, Object data) {

@@ -213,9 +213,7 @@ public class ClientController {
         if (!Validator.isValidUsername(user.getUsername())) {
             return new Response(false, "Nombre de usuario inválido", null);
         }
-            if (ClientDAO.getClientByIdentityCard(client.getIdentityCard()) != null) {
-            return new Response(false, "La cédula ya está registrada", null);
-        }
+          
         if (contact != null) {
 
             if (!Validator.isValidContact(contact.getType(), contact.getContactValue())) {
