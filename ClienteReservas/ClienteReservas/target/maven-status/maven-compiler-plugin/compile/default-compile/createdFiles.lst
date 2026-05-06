@@ -2,6 +2,7 @@ controller\auditorium_form_screen_controller.class
 controller\login_screen_controller.class
 controller\register_admin_screen_controller.class
 service\AuthService.class
+network\ResponseStore.class
 network\ServerConnection.class
 controller\admin_manage_device_reservation_screen_controller.class
 components\DeviceCard.class
@@ -33,6 +34,7 @@ components\DayCard.class
 service\ClientProfileService.class
 controller\client_schedule_screen_controller.class
 model\Equipment.class
+network\ServerListener.class
 utils\DraftContainer.class
 session\Session.class
 dto\CalendarRequest.class
@@ -58,6 +60,7 @@ components\DeviceFormDialog.class
 draft\EquipmentReservationDraft.class
 service\CalendarService.class
 service\EquipmentReservationService.class
+network\ReservationNotificationHandler.class
 com\auditorio\clientereservas\App.class
 controller\home_screen_controller.class
 controller\register_screen_controller.class

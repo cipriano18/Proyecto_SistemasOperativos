@@ -5,8 +5,7 @@
 package service;
 
 import dto.AdminRequest;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import network.ResponseStore;
 import network.ServerConnection;
 import network.SocketManager;
 
@@ -26,6 +25,7 @@ public class AdminProfileService {
 
     private static Response send(String command, Object data) {
         try {
+
             SocketManager socketManager = SocketManager.getInstance();
 
             if (!socketManager.isConnected()) {
@@ -33,26 +33,19 @@ public class AdminProfileService {
             }
 
             ServerConnection connection = socketManager.getConnection();
-            ObjectOutputStream out = connection.getObjectOutput();
-            ObjectInputStream in = connection.getObjectInput();
 
-            out.writeObject(command);
-            out.flush();
+            connection.sendRequest(command, data);
 
-            out.writeObject(data);
-            out.flush();
-
-            Object response = in.readObject();
-
-            if (response instanceof Response) {
-                return (Response) response;
-            } else {
-                return new Response(false, "Respuesta inesperada del servidor", null);
-            }
+            return ResponseStore.waitResponse();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new Response(false, "Error al conectar con el servidor: " + e.getMessage(), null);
+
+            return new Response(
+                    false,
+                    "Error al conectar con el servidor: " + e.getMessage(),
+                    null
+            );
         }
     }
 }

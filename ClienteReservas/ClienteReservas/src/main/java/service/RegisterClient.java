@@ -1,18 +1,21 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package service;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import dto.ClientRequest;
+import network.ResponseStore;
 import network.ServerConnection;
 import network.SocketManager;
 
+/**
+ *
+ * @author Cipriano
+ */
 public class RegisterClient {
 
     public static Response register(ClientRequest request) {
+        return sendRequest("CREATE_CLIENT", request);
+    }
+
+    private static Response sendRequest(String command, Object data) {
         try {
             SocketManager socketManager = SocketManager.getInstance();
 
@@ -21,26 +24,19 @@ public class RegisterClient {
             }
 
             ServerConnection connection = socketManager.getConnection();
-            ObjectOutputStream out = connection.getObjectOutput();
-            ObjectInputStream in = connection.getObjectInput();
 
-            out.writeObject("CREATE_CLIENT");
-            out.flush();
+            connection.sendRequest(command, data);
 
-            out.writeObject(request);
-            out.flush();
-
-            Object response = in.readObject();
-
-            if (response instanceof Response) {
-                return (Response) response;
-            } else {
-                return new Response(false, "Respuesta inesperada del servidor", null);
-            }
+            return ResponseStore.waitResponse();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new Response(false, "Error al conectar con el servidor: " + e.getMessage(), null);
+
+            return new Response(
+                    false,
+                    "Error al conectar con el servidor: " + e.getMessage(),
+                    null
+            );
         }
     }
 }

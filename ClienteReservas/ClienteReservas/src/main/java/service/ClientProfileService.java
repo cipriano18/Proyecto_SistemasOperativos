@@ -1,23 +1,28 @@
 package service;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import dto.ClientRequest;
+import model.Client;
+import network.ResponseStore;
 import network.ServerConnection;
 import network.SocketManager;
 
+/**
+ *
+ * @author cipriano
+ */
 public class ClientProfileService {
 
-    public static Response update(ClientRequest request) {
-        return send("UPDATE_CLIENT", request);
+    public static Response update(Client client) {
+        return send("UPDATE_CLIENT", client);
     }
 
-    public static Response delete(ClientRequest request) {
-        return send("DELETE_CLIENT", request);
+    public static Response getClient(int idClient) {
+        return send("GET_CLIENT", idClient);
     }
 
-    private static Response send(String command, ClientRequest request) {
+    private static Response send(String command, Object data) {
+
         try {
+
             SocketManager socketManager = SocketManager.getInstance();
 
             if (!socketManager.isConnected()) {
@@ -25,26 +30,19 @@ public class ClientProfileService {
             }
 
             ServerConnection connection = socketManager.getConnection();
-            ObjectOutputStream out = connection.getObjectOutput();
-            ObjectInputStream in = connection.getObjectInput();
 
-            out.writeObject(command);
-            out.flush();
+            connection.sendRequest(command, data);
 
-            out.writeObject(request);
-            out.flush();
-
-            Object response = in.readObject();
-
-            if (response instanceof Response) {
-                return (Response) response;
-            } else {
-                return new Response(false, "Respuesta inesperada del servidor", null);
-            }
+            return ResponseStore.waitResponse();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+
+            return new Response(
+                    false,
+                    "Error al conectar con el servidor: " + e.getMessage(),
+                    null
+            );
         }
     }
 }

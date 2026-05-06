@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package network;
 
 import java.io.IOException;
@@ -18,6 +14,8 @@ public class ServerConnection {
     private ObjectOutputStream objectOutput;
     private ObjectInputStream objectInput;
 
+    private ServerListener listener;
+
     public ServerConnection() throws IOException {
         socket = new Socket(HOST, PORT);
 
@@ -25,6 +23,9 @@ public class ServerConnection {
         objectOutput.flush();
 
         objectInput = new ObjectInputStream(socket.getInputStream());
+
+        listener = new ServerListener(this);
+        listener.start();
 
         System.out.println("Conectado al servidor en " + HOST + ":" + PORT);
     }
@@ -37,7 +38,27 @@ public class ServerConnection {
         return objectInput;
     }
 
+   public void sendRequest(String command, Object data) throws IOException {
+    synchronized (objectOutput) {
+        objectOutput.writeObject(command);
+        objectOutput.flush();
+
+        objectOutput.writeObject(data);
+        objectOutput.flush();
+
+        objectOutput.reset();
+    }
+}
+
     public void close() {
+        try {
+            if (listener != null) {
+                listener.stopListener();
+            }
+        } catch (Exception e) {
+            System.out.println("Error al detener listener: " + e.getMessage());
+        }
+
         try {
             if (objectOutput != null) {
                 objectOutput.close();

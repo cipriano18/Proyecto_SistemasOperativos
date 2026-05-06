@@ -5,15 +5,14 @@
 package service;
 
 import dto.EquipmentReservationDraftRequest;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import network.ServerConnection;
 import network.SocketManager;
-
+import network.ResponseStore;
 /**
  *
  * @author Cipriano
  */
+
 public class ReservationDraftService {
 
     public static Response discardEquipmentDraft(EquipmentReservationDraftRequest request) {
@@ -29,22 +28,10 @@ public class ReservationDraftService {
             }
 
             ServerConnection connection = socketManager.getConnection();
-            ObjectOutputStream out = connection.getObjectOutput();
-            ObjectInputStream in = connection.getObjectInput();
 
-            out.writeObject(command);
-            out.flush();
+            connection.sendRequest(command, data);
 
-            out.writeObject(data);
-            out.flush();
-
-            Object response = in.readObject();
-
-            if (response instanceof Response) {
-                return (Response) response;
-            }
-
-            return new Response(false, "Respuesta inesperada del servidor", null);
+            return ResponseStore.waitResponse();
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,14 +4,14 @@
  */
 package service;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import model.User;
+import network.ResponseStore;
 import network.ServerConnection;
 import network.SocketManager;
 
 public class AuthService {
-     public static Response login(String username, String password) {
+
+    public static Response login(String username, String password) {
         try {
             SocketManager socketManager = SocketManager.getInstance();
 
@@ -20,30 +20,18 @@ public class AuthService {
             }
 
             ServerConnection connection = socketManager.getConnection();
-            ObjectOutputStream out = connection.getObjectOutput();
-            ObjectInputStream in = connection.getObjectInput();
 
             User user = new User();
             user.setUsername(username);
             user.setPassword(password);
 
-            out.writeObject("LOGIN");
-            out.flush();
+            connection.sendRequest("LOGIN", user);
 
-            out.writeObject(user);
-            out.flush();
-
-            Object response = in.readObject();
-
-            if (response instanceof Response) {
-                return (Response) response;
-            } else {
-                return new Response(false, "Respuesta inesperada del servidor", null);
-            }
+            return ResponseStore.waitResponse();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new Response(false, "Error al conectar con el servidor: " + e.getMessage(), null);
         }
     }
 }

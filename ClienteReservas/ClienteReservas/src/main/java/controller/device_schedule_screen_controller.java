@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,14 +20,14 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import model.CalendarBlock;
-import service.Response;
-import service.CalendarService;
-import utils.CalendarBuilder;
-import javafx.application.Platform;
 import javafx.stage.Stage;
-import utils.DraftContainer;
+import model.CalendarBlock;
+import network.ReservationNotificationHandler;
+import service.CalendarService;
+import service.Response;
 import session.Session;
+import utils.CalendarBuilder;
+import utils.DraftContainer;
 
 public class device_schedule_screen_controller implements Initializable {
 
@@ -48,7 +49,7 @@ public class device_schedule_screen_controller implements Initializable {
     private TextField tf_year;
     @FXML
     private Button btn_search;
-    
+
     private final CalendarBuilder builder = new CalendarBuilder();
     private final List<Integer> monthValues = new ArrayList<>();
 
@@ -79,6 +80,18 @@ public class device_schedule_screen_controller implements Initializable {
             }
         });
 
+        int idClient = Session.getInstance()
+                .getClient()
+                .getClient()
+                .getIdClient();
+
+        CalendarService.enterReservationsView(idClient);
+
+        ReservationNotificationHandler.setOnDraftExpired(() -> {
+            System.out.println("Refrescando calendario por broadcast...");
+            loadCalendar();
+        });
+
         loadCalendar();
 
         Platform.runLater(() -> {
@@ -86,6 +99,7 @@ public class device_schedule_screen_controller implements Initializable {
 
             stage.setOnCloseRequest(event -> {
                 CalendarService.exitReservationsView();
+                ReservationNotificationHandler.clearOnDraftExpired();
             });
         });
     }
@@ -93,6 +107,7 @@ public class device_schedule_screen_controller implements Initializable {
     @FXML
     private void GoToLogin(ActionEvent event) throws IOException {
         CalendarService.exitReservationsView();
+        ReservationNotificationHandler.clearOnDraftExpired();
         App.setRoot("home_screen");
     }
 
@@ -121,13 +136,17 @@ public class device_schedule_screen_controller implements Initializable {
 
     private int parseYearOrCurrent() {
         int currentYear = java.time.LocalDate.now().getYear();
+
         if (tf_year == null) {
             return currentYear;
         }
+
         String text = tf_year.getText() == null ? "" : tf_year.getText().trim();
+
         if (text.isEmpty()) {
             return currentYear;
         }
+
         try {
             return Integer.parseInt(text);
         } catch (NumberFormatException e) {
@@ -144,15 +163,16 @@ public class device_schedule_screen_controller implements Initializable {
         }
 
         String desired = String.valueOf(yearTyped);
+
         if (!desired.equals(tf_year.getText())) {
             tf_year.setText(desired);
         }
 
         loadMonths();
+        loadCalendar();
     }
 
     private void loadCalendar() {
-
         int selectedIndex = chb_month.getSelectionModel().getSelectedIndex();
 
         if (selectedIndex < 0 || selectedIndex >= monthValues.size()) {
@@ -163,10 +183,11 @@ public class device_schedule_screen_controller implements Initializable {
 
         int year = parseYearOrCurrent();
         int currentYear = java.time.LocalDate.now().getYear();
+
         if (year < currentYear) {
             year = currentYear;
         }
-        
+
         String flowType = DraftContainer.getInstance().getFlowType();
 
         int idClient = Session.getInstance()
@@ -181,7 +202,7 @@ public class device_schedule_screen_controller implements Initializable {
         } else {
             response = CalendarService.getCalendarBlocks(month, year, idClient);
         }
-        
+
         if (response == null) {
             PopUp.warning(
                     "Error de conexión",
@@ -217,7 +238,6 @@ public class device_schedule_screen_controller implements Initializable {
     }
 
     private void setupYearField() {
-
         UnaryOperator<TextFormatter.Change> filter = change -> {
             String newText = change.getControlNewText();
 

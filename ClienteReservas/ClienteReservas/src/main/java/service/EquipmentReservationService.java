@@ -5,11 +5,14 @@
 package service;
 
 import dto.EquipmentReservationRequest;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import network.ResponseStore;
 import network.ServerConnection;
 import network.SocketManager;
 
+/**
+ *
+ * @author Cipriano
+ */
 public class EquipmentReservationService {
 
     public static Response updateEquipmentReservation(EquipmentReservationRequest request) {
@@ -23,7 +26,7 @@ public class EquipmentReservationService {
     public static Response getReservationsByClientId(int idClient) {
         return sendRequest("GET_RESERVATIONS_BY_CLIENT_ID", idClient);
     }
-    
+
     public static Response getEquipmentReservationsByMonth(int month, int year) {
         int[] data = {month, year};
         return sendRequest("GET_EQUIPMENT_RESERVATIONS_BY_MONTH", data);
@@ -39,6 +42,7 @@ public class EquipmentReservationService {
 
     private static Response sendRequest(String action, Object data) {
         try {
+
             SocketManager socketManager = SocketManager.getInstance();
 
             if (!socketManager.isConnected()) {
@@ -46,26 +50,19 @@ public class EquipmentReservationService {
             }
 
             ServerConnection connection = socketManager.getConnection();
-            ObjectOutputStream out = connection.getObjectOutput();
-            ObjectInputStream in = connection.getObjectInput();
 
-            out.writeObject(action);
-            out.flush();
+            connection.sendRequest(action, data);
 
-            out.writeObject(data);
-            out.flush();
-
-            Object response = in.readObject();
-
-            if (response instanceof Response) {
-                return (Response) response;
-            }
-
-            return new Response(false, "Respuesta inesperada del servidor", null);
+            return ResponseStore.waitResponse();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+
+            return new Response(
+                    false,
+                    "Error al conectar con el servidor: " + e.getMessage(),
+                    null
+            );
         }
     }
 }

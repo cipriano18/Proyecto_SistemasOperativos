@@ -5,13 +5,11 @@
 package service;
 
 import dto.EquipmentReservationDraftRequest;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import network.ResponseStore;
 import network.ServerConnection;
 import network.SocketManager;
 
 public class EquipmentReservationDraftService {
-
 
     public static Response startEquipmentDraft(EquipmentReservationDraftRequest request) {
         return sendRequest("START_EQUIPMENT_DRAFT", request);
@@ -35,13 +33,12 @@ public class EquipmentReservationDraftService {
     }
 
     public static Response confirmEquipmentDraft(int idDraft, int idClient) {
+        EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
+        request.setIdDraft(idDraft);
+        request.setIdClient(idClient);
 
-    EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
-    request.setIdDraft(idDraft);
-    request.setIdClient(idClient);
-
-    return sendRequest("CONFIRM_EQUIPMENT_DRAFT", request);
-}
+        return sendRequest("CONFIRM_EQUIPMENT_DRAFT", request);
+    }
 
     private static Response sendRequest(String action, Object data) {
         try {
@@ -52,26 +49,14 @@ public class EquipmentReservationDraftService {
             }
 
             ServerConnection connection = socketManager.getConnection();
-            ObjectOutputStream out = connection.getObjectOutput();
-            ObjectInputStream in = connection.getObjectInput();
 
-            out.writeObject(action);
-            out.flush();
+            connection.sendRequest(action, data);
 
-            out.writeObject(data);
-            out.flush();
-
-            Object response = in.readObject();
-
-            if (response instanceof Response) {
-                return (Response) response;
-            }
-
-            return new Response(false, "Respuesta inesperada del servidor", null);
+            return ResponseStore.waitResponse();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new Response(false, "Error al conectar con el servidor: " + e.getMessage(), null);
         }
     }
 }

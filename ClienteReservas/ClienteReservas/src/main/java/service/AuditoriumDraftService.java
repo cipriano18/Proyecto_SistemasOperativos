@@ -1,12 +1,14 @@
 package service;
 
 import dto.AuditoriumDraftRequest;
-import dto.CalendarRequest;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import network.ResponseStore;
 import network.ServerConnection;
 import network.SocketManager;
 
+/**
+ *
+ * @author Cipriano
+ */
 public class AuditoriumDraftService {
 
     public static Response startAuditoriumDraft(AuditoriumDraftRequest request) {
@@ -31,6 +33,7 @@ public class AuditoriumDraftService {
 
     private static Response sendRequest(String action, Object data) {
         try {
+
             SocketManager socketManager = SocketManager.getInstance();
 
             if (!socketManager.isConnected()) {
@@ -38,26 +41,19 @@ public class AuditoriumDraftService {
             }
 
             ServerConnection connection = socketManager.getConnection();
-            ObjectOutputStream out = connection.getObjectOutput();
-            ObjectInputStream in = connection.getObjectInput();
 
-            out.writeObject(action);
-            out.flush();
+            connection.sendRequest(action, data);
 
-            out.writeObject(data);
-            out.flush();
-
-            Object response = in.readObject();
-
-            if (response instanceof Response) {
-                return (Response) response;
-            }
-
-            return new Response(false, "Respuesta inesperada del servidor", null);
+            return ResponseStore.waitResponse();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+
+            return new Response(
+                    false,
+                    "Error al conectar con el servidor: " + e.getMessage(),
+                    null
+            );
         }
     }
 }
