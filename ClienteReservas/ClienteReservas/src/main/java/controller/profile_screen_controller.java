@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -134,15 +135,18 @@ public class profile_screen_controller implements Initializable {
         if (ct != null) {
             String type = ct.getType() == null ? "EMAIL" : ct.getType().toUpperCase();
             contactType = type;
-            tf_contact.setText(nullSafe(ct.getContactValue()));
             if ("PHONE".equals(type)) {
                 rdb_phone.setSelected(true);
-                lbl_contact_type.setText("TELÉFONO");
-                tf_contact.setPromptText("82892226");
+                lbl_contact_type.setText("TELÉFONO (+506)");
+                tf_contact.setPromptText("8289 2226");
+                installPhoneFormatter();
+                tf_contact.setText(formatPhone(nullSafe(ct.getContactValue())));
             } else {
                 rdb_mail.setSelected(true);
                 lbl_contact_type.setText("CORREO ELECTRÓNICO");
                 tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
+                tf_contact.setTextFormatter(null);
+                tf_contact.setText(nullSafe(ct.getContactValue()));
             }
         }
 
@@ -181,14 +185,44 @@ public class profile_screen_controller implements Initializable {
     private void ChangeToMail(ActionEvent event) {
         lbl_contact_type.setText("CORREO ELECTRÓNICO");
         tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
+        tf_contact.setTextFormatter(null);
         contactType = "EMAIL";
     }
 
     @FXML
     private void ChangeToPhone(ActionEvent event) {
-        lbl_contact_type.setText("TELÉFONO");
-        tf_contact.setPromptText("82892226");
+        lbl_contact_type.setText("TELÉFONO (+506)");
+        tf_contact.setPromptText("8289 2226");
+        installPhoneFormatter();
+        tf_contact.setText(formatPhone(tf_contact.getText()));
         contactType = "PHONE";
+    }
+
+    private void installPhoneFormatter() {
+        tf_contact.setTextFormatter(new TextFormatter<String>(change -> {
+            if (!change.isContentChange()) {
+                return change;
+            }
+            String proposed = change.getControlNewText();
+            String digits = proposed.replaceAll("\\D", "");
+            if (digits.length() > 8) {
+                return null;
+            }
+            String formatted = formatPhone(digits);
+            change.setRange(0, change.getControlText().length());
+            change.setText(formatted);
+            change.setCaretPosition(formatted.length());
+            change.setAnchor(formatted.length());
+            return change;
+        }));
+    }
+
+    private String formatPhone(String raw) {
+        if (raw == null) return "";
+        String d = raw.replaceAll("\\D", "");
+        if (d.length() > 8) d = d.substring(0, 8);
+        if (d.length() <= 4) return d;
+        return d.substring(0, 4) + " " + d.substring(4);
     }
 
     @FXML
@@ -206,6 +240,9 @@ public class profile_screen_controller implements Initializable {
         String fSurname = tf_first_surname.getText().trim();
         String mSurname = tf_second_surname.getText().trim();
         String contactValue = tf_contact.getText().trim();
+        if ("PHONE".equals(contactType)) {
+            contactValue = contactValue.replaceAll("\\D", "");
+        }
         String newPassword = tf_pass.getText().trim();
 
         boolean hasErrors = false;
