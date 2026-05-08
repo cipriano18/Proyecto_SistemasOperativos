@@ -28,6 +28,8 @@ import utils.Animations;
 public class profile_screen_controller implements Initializable {
 
     private String contactType = "EMAIL";
+    private String emailBuffer = "";
+    private String phoneBuffer = "";
 
     @FXML
     private TextField tf_first_name;
@@ -136,17 +138,19 @@ public class profile_screen_controller implements Initializable {
             String type = ct.getType() == null ? "EMAIL" : ct.getType().toUpperCase();
             contactType = type;
             if ("PHONE".equals(type)) {
+                phoneBuffer = nullSafe(ct.getContactValue());
                 rdb_phone.setSelected(true);
                 lbl_contact_type.setText("TELÉFONO (+506)");
                 tf_contact.setPromptText("8289 2226");
                 installPhoneFormatter();
-                tf_contact.setText(formatPhone(nullSafe(ct.getContactValue())));
+                tf_contact.setText(formatPhone(phoneBuffer));
             } else {
+                emailBuffer = nullSafe(ct.getContactValue());
                 rdb_mail.setSelected(true);
                 lbl_contact_type.setText("CORREO ELECTRÓNICO");
                 tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
                 tf_contact.setTextFormatter(null);
-                tf_contact.setText(nullSafe(ct.getContactValue()));
+                tf_contact.setText(emailBuffer);
             }
         }
 
@@ -183,19 +187,25 @@ public class profile_screen_controller implements Initializable {
 
     @FXML
     private void ChangeToMail(ActionEvent event) {
+        if ("PHONE".equals(contactType)) {
+            phoneBuffer = tf_contact.getText();
+        }
         lbl_contact_type.setText("CORREO ELECTRÓNICO");
         tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
         tf_contact.setTextFormatter(null);
-        tf_contact.clear();
+        tf_contact.setText(emailBuffer);
         contactType = "EMAIL";
     }
 
     @FXML
     private void ChangeToPhone(ActionEvent event) {
+        if ("EMAIL".equals(contactType)) {
+            emailBuffer = tf_contact.getText();
+        }
         lbl_contact_type.setText("TELÉFONO (+506)");
         tf_contact.setPromptText("8289 2226");
-        tf_contact.clear();
         installPhoneFormatter();
+        tf_contact.setText(formatPhone(phoneBuffer));
         contactType = "PHONE";
     }
 
