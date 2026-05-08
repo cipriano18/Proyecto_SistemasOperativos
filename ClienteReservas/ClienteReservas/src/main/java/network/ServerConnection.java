@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class ServerConnection {
 
-    private static final String HOST = "localhost";
+    private static final String HOST = "10.35.142.88";
     private static final int PORT = 8000;
 
     private Socket socket;

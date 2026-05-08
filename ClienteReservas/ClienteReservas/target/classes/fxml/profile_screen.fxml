@@ -38,6 +38,17 @@
                               </Label>
                               <VBox fx:id="vb_form1" spacing="20.0" VBox.vgrow="ALWAYS">
                                  <children>
+                                     <HBox alignment="TOP_CENTER" spacing="80.0">
+                                       <children>
+                                          <VBox spacing="6">
+                                             <children>
+                                                <Label styleClass="field-label" text="CÉDULA (no editable)" />
+                                                <TextField fx:id="tf_id_card" editable="false" prefWidth="340.0" promptText="Cédula" styleClass="text-field" />
+                                             </children>
+                                          </VBox>
+                                          <Region prefHeight="68.0" prefWidth="337.0" />
+                                       </children>
+                                    </HBox>
                                     <HBox alignment="TOP_CENTER" spacing="80.0">
                                        <children>
                                           <VBox spacing="6">
@@ -71,17 +82,6 @@
                                                 <Label fx:id="msg_Sec_surname" prefWidth="340.0" styleClass="msg-error" text="" wrapText="true" />
                                              </children>
                                           </VBox>
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="TOP_CENTER" spacing="80.0">
-                                       <children>
-                                          <VBox spacing="6">
-                                             <children>
-                                                <Label styleClass="field-label" text="CÉDULA (no editable)" />
-                                                <TextField fx:id="tf_id_card" editable="false" prefWidth="340.0" promptText="Cédula" styleClass="text-field" />
-                                             </children>
-                                          </VBox>
-                                          <Region prefHeight="68.0" prefWidth="337.0" />
                                        </children>
                                     </HBox>
                                  </children>
