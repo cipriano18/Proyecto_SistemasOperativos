@@ -186,6 +186,7 @@ public class profile_screen_controller implements Initializable {
         lbl_contact_type.setText("CORREO ELECTRÓNICO");
         tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
         tf_contact.setTextFormatter(null);
+        tf_contact.clear();
         contactType = "EMAIL";
     }
 
@@ -193,8 +194,8 @@ public class profile_screen_controller implements Initializable {
     private void ChangeToPhone(ActionEvent event) {
         lbl_contact_type.setText("TELÉFONO (+506)");
         tf_contact.setPromptText("8289 2226");
+        tf_contact.clear();
         installPhoneFormatter();
-        tf_contact.setText(formatPhone(tf_contact.getText()));
         contactType = "PHONE";
     }
 
