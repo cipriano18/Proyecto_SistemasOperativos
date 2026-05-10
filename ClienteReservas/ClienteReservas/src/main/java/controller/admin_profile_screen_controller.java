@@ -32,8 +32,6 @@ import utils.Animations;
 
 public class admin_profile_screen_controller implements Initializable {
 
-    private String contactType = "EMAIL";
-
     @FXML private Button btn_goback;
     @FXML private VBox vb_info;
     @FXML private Label lbl_sis;
@@ -66,7 +64,6 @@ public class admin_profile_screen_controller implements Initializable {
 
     private static final String NAME_REGEX = "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$";
     private static final String EMAIL_REGEX = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
-    private static final String PHONE_REGEX = "^[0-9]{8}$";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -108,8 +105,6 @@ public class admin_profile_screen_controller implements Initializable {
         tf_user.setText(nullSafe(u.getUsername()));
 
         if (ct != null) {
-            String type = ct.getType() == null ? "EMAIL" : ct.getType().toUpperCase();
-            contactType = type;
             tf_contact.setText(nullSafe(ct.getContactValue()));
         }
 
@@ -183,12 +178,9 @@ public class admin_profile_screen_controller implements Initializable {
         }
 
         if (contactValue.isEmpty()) {
-            showError(msg_contact, "El valor del contacto es obligatorio");
+            showError(msg_contact, "El correo es obligatorio");
             hasErrors = true;
-        } else if ("PHONE".equals(contactType) && !contactValue.matches(PHONE_REGEX)) {
-            showError(msg_contact, "El teléfono debe contener exactamente 8 dígitos");
-            hasErrors = true;
-        } else if ("EMAIL".equals(contactType) && !contactValue.matches(EMAIL_REGEX)) {
+        } else if (!contactValue.matches(EMAIL_REGEX)) {
             showError(msg_contact, "El correo debe tener un formato válido");
             hasErrors = true;
         }
@@ -244,11 +236,11 @@ public class admin_profile_screen_controller implements Initializable {
         if (currentContact != null) {
             contact = new Contact(
                     currentContact.getIdContact(),
-                    contactType,
+                    "EMAIL",
                     contactValue
             );
         } else {
-            contact = new Contact(contactType, contactValue);
+            contact = new Contact("EMAIL", contactValue);
         }
 
         AdminRequest request = new AdminRequest(user, admin, contact);

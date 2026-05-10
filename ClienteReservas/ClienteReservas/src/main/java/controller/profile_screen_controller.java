@@ -10,10 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.Client;
@@ -26,10 +23,6 @@ import session.Session;
 import utils.Animations;
 
 public class profile_screen_controller implements Initializable {
-
-    private String contactType = "EMAIL";
-    private String emailBuffer = "";
-    private String phoneBuffer = "";
 
     @FXML
     private TextField tf_first_name;
@@ -48,14 +41,6 @@ public class profile_screen_controller implements Initializable {
     @FXML
     private TextField tf_id_card;
     @FXML
-    private RadioButton rdb_mail;
-    @FXML
-    private ToggleGroup tg_contact_tipe;
-    @FXML
-    private RadioButton rdb_phone;
-    @FXML
-    private Label lbl_contact_type;
-    @FXML
     private TextField tf_contact;
     @FXML
     private Label msg_contact;
@@ -70,7 +55,6 @@ public class profile_screen_controller implements Initializable {
 
     private static final String NAME_REGEX = "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$";
     private static final String EMAIL_REGEX = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
-    private static final String PHONE_REGEX = "^[0-9]{8}$";
     private static final String USERNAME_REGEX = "[a-zA-Z0-9_]+";
     @FXML
     private Button btn_goback;
@@ -135,23 +119,7 @@ public class profile_screen_controller implements Initializable {
         tf_user.setText(nullSafe(u.getUsername()));
 
         if (ct != null) {
-            String type = ct.getType() == null ? "EMAIL" : ct.getType().toUpperCase();
-            contactType = type;
-            if ("PHONE".equals(type)) {
-                phoneBuffer = nullSafe(ct.getContactValue());
-                rdb_phone.setSelected(true);
-                lbl_contact_type.setText("TELÉFONO (+506)");
-                tf_contact.setPromptText("8289 2226");
-                installPhoneFormatter();
-                tf_contact.setText(formatPhone(phoneBuffer));
-            } else {
-                emailBuffer = nullSafe(ct.getContactValue());
-                rdb_mail.setSelected(true);
-                lbl_contact_type.setText("CORREO ELECTRÓNICO");
-                tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
-                tf_contact.setTextFormatter(null);
-                tf_contact.setText(emailBuffer);
-            }
+            tf_contact.setText(nullSafe(ct.getContactValue()));
         }
 
         //Animations
@@ -186,57 +154,6 @@ public class profile_screen_controller implements Initializable {
     }
 
     @FXML
-    private void ChangeToMail(ActionEvent event) {
-        if ("PHONE".equals(contactType)) {
-            phoneBuffer = tf_contact.getText();
-        }
-        lbl_contact_type.setText("CORREO ELECTRÓNICO");
-        tf_contact.setPromptText("ejemplo.una@est.una.ac.cr");
-        tf_contact.setTextFormatter(null);
-        tf_contact.setText(emailBuffer);
-        contactType = "EMAIL";
-    }
-
-    @FXML
-    private void ChangeToPhone(ActionEvent event) {
-        if ("EMAIL".equals(contactType)) {
-            emailBuffer = tf_contact.getText();
-        }
-        lbl_contact_type.setText("TELÉFONO (+506)");
-        tf_contact.setPromptText("8289 2226");
-        installPhoneFormatter();
-        tf_contact.setText(formatPhone(phoneBuffer));
-        contactType = "PHONE";
-    }
-
-    private void installPhoneFormatter() {
-        tf_contact.setTextFormatter(new TextFormatter<String>(change -> {
-            if (!change.isContentChange()) {
-                return change;
-            }
-            String proposed = change.getControlNewText();
-            String digits = proposed.replaceAll("\\D", "");
-            if (digits.length() > 8) {
-                return null;
-            }
-            String formatted = formatPhone(digits);
-            change.setRange(0, change.getControlText().length());
-            change.setText(formatted);
-            change.setCaretPosition(formatted.length());
-            change.setAnchor(formatted.length());
-            return change;
-        }));
-    }
-
-    private String formatPhone(String raw) {
-        if (raw == null) return "";
-        String d = raw.replaceAll("\\D", "");
-        if (d.length() > 8) d = d.substring(0, 8);
-        if (d.length() <= 4) return d;
-        return d.substring(0, 4) + " " + d.substring(4);
-    }
-
-    @FXML
     private void SaveChanges(ActionEvent event) throws IOException {
         clearMessages();
 
@@ -251,9 +168,6 @@ public class profile_screen_controller implements Initializable {
         String fSurname = tf_first_surname.getText().trim();
         String mSurname = tf_second_surname.getText().trim();
         String contactValue = tf_contact.getText().trim();
-        if ("PHONE".equals(contactType)) {
-            contactValue = contactValue.replaceAll("\\D", "");
-        }
         String newPassword = tf_pass.getText().trim();
 
         boolean hasErrors = false;
@@ -283,12 +197,9 @@ public class profile_screen_controller implements Initializable {
         }
 
         if (contactValue.isEmpty()) {
-            showError(msg_contact, "El valor del contacto es obligatorio");
+            showError(msg_contact, "El correo es obligatorio");
             hasErrors = true;
-        } else if ("PHONE".equals(contactType) && !contactValue.matches(PHONE_REGEX)) {
-            showError(msg_contact, "El teléfono debe contener exactamente 8 dígitos");
-            hasErrors = true;
-        } else if ("EMAIL".equals(contactType) && !contactValue.matches(EMAIL_REGEX)) {
+        } else if (!contactValue.matches(EMAIL_REGEX)) {
             showError(msg_contact, "El correo debe tener un formato válido");
             hasErrors = true;
         }
@@ -329,9 +240,9 @@ public class profile_screen_controller implements Initializable {
 
         Contact contact;
         if (currentContact != null) {
-            contact = new Contact(currentContact.getIdContact(), contactType, contactValue);
+            contact = new Contact(currentContact.getIdContact(), "EMAIL", contactValue);
         } else {
-            contact = new Contact(contactType, contactValue);
+            contact = new Contact("EMAIL", contactValue);
         }
 
         ClientRequest request = new ClientRequest(user, client, contact);
@@ -451,7 +362,7 @@ public class profile_screen_controller implements Initializable {
             target = msg_surname;
         } else if (low.contains("segundo apellido")) {
             target = msg_Sec_surname;
-        } else if (low.contains("contacto") || low.contains("teléfono") || low.contains("correo")) {
+        } else if (low.contains("contacto") || low.contains("correo")) {
             target = msg_contact;
         } else {
             target = msg_global;

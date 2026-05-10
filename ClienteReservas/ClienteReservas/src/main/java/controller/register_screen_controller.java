@@ -33,7 +33,6 @@ import utils.Animations;
  */
 public class register_screen_controller implements Initializable {
 
-    private String contactType = "EMAIL";
     @FXML
     private Button btn_goback;
     @FXML
@@ -120,7 +119,6 @@ public class register_screen_controller implements Initializable {
     private static final String ID_CARD_REGEX = "^[A-Za-z0-9]{9,20}$";
     private static final String USERNAME_REGEX = "[a-zA-Z0-9_]+";
     private static final String EMAIL_REGEX = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
-    private static final String PHONE_REGEX = "^[0-9]{8}$";
 
     @FXML
     private void RegisterUser(ActionEvent event) throws IOException {
@@ -170,12 +168,9 @@ public class register_screen_controller implements Initializable {
         }
 
         if (contactValue.isEmpty()) {
-            showError(msg_contact, "El valor del contacto es obligatorio");
+            showError(msg_contact, "El correo es obligatorio");
             hasErrors = true;
-        } else if ("PHONE".equals(contactType) && !contactValue.matches(PHONE_REGEX)) {
-            showError(msg_contact, "El teléfono debe contener exactamente 8 dígitos");
-            hasErrors = true;
-        } else if ("EMAIL".equals(contactType) && !contactValue.matches(EMAIL_REGEX)) {
+        } else if (!contactValue.matches(EMAIL_REGEX)) {
             showError(msg_contact, "El correo debe tener un formato válido");
             hasErrors = true;
         }
@@ -211,7 +206,7 @@ public class register_screen_controller implements Initializable {
 
         User user = new User(3, username, password);
         Client client = new Client(0, fName, mName, fSurname, mSurname, idCard);
-        Contact contact = new Contact(contactType, contactValue);
+        Contact contact = new Contact("EMAIL", contactValue);
         ClientRequest request = new ClientRequest(user, client, contact);
 
         Response resp = RegisterClient.register(request);
