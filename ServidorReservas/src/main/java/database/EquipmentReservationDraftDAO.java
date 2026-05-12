@@ -25,7 +25,7 @@ public class EquipmentReservationDraftDAO {
 
     public static List<CalendarBlock> getBlockedDraftsByMonth(int month, int year, int idClient) {
 
-        cleanupExpiredDrafts();
+        cleanupExpiredDraftsAndCount();
 
         List<CalendarBlock> blocks = new ArrayList<>();
 

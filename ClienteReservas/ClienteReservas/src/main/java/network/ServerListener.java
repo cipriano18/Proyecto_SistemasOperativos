@@ -2,6 +2,7 @@ package network;
 
 import javafx.application.Platform;
 import service.Response;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -42,8 +43,8 @@ public class ServerListener extends Thread {
     private void handleResponse(Response response) {
 
         String message = response.getMessage();
-
-        if ("RESERVATION_DRAFT_EXPIRED".equals(message)) {
+        if ("RESERVATION_DRAFT_EXPIRED".equals(message)
+                || "AUDITORIUM_DRAFT_EXPIRED".equals(message)) {
             Platform.runLater(() -> {
                 System.out.println("Broadcast recibido: " + message);
                 ReservationNotificationHandler.notifyDraftExpired(response);

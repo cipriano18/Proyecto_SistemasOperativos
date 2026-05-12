@@ -29,6 +29,7 @@ import javafx.scene.layout.VBox;
 import model.Equipment;
 import model.RXE;
 import model.Reservation;
+import network.ReservationNotificationHandler;
 import service.AuditoriumDraftService;
 import service.EquipmentService;
 import service.Response;
@@ -113,7 +114,18 @@ public class auditorium_form_screen_controller implements Initializable {
         loadDraftEquipmentCards();
 
         addAutosaveListeners();
+ReservationNotificationHandler.setOnDraftExpired(() -> {
 
+    System.out.println("Broadcast recibido en formulario de auditorio");
+
+    DraftContainer.getInstance().setFlowType("AUDITORIUM");
+
+    try {
+        App.setRoot("device_schedule_screen");
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+});
         loadingData = false;
     }
 
@@ -441,7 +453,8 @@ public class auditorium_form_screen_controller implements Initializable {
 
         DraftContainer.getInstance().clearAll();
 
-        App.setRoot("home_screen");
+        DraftContainer.getInstance().setFlowType("AUDITORIUM");
+        App.setRoot("device_schedule_screen");
     }
 
     private void loadAvailableEquipment() {

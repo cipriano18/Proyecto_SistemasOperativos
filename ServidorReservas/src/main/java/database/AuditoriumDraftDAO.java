@@ -4,7 +4,6 @@
  */
 package database;
 
-import static database.EquipmentReservationDraftDAO.cleanupExpiredDrafts;
 import draft.AuditoriumDraft;
 import dto.AuditoriumDraftRequest;
 import java.sql.Connection;
@@ -38,7 +37,7 @@ public class AuditoriumDraftDAO {
     // Obtener drafts activos de auditorio por mes y año para mostrarlos como bloqueados en el calendario
     public static List<CalendarBlock> getBlockedAuditoriumDraftsByMonth(int month, int year, int idClient) {
 
-        cleanupExpiredDrafts();
+     cleanupExpiredDraftsAndCount();
 
         List<CalendarBlock> blocks = new java.util.ArrayList<>();
 
@@ -112,7 +111,7 @@ public class AuditoriumDraftDAO {
         try {
             semaphore.acquire();
 
-            cleanupExpiredDrafts();
+           cleanupExpiredDraftsAndCount();
 
             if (existsAuditoriumReservationByDateAndSection(
                     reservation.getReservationDate(),
@@ -713,4 +712,58 @@ public class AuditoriumDraftDAO {
             return false;
         }
     }
+    public static List<CalendarBlock> getExpiredDraftBlocks() {
+
+    List<CalendarBlock> blocks = new java.util.ArrayList<>();
+
+    String sql =
+            "SELECT d.reservation_date, d.id_section " +
+            "FROM AUD_ReservationDrafts d " +
+            "INNER JOIN AUD_AuditoriumDrafts ad " +
+            "ON d.id_draft = ad.id_draft " +
+            "WHERE d.expires_at <= NOW()";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            CalendarBlock block = new CalendarBlock();
+            block.setReservationDate(rs.getDate("reservation_date"));
+            block.setIdSection(rs.getInt("id_section"));
+            block.setStatus("EXPIRED_AUDITORIUM_DRAFT");
+
+            blocks.add(block);
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error al obtener drafts vencidos de auditorio: " + e.getMessage());
+    }
+
+    return blocks;
+}
+
+public static int cleanupExpiredDraftsAndCount() {
+
+    String sql =
+            "DELETE d " +
+            "FROM AUD_ReservationDrafts d " +
+            "INNER JOIN AUD_AuditoriumDrafts ad " +
+            "ON d.id_draft = ad.id_draft " +
+            "WHERE d.expires_at <= NOW()";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        int deleted = ps.executeUpdate();
+
+        System.out.println("Drafts de auditorio expirados eliminados: " + deleted);
+
+        return deleted;
+
+    } catch (SQLException e) {
+        System.out.println("Error al limpiar drafts vencidos de auditorio: " + e.getMessage());
+        return 0;
+    }
+}
 }
