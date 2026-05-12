@@ -4,10 +4,12 @@ import com.auditorio.clientereservas.App;
 import components.DeviceCard;
 import components.ListDeviceCard;
 import components.PopUp;
+import components.TtlChip;
 import draft.AuditoriumDraft;
 import dto.AuditoriumDraftRequest;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -63,11 +65,17 @@ public class auditorium_form_screen_controller implements Initializable {
     @FXML
     private TextArea txt_observations;
 
+    @FXML
+    private HBox ttl_chip_container;
+
     private AuditoriumDraftRequest currentDraft;
     private Reservation selectedReservation;
     private List<Equipment> availableEquipmentList;
 
     private boolean loadingData = false;
+
+    private TtlChip ttlChip;
+    private Runnable expiredListener;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -126,7 +134,81 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
         e.printStackTrace();
     }
 });
+        setupTtlChip();
+
         loadingData = false;
+    }
+
+    private void setupTtlChip() {
+        // Intenta leer createdAt/expiresAt del DTO. El servidor todavía no los envía
+        // en AuditoriumDraftRequest; cuando los agreguen, este wire-up se activa solo.
+        Timestamp[] ttl = tryReadTtl(currentDraft);
+        if (ttl == null || ttl[0] == null || ttl[1] == null || ttl_chip_container == null) {
+            return;
+        }
+
+        ttl_chip_container.setVisible(true);
+        ttl_chip_container.setManaged(true);
+
+        ttlChip = new TtlChip();
+        ttlChip.setOnExpired(this::handleDraftExpired);
+        ttl_chip_container.getChildren().setAll(ttlChip);
+        ttlChip.start(ttl[0], ttl[1]);
+
+        expiredListener = this::handleDraftExpired;
+        ReservationNotificationHandler.addOnDraftExpired(expiredListener);
+    }
+
+    private static Timestamp[] tryReadTtl(AuditoriumDraftRequest req) {
+        if (req == null) return null;
+        try {
+            java.lang.reflect.Method m1 = req.getClass().getMethod("getCreatedAt");
+            java.lang.reflect.Method m2 = req.getClass().getMethod("getExpiresAt");
+            Object a = m1.invoke(req);
+            Object b = m2.invoke(req);
+            if (a instanceof Timestamp && b instanceof Timestamp) {
+                return new Timestamp[] { (Timestamp) a, (Timestamp) b };
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    private void handleDraftExpired() {
+        teardownTtlChip();
+
+        DraftContainer.getInstance().setDraftResponse(null);
+
+        PopUp.warning(
+                "Reserva vencida",
+                "Tiempo agotado",
+                "Su reserva temporal de auditorio ha vencido. Debe iniciar el proceso nuevamente.",
+                "back_hand.png",
+                1,
+                1,
+                "Aceptar"
+        );
+
+        try {
+            App.setRoot("device_schedule_screen");
+        } catch (IOException ignored) {
+        }
+    }
+
+    private void teardownTtlChip() {
+        if (ttlChip != null) {
+            ttlChip.stop();
+            ttlChip = null;
+        }
+        if (expiredListener != null) {
+            ReservationNotificationHandler.removeOnDraftExpired(expiredListener);
+            expiredListener = null;
+        }
+        if (ttl_chip_container != null) {
+            ttl_chip_container.getChildren().clear();
+            ttl_chip_container.setVisible(false);
+            ttl_chip_container.setManaged(false);
+        }
     }
 
     private void loadAuditoriumDraftData() {
@@ -455,6 +537,10 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
 
         DraftContainer.getInstance().setFlowType("AUDITORIUM");
         App.setRoot("device_schedule_screen");
+
+        teardownTtlChip();
+
+        App.setRoot("home_screen");
     }
 
     private void loadAvailableEquipment() {
@@ -639,6 +725,8 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
             );
 
             DraftContainer.getInstance().clearAll();
+
+            teardownTtlChip();
 
             try {
                 App.setRoot("home_screen");

@@ -37,7 +37,9 @@
                         <Label minWidth="300.0" styleClass="hero-subtitle" text="Reserve de ante mano los equipos que decea utilizar para sus eventos o clases." wrapText="true" />
                      </children>
                   </VBox>
-                  <Region prefHeight="116.0" prefWidth="318.0" HBox.hgrow="ALWAYS" />
+                  <Region prefHeight="116.0" prefWidth="120.0" HBox.hgrow="ALWAYS" />
+                  <HBox fx:id="ttl_chip_container" alignment="CENTER" />
+                  <Region prefHeight="116.0" prefWidth="40.0" />
                   <ImageView fx:id="img_logo" fitHeight="120.0" fitWidth="328.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../assets/LOGO-UNA1-Blanco.png" />

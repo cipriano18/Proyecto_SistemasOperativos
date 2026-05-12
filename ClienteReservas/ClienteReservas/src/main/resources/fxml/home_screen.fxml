@@ -9,6 +9,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
@@ -18,6 +19,15 @@
    <children>
       <VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" spacing="30.0" HBox.hgrow="ALWAYS">
          <children>
+            <HBox fx:id="draft_recovery_banner" alignment="CENTER_LEFT" managed="false" spacing="14.0" styleClass="recovery-banner" visible="false">
+               <children>
+                  <Label fx:id="lbl_recovery_text" styleClass="recovery-text" text="Tienes una reserva temporal activa" />
+                  <HBox fx:id="ttl_banner_chip_container" alignment="CENTER" />
+                  <Region prefWidth="20.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="btn_continue_draft" mnemonicParsing="false" onAction="#OnContinueDraft" styleClass="recovery-btn-primary" text="Continuar" />
+                  <Button fx:id="btn_discard_draft" mnemonicParsing="false" onAction="#OnDiscardDraft" styleClass="recovery-btn-secondary" text="Descartar" />
+               </children>
+            </HBox>
             <HBox alignment="CENTER">
                <children>
                   <VBox alignment="CENTER" spacing="6">
