@@ -8,6 +8,7 @@ import com.auditorio.clientereservas.App;
 import components.DeviceCard;
 import components.ListDeviceCard;
 import components.PopUp;
+import components.TtlChip;
 import draft.EquipmentReservationDraft;
 import dto.EquipmentReservationDraftRequest;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.Equipment;
 import model.RXE;
+import network.ReservationNotificationHandler;
 import service.EquipmentReservationDraftService;
 import service.EquipmentService;
 import service.ReservationDraftService;
@@ -64,9 +66,13 @@ public class device_form_screen_controller implements Initializable {
     private Button btn_save_reservation;
     @FXML
     private VBox vb_added_devices;
+    @FXML
+    private HBox ttl_chip_container;
     private int currentDraftId = 0;
     private EquipmentReservationDraft currentDraft;
     private List<Equipment> availableEquipmentList;
+    private TtlChip ttlChip;
+    private Runnable expiredListener;
 
     /**
      * Initializes the controller class.
@@ -88,9 +94,70 @@ public class device_form_screen_controller implements Initializable {
             loadAvailableEquipment();
             loadDraftEquipmentCards();
 
+            setupTtlChip();
+
         } else {
             currentDraftId = Session.getInstance().getCurrentEquipmentDraftId();
             System.out.println("No se encontró draft en DraftContainer. ID en Session: " + currentDraftId);
+        }
+    }
+
+    private void setupTtlChip() {
+        if (currentDraft == null
+                || currentDraft.getCreatedAt() == null
+                || currentDraft.getExpiresAt() == null
+                || ttl_chip_container == null) {
+            return;
+        }
+
+        ttlChip = new TtlChip();
+        ttlChip.setOnExpired(this::handleDraftExpired);
+        ttl_chip_container.getChildren().setAll(ttlChip);
+        ttlChip.start(currentDraft.getCreatedAt(), currentDraft.getExpiresAt());
+
+        expiredListener = this::handleDraftExpired;
+        ReservationNotificationHandler.addOnDraftExpired(expiredListener);
+    }
+
+    private void handleDraftExpired() {
+        if (ttlChip != null) {
+            ttlChip.stop();
+        }
+        if (expiredListener != null) {
+            ReservationNotificationHandler.removeOnDraftExpired(expiredListener);
+            expiredListener = null;
+        }
+
+        Session.getInstance().setCurrentEquipmentDraftId(0);
+        DraftContainer.getInstance().setDraftResponse(null);
+
+        PopUp.warning(
+                "Reserva vencida",
+                "Tiempo agotado",
+                "Su reserva temporal ha vencido. Debe iniciar el proceso nuevamente.",
+                "back_hand.png",
+                1,
+                1,
+                "Aceptar"
+        );
+
+        try {
+            App.setRoot("device_schedule_screen");
+        } catch (IOException ignored) {
+        }
+    }
+
+    private void teardownTtlChip() {
+        if (ttlChip != null) {
+            ttlChip.stop();
+            ttlChip = null;
+        }
+        if (expiredListener != null) {
+            ReservationNotificationHandler.removeOnDraftExpired(expiredListener);
+            expiredListener = null;
+        }
+        if (ttl_chip_container != null) {
+            ttl_chip_container.getChildren().clear();
         }
     }
 
@@ -136,6 +203,8 @@ public class device_form_screen_controller implements Initializable {
             Session.getInstance().setCurrentEquipmentDraftId(0);
             DraftContainer.getInstance().setDraftResponse(null);
         }
+
+        teardownTtlChip();
 
         App.setRoot("device_schedule_screen");
     }
@@ -329,6 +398,8 @@ public class device_form_screen_controller implements Initializable {
 
             Session.getInstance().setCurrentEquipmentDraftId(0);
             DraftContainer.getInstance().setDraftResponse(null);
+
+            teardownTtlChip();
 
             try {
                 App.setRoot("device_schedule_screen");

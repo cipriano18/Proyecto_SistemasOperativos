@@ -2,6 +2,8 @@ package controller;
 
 import com.auditorio.clientereservas.App;
 import components.PopUp;
+import components.TtlChip;
+import draft.EquipmentReservationDraft;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,11 +21,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.CalendarBlock;
 import network.ReservationNotificationHandler;
 import service.CalendarService;
+import service.EquipmentReservationDraftService;
 import service.Response;
 import session.Session;
 import utils.CalendarBuilder;
@@ -49,9 +53,15 @@ public class device_schedule_screen_controller implements Initializable {
     private TextField tf_year;
     @FXML
     private Button btn_search;
+    @FXML
+    private HBox hb_ttl_indicator;
 
     private final CalendarBuilder builder = new CalendarBuilder();
     private final List<Integer> monthValues = new ArrayList<>();
+
+    private TtlChip ttlChip;
+    private Runnable expiredListener;
+    private Runnable refreshListener;
 
     private static final String[] MONTH_NAMES = {
         "Enero", "Febrero", "Marzo", "Abril",
@@ -87,10 +97,13 @@ public class device_schedule_screen_controller implements Initializable {
 
         CalendarService.enterReservationsView(idClient);
 
-        ReservationNotificationHandler.setOnDraftExpired(() -> {
+        refreshListener = () -> {
             System.out.println("Refrescando calendario por broadcast...");
             loadCalendar();
-        });
+        };
+        ReservationNotificationHandler.addOnDraftExpired(refreshListener);
+
+        setupTtlIndicator(idClient);
 
         loadCalendar();
 
@@ -99,15 +112,75 @@ public class device_schedule_screen_controller implements Initializable {
 
             stage.setOnCloseRequest(event -> {
                 CalendarService.exitReservationsView();
+                teardownTtlIndicator();
                 ReservationNotificationHandler.clearOnDraftExpired();
             });
         });
     }
 
+    private void setupTtlIndicator(int idClient) {
+        if (hb_ttl_indicator == null) {
+            return;
+        }
+
+        try {
+            Response resp = EquipmentReservationDraftService.getEquipmentDraftByClientId(idClient);
+            if (resp == null || !resp.isSuccess()
+                    || !(resp.getData() instanceof EquipmentReservationDraft)) {
+                return;
+            }
+
+            EquipmentReservationDraft draft = (EquipmentReservationDraft) resp.getData();
+            if (draft.getCreatedAt() == null || draft.getExpiresAt() == null || draft.isExpired()) {
+                return;
+            }
+
+            ttlChip = new TtlChip();
+            ttlChip.setCompact(true);
+            ttlChip.setOnExpired(() -> {
+                teardownTtlIndicator();
+                loadCalendar();
+            });
+
+            hb_ttl_indicator.getChildren().setAll(ttlChip);
+            hb_ttl_indicator.setVisible(true);
+            hb_ttl_indicator.setManaged(true);
+
+            ttlChip.start(draft.getCreatedAt(), draft.getExpiresAt());
+
+            expiredListener = () -> {
+                teardownTtlIndicator();
+            };
+            ReservationNotificationHandler.addOnDraftExpired(expiredListener);
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar el indicador de TTL: " + e.getMessage());
+        }
+    }
+
+    private void teardownTtlIndicator() {
+        if (ttlChip != null) {
+            ttlChip.stop();
+            ttlChip = null;
+        }
+        if (expiredListener != null) {
+            ReservationNotificationHandler.removeOnDraftExpired(expiredListener);
+            expiredListener = null;
+        }
+        if (hb_ttl_indicator != null) {
+            hb_ttl_indicator.getChildren().clear();
+            hb_ttl_indicator.setVisible(false);
+            hb_ttl_indicator.setManaged(false);
+        }
+    }
+
     @FXML
     private void GoToLogin(ActionEvent event) throws IOException {
         CalendarService.exitReservationsView();
-        ReservationNotificationHandler.clearOnDraftExpired();
+        teardownTtlIndicator();
+        if (refreshListener != null) {
+            ReservationNotificationHandler.removeOnDraftExpired(refreshListener);
+            refreshListener = null;
+        }
         App.setRoot("home_screen");
     }
 

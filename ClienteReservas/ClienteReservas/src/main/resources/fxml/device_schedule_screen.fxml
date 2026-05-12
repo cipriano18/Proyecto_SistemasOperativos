@@ -44,7 +44,9 @@
                               <Label fx:id="lbl_audInfo" minWidth="300.0" styleClass="hero-subtitle" text="Visualice en tiempo real la disponibilidad del auditorio por días y bloques horarios." wrapText="true" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
-                        <Region prefHeight="116.0" prefWidth="318.0" HBox.hgrow="ALWAYS" />
+                        <Region prefHeight="116.0" prefWidth="120.0" HBox.hgrow="ALWAYS" />
+                        <HBox fx:id="hb_ttl_indicator" alignment="CENTER" managed="false" visible="false" />
+                        <Region prefHeight="116.0" prefWidth="40.0" />
                         <ImageView fx:id="img_logo" fitHeight="90.0" fitWidth="113.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../assets/LOGO-UNA1-Blanco.png" />
