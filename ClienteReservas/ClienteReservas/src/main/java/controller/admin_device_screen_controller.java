@@ -5,7 +5,6 @@
 package controller;
 
 import com.auditorio.clientereservas.App;
-import components.PopUp;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -28,10 +27,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+
 /**
- * FXML Controller class
- *
- * @author Alvaro Artavia
+ * Controlador de la pantalla de administracion de equipos.
  */
 public class admin_device_screen_controller implements Initializable {
 
@@ -56,13 +54,18 @@ public class admin_device_screen_controller implements Initializable {
     @FXML
     private TableColumn<Equipment, Integer> tc_quantity;
     private Equipment selectedEquipment;
+
     /**
-     * Initializes the controller class.
+     * Inicializa la tabla y carga la lista de equipos disponibles.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         tc_name.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tc_quantity.setCellValueFactory(new PropertyValueFactory<>("totalQuantity"));
+        tc_quantity.setCellValueFactory(
+                new PropertyValueFactory<>("totalQuantity"));
 
         loadEquipmentTable();
     }    
@@ -72,6 +75,11 @@ public class admin_device_screen_controller implements Initializable {
         App.setRoot("admin_home_screen");
     }
 
+    /**
+     * Elimina el equipo seleccionado tras solicitar confirmacion al usuario.
+     *
+     * @param event evento generado por la accion del usuario
+     */
     @FXML
 private void DeleteDevice(ActionEvent event) {
 
@@ -120,7 +128,9 @@ private void DeleteDevice(ActionEvent event) {
         PopUp.warning(
                 "Error",
                 "No se pudo eliminar el equipo",
-                resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
+                resp != null 
+                        ? resp.getMessage() 
+                        : "No se pudo conectar con el servidor.",
                 "dangerous.png",
                 1,
                 1,
@@ -129,6 +139,11 @@ private void DeleteDevice(ActionEvent event) {
     }
 }
 
+   /**
+    * Abre el formulario para editar el equipo actualmente seleccionado.
+    *
+    * @param event evento generado por la accion del usuario
+    */
    @FXML
 private void EditDevice(ActionEvent event) {
 
@@ -156,7 +171,8 @@ private void EditDevice(ActionEvent event) {
                 selectedEquipment.setName(name);
                 selectedEquipment.setTotalQuantity(quantity);
 
-                Response resp = EquipmentService.updateEquipment(selectedEquipment);
+                Response resp 
+                        = EquipmentService.updateEquipment(selectedEquipment);
 
                 if (resp != null && resp.isSuccess()) {
 
@@ -175,7 +191,9 @@ private void EditDevice(ActionEvent event) {
                     PopUp.warning(
                             "Error",
                             "No se pudo actualizar el equipo",
-                            resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
+                            resp != null 
+                                    ? resp.getMessage() 
+                                    : "No se pudo conectar con el servidor.",
                             "dangerous.png",
                             1,
                             1,
@@ -188,6 +206,11 @@ private void EditDevice(ActionEvent event) {
     dialog.show();
 }
 
+    /**
+     * Abre el formulario para registrar un nuevo equipo.
+     *
+     * @param event evento generado por la accion del usuario
+     */
     @FXML
     private void AddDevice(ActionEvent event) {
 
@@ -219,7 +242,9 @@ private void EditDevice(ActionEvent event) {
                     PopUp.warning(
                             "Error",
                             "No se pudo crear el equipo",
-                            resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
+                            resp != null 
+                                    ? resp.getMessage() 
+                                    : "No se pudo conectar con el servidor.",
                             "dangerous.png",
                             1,
                             1,
@@ -231,6 +256,12 @@ private void EditDevice(ActionEvent event) {
 
     dialog.show();
 }
+
+/**
+ * Actualiza el equipo seleccionado a partir de la fila elegida en la tabla.
+ *
+ * @param event evento generado por la seleccion del usuario
+ */
 @FXML
 private void GetSelectedDevice(MouseEvent event) {
     selectedEquipment = tbl_device_list.getSelectionModel().getSelectedItem();
@@ -239,6 +270,10 @@ private void GetSelectedDevice(MouseEvent event) {
         chb_selected_device.setText(selectedEquipment.getName());
     }
 }
+
+    /**
+     * Consulta los equipos registrados y actualiza la tabla de la vista.
+     */
      private void loadEquipmentTable() {
 
         Response resp = EquipmentService.getAllEquipment();
@@ -256,7 +291,9 @@ private void GetSelectedDevice(MouseEvent event) {
             PopUp.warning(
                     "Error",
                     "No se pudieron cargar los equipos",
-                    resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
+                    resp != null 
+                            ? resp.getMessage() 
+                            : "No se pudo conectar con el servidor.",
                     "dangerous.png",
                     1,
                     1,

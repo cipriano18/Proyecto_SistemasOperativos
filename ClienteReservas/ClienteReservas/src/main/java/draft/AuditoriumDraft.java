@@ -2,6 +2,9 @@ package draft;
 
 import java.io.Serializable;
 
+/**
+ * Representa la informacion adicional de un borrador de auditorio.
+ */
 public class AuditoriumDraft implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -11,10 +14,27 @@ public class AuditoriumDraft implements Serializable {
     private int attendeesCount;
     private String observations;
 
+    /**
+     * Crea un borrador vacio de auditorio.
+     */
     public AuditoriumDraft() {
     }
 
-    public AuditoriumDraft(int idAuditoriumDraft, int idDraft, String eventName, int attendeesCount, String observations) {
+    /**
+     * Crea un borrador con la informacion principal del evento.
+     *
+     * @param idAuditoriumDraft identificador del borrador de auditorio
+     * @param idDraft identificador del draft general asociado
+     * @param eventName nombre del evento
+     * @param attendeesCount cantidad de asistentes
+     * @param observations observaciones adicionales
+     */
+    public AuditoriumDraft(
+            int idAuditoriumDraft, 
+            int idDraft, String eventName, 
+            int attendeesCount, 
+            String observations) {
+        
         this.idAuditoriumDraft = idAuditoriumDraft;
         this.idDraft = idDraft;
         this.eventName = eventName;

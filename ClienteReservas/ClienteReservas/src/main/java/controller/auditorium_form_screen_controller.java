@@ -37,6 +37,9 @@ import service.EquipmentService;
 import service.Response;
 import utils.DraftContainer;
 
+/**
+ * Controlador del formulario para completar una reserva de auditorio.
+ */
 public class auditorium_form_screen_controller implements Initializable {
 
     @FXML
@@ -77,12 +80,19 @@ public class auditorium_form_screen_controller implements Initializable {
     private TtlChip ttlChip;
     private Runnable expiredListener;
 
+    /**
+     * Carga el draft actual, los datos base y el estado visual del formulario.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
         loadingData = true;
 
-        Response draftResponse = DraftContainer.getInstance().getDraftResponse();
+        Response draftResponse 
+                = DraftContainer.getInstance().getDraftResponse();
 
         if (draftResponse != null
                 && draftResponse.isSuccess()
@@ -92,14 +102,16 @@ public class auditorium_form_screen_controller implements Initializable {
             selectedReservation = currentDraft.getReservation();
 
         } else {
-            selectedReservation = DraftContainer.getInstance().getSelectedReservation();
+            selectedReservation 
+                    = DraftContainer.getInstance().getSelectedReservation();
         }
 
         if (selectedReservation == null) {
             PopUp.warning(
                     "Reserva inválida",
                     "No se encontró la sección seleccionada",
-                    "Seleccione una fecha y sección antes de continuar con la reserva de auditorio.",
+                    "Seleccione una fecha y sección antes de continuar con la "
+                    + "reserva de auditorio.",
                     "error.png",
                     1,
                     1,
@@ -113,8 +125,11 @@ public class auditorium_form_screen_controller implements Initializable {
             return;
         }
 
-        lbl_selected_date.setText(formatDate(selectedReservation.getReservationDate()));
-        lbl_selected_section.setText(formatSection(selectedReservation.getIdSection()));
+        lbl_selected_date.setText(
+                formatDate(selectedReservation.getReservationDate()));
+        
+        lbl_selected_section.setText(
+                formatSection(selectedReservation.getIdSection()));
 
         loadAuditoriumDraftData();
 
@@ -122,28 +137,33 @@ public class auditorium_form_screen_controller implements Initializable {
         loadDraftEquipmentCards();
 
         addAutosaveListeners();
-ReservationNotificationHandler.setOnDraftExpired(() -> {
+        
+    ReservationNotificationHandler.setOnDraftExpired(() -> {
 
-    System.out.println("Broadcast recibido en formulario de auditorio");
+        System.out.println("Broadcast recibido en formulario de auditorio");
 
-    DraftContainer.getInstance().setFlowType("AUDITORIUM");
+        DraftContainer.getInstance().setFlowType("AUDITORIUM");
 
-    try {
-        App.setRoot("device_schedule_screen");
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-});
+        try {
+            App.setRoot("device_schedule_screen");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    });
         setupTtlChip();
 
         loadingData = false;
     }
 
+    /**
+     * Configura el chip con el tiempo restante del draft activo.
+     */
     private void setupTtlChip() {
-        // Intenta leer createdAt/expiresAt del DTO. El servidor todavía no los envía
-        // en AuditoriumDraftRequest; cuando los agreguen, este wire-up se activa solo.
+
         Timestamp[] ttl = tryReadTtl(currentDraft);
-        if (ttl == null || ttl[0] == null || ttl[1] == null || ttl_chip_container == null) {
+        if (ttl == null || ttl[0] == null || 
+            ttl[1] == null || ttl_chip_container == null) {
+            
             return;
         }
 
@@ -162,8 +182,12 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
     private static Timestamp[] tryReadTtl(AuditoriumDraftRequest req) {
         if (req == null) return null;
         try {
-            java.lang.reflect.Method m1 = req.getClass().getMethod("getCreatedAt");
-            java.lang.reflect.Method m2 = req.getClass().getMethod("getExpiresAt");
+            java.lang.reflect.Method m1 
+                    = req.getClass().getMethod("getCreatedAt");
+            
+            java.lang.reflect.Method m2 
+                    = req.getClass().getMethod("getExpiresAt");
+            
             Object a = m1.invoke(req);
             Object b = m2.invoke(req);
             if (a instanceof Timestamp && b instanceof Timestamp) {
@@ -174,6 +198,9 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
         return null;
     }
 
+    /**
+     * Atiende la expiracion del draft y redirige al calendario.
+     */
     private void handleDraftExpired() {
         teardownTtlChip();
 
@@ -182,7 +209,8 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
         PopUp.warning(
                 "Reserva vencida",
                 "Tiempo agotado",
-                "Su reserva temporal de auditorio ha vencido. Debe iniciar el proceso nuevamente.",
+                "Su reserva temporal de auditorio ha vencido. Debe iniciar el "
+                + "proceso nuevamente.",
                 "back_hand.png",
                 1,
                 1,
@@ -201,7 +229,10 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
             ttlChip = null;
         }
         if (expiredListener != null) {
-            ReservationNotificationHandler.removeOnDraftExpired(expiredListener);
+            
+            ReservationNotificationHandler
+                    .removeOnDraftExpired(expiredListener);
+            
             expiredListener = null;
         }
         if (ttl_chip_container != null) {
@@ -216,39 +247,67 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
         if (currentDraft != null && currentDraft.getAuditoriumDraft() != null) {
             AuditoriumDraft draft = currentDraft.getAuditoriumDraft();
 
-            txt_event_name.setText(draft.getEventName() != null ? draft.getEventName() : "");
+            txt_event_name.setText(
+                    draft.getEventName() != null ? draft.getEventName() : "");
 
             if (draft.getAttendeesCount() > 0) {
-                txt_attendees_count.setText(String.valueOf(draft.getAttendeesCount()));
+                txt_attendees_count.setText(
+                        String.valueOf(draft.getAttendeesCount()));
             } else {
                 txt_attendees_count.setText("");
             }
 
-            txt_observations.setText(draft.getObservations() != null ? draft.getObservations() : "");
+            txt_observations.setText(
+                    draft.getObservations() != null 
+                            ? draft.getObservations() 
+                            : "");
         }
     }
 
     private void addAutosaveListeners() {
 
-        txt_event_name.textProperty().addListener((obs, oldValue, newValue) -> {
+        txt_event_name.textProperty().addListener((
+                obs, 
+                oldValue, 
+                newValue) -> {
+            
             refreshAuditoriumDraftInServer();
+            
         });
 
-        txt_attendees_count.textProperty().addListener((obs, oldValue, newValue) -> {
+        txt_attendees_count.textProperty().addListener((
+                obs, 
+                oldValue, 
+                newValue) -> {
+            
             refreshAuditoriumDraftInServer();
+            
         });
 
-        txt_observations.textProperty().addListener((obs, oldValue, newValue) -> {
+        txt_observations.textProperty().addListener((
+                obs, 
+                oldValue, 
+                newValue) -> {
+            
             refreshAuditoriumDraftInServer();
+            
         });
     }
 
+    /**
+     * Agrega una nueva tarjeta de equipo al formulario del auditorio.
+     *
+     * @param event evento generado por la accion del usuario
+     */
     @FXML
     private void AddDeviceToList(ActionEvent event) {
 
         loadAvailableEquipment();
 
-        if (availableEquipmentList == null || availableEquipmentList.isEmpty()) {
+        if (
+            availableEquipmentList == null 
+            || availableEquipmentList.isEmpty()) {
+            
             PopUp.warning(
                     "Aviso",
                     "Sin equipos disponibles",
@@ -265,7 +324,8 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
 
         for (Node n : vb_added_devices.getChildren()) {
             if (n instanceof ListDeviceCard) {
-                Equipment selected = ((ListDeviceCard) n).getSelectedEquipment();
+                Equipment selected 
+                        = ((ListDeviceCard) n).getSelectedEquipment();
 
                 if (selected != null) {
                     usedIds.add(selected.getIdEquipment());
@@ -374,7 +434,8 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
                 boolean confirm = PopUp.warning(
                         "Confirmación",
                         "Eliminar equipo",
-                        "¿Está seguro que desea eliminar este equipo de la lista?",
+                        "¿Está seguro que desea eliminar este equipo "
+                        + "de la lista?",
                         "warning.png",
                         2,
                         3,
@@ -392,7 +453,8 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
                             .get(vb_added_devices.getChildren().size() - 1);
 
                     if (newLast instanceof ListDeviceCard) {
-                        ((ListDeviceCard) newLast).setDeviceChoiceDisabled(false);
+                       ((ListDeviceCard) newLast)
+                               .setDeviceChoiceDisabled(false);
                     }
                 }
 
@@ -494,13 +556,20 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
         return equipmentList;
     }
 
+    /**
+     * Descarta el draft actual y abandona el formulario.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void goBack(ActionEvent event) throws IOException {
 
         boolean confirm = PopUp.warning(
                 "Confirmación",
                 "Salir de la reserva",
-                "Si sale de esta pantalla, perderá la reserva actual y tendrá que iniciar el proceso desde cero. ¿Desea continuar?",
+                "Si sale de esta pantalla, perderá la reserva actual y tendrá "
+                + "que iniciar el proceso desde cero. ¿Desea continuar?",
                 "warning.png",
                 2,
                 3,
@@ -517,13 +586,16 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
             request.setIdDraft(currentDraft.getIdDraft());
             request.setIdClient(currentDraft.getIdClient());
 
-            Response resp = AuditoriumDraftService.discardAuditoriumDraft(request);
+            Response resp 
+                    = AuditoriumDraftService.discardAuditoriumDraft(request);
 
             if (resp == null || !resp.isSuccess()) {
                 PopUp.warning(
                         "Error",
                         "No se pudo descartar",
-                        resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
+                        resp != null 
+                                ? resp.getMessage() 
+                                : "No se pudo conectar con el servidor.",
                         "error.png",
                         1,
                         1,
@@ -546,11 +618,14 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
     private void loadAvailableEquipment() {
 
         if (selectedReservation == null) {
-            System.out.println("No hay reservación seleccionada para cargar equipos");
+            System.out.println("No hay reservación seleccionada para "
+                    + "cargar equipos");
             return;
         }
 
-        java.sql.Date reservationDate = selectedReservation.getReservationDate();
+        java.sql.Date reservationDate 
+                = selectedReservation.getReservationDate();
+        
         int idSection = selectedReservation.getIdSection();
 
         Response resp = EquipmentService.getAvailableEquipmentByDateAndSection(
@@ -574,10 +649,15 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
                 hb_device_container.getChildren().add(card);
             }
 
-            System.out.println("Equipos cargados: " + availableEquipmentList.size());
+            System.out.println(
+                    "Equipos cargados: " 
+                    + availableEquipmentList.size());
 
         } else {
-            String msg = resp != null ? resp.getMessage() : "No se pudo conectar al servidor";
+            String msg = resp != null 
+                    ? resp.getMessage() 
+                    : "No se pudo conectar al servidor";
+            
             System.out.println(msg);
         }
     }
@@ -599,6 +679,11 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
         }
     }
 
+    /**
+     * Valida y confirma la reserva definitiva de auditorio.
+     *
+     * @param event evento generado por la accion del usuario
+     */
     @FXML
     private void saveAuditoriumReservation(ActionEvent event) {
 
@@ -618,7 +703,8 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
             PopUp.warning(
                     "Datos incompletos",
                     "El nombre del evento es obligatorio",
-                    "Ingrese el nombre del evento para crear la reserva temporal de auditorio.",
+                    "Ingrese el nombre del evento para crear la reserva "
+                    + "temporal de auditorio.",
                     "error.png",
                     1,
                     1,
@@ -661,7 +747,8 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
             PopUp.warning(
                     "Reserva temporal no disponible",
                     "No se encontró el draft de auditorio",
-                    "Intente seleccionar nuevamente la fecha y sección desde el calendario.",
+                    "Intente seleccionar nuevamente la fecha y sección desde "
+                    + "el calendario.",
                     "error.png",
                     1,
                     1,
@@ -684,13 +771,16 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
         request.setAuditoriumDraft(auditoriumDraft);
         request.setEquipmentList(equipmentList);
 
-        Response updateResp = AuditoriumDraftService.updateAuditoriumDraft(request);
+        Response updateResp 
+                = AuditoriumDraftService.updateAuditoriumDraft(request);
 
         if (updateResp == null || !updateResp.isSuccess()) {
             PopUp.warning(
                     "Error",
                     "No se pudo guardar",
-                    updateResp != null ? updateResp.getMessage() : "No se pudo conectar con el servidor.",
+                    updateResp != null 
+                            ? updateResp.getMessage() 
+                            : "No se pudo conectar con el servidor.",
                     "error.png",
                     1,
                     1,
@@ -713,7 +803,8 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
             return;
         }
 
-        Response confirmResp = AuditoriumDraftService.confirmAuditoriumDraft(request);
+        Response confirmResp 
+                = AuditoriumDraftService.confirmAuditoriumDraft(request);
 
         if (confirmResp != null && confirmResp.isSuccess()) {
 
@@ -738,7 +829,9 @@ ReservationNotificationHandler.setOnDraftExpired(() -> {
             PopUp.warning(
                     "Error",
                     "No se pudo confirmar",
-                    confirmResp != null ? confirmResp.getMessage() : "Error desconocido.",
+                    confirmResp != null 
+                            ? confirmResp.getMessage() 
+                            : "Error desconocido.",
                     "error.png",
                     1,
                     1,

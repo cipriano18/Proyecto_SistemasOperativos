@@ -36,8 +36,29 @@ import session.Session;
 import utils.CalendarConstants;
 import utils.DraftContainer;
 
-public class DayCard {
+/**
+ * Construye las tarjetas de días del calendario de reservas.
+ *
+ * @author Makin Artavia
+ */
 
+public class DayCard {
+    
+    /**
+    * Construye una tarjeta visual correspondiente a un día específico
+    * del calendario de reservas.
+    *
+    * <p>
+    * La tarjeta incluye la información del día, las secciones disponibles
+    * y el estado actual de cada sección según los bloques recibidos.
+    * </p>
+    *
+    * @param number número del día
+    * @param date fecha asociada al día
+    * @param blocks lista de bloques de calendario utilizados para determinar
+    *               el estado de las secciones
+    * @return contenedor VBox completamente configurado para representar el día
+    */
     public VBox createCard(int number, Date date, List<CalendarBlock> blocks) {
         VBox card = new VBox();
         card.setAlignment(Pos.CENTER);
@@ -99,11 +120,36 @@ public class DayCard {
                 blocks
         );
 
-        card.getChildren().addAll(header, separator, subtitle, btnManana, btnTarde, btnNoche);
+        card.getChildren().addAll(
+                header, 
+                separator, 
+                subtitle, 
+                btnManana, 
+                btnTarde, 
+                btnNoche);
 
         return card;
     }
-
+    
+    /**
+    * Crea un botón representando una sección específica del día
+    * dentro del sistema de reservas.
+    *
+    * <p>
+    * El botón adapta automáticamente su apariencia y comportamiento
+    * según el estado de disponibilidad de la sección.
+    * También administra la lógica para continuar drafts existentes
+    * o iniciar nuevas reservas.
+    * </p>
+    *
+    * @param text texto visible del botón
+    * @param iconRoute ruta del ícono asociado a la sección
+    * @param date fecha de la reserva
+    * @param idSection identificador de la sección
+    * @param blocks lista de bloques del calendario
+    * @return botón configurado para la sección indicada
+    */
+    
     private Button createSectionButton(
             String text,
             String iconRoute,
@@ -123,7 +169,9 @@ public class DayCard {
         content.setAlignment(Pos.CENTER_LEFT);
         content.setSpacing(5);
 
-        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream(iconRoute)));
+        ImageView icon = new ImageView(
+                new Image(getClass().getResourceAsStream(iconRoute)));
+        
         icon.setFitWidth(24);
         icon.setFitHeight(24);
         icon.setPreserveRatio(true);
@@ -147,13 +195,16 @@ public class DayCard {
                         .getIdClient();
 
                 if ("AUDITORIUM".equals(flowType)) {
-                    Response existingDraftResp = AuditoriumDraftService.getAuditoriumDraftByClientId(idClient);
+                    Response existingDraftResp = 
+                        AuditoriumDraftService.getAuditoriumDraftByClientId(
+                                idClient);
 
                     if (isSameAuditoriumDraft(existingDraftResp, reservation)) {
                         boolean continueDraft = PopUp.warning(
                                 "Reserva en proceso",
                                 "Se encontro una reserva temporal",
-                                "Parece que tenias una reserva en proceso, deseas continuar?",
+                                "Parece que tenias una reserva en proceso,"
+                                + " deseas continuar?",
                                 "question.png",
                                 2,
                                 3,
@@ -161,28 +212,50 @@ public class DayCard {
                         );
 
                         if (continueDraft) {
-                            DraftContainer.getInstance().setSelectedReservation(reservation);
-                            DraftContainer.getInstance().setDraftResponse(existingDraftResp);
-                            CalendarService.exitReservationsView();
+                            DraftContainer
+                                    .getInstance()
+                                    .setSelectedReservation(reservation);
+                            
+                            DraftContainer
+                                    .getInstance()
+                                    .setDraftResponse(existingDraftResp);
+                            
+                            CalendarService
+                                    .exitReservationsView();
+                            
                             App.setRoot("auditorium_form_screen");
                         }
                         return;
                     }
 
-                    AuditoriumDraftRequest request = new AuditoriumDraftRequest();
+                    AuditoriumDraftRequest request 
+                            = new AuditoriumDraftRequest();
+                    
                     request.setIdClient(idClient);
                     request.setReservation(reservation);
                     request.setEquipmentList(new ArrayList<>());
 
-                    Response resp = AuditoriumDraftService.startAuditoriumDraft(request);
+                    Response resp = AuditoriumDraftService
+                            .startAuditoriumDraft(request);
 
                     if (resp != null && resp.isSuccess()) {
-                        DraftContainer.getInstance().setSelectedReservation(reservation);
-                        DraftContainer.getInstance().setDraftResponse(resp);
-                        CalendarService.exitReservationsView();
+                        DraftContainer
+                                .getInstance()
+                                .setSelectedReservation(reservation);
+                        
+                        DraftContainer
+                                .getInstance()
+                                .setDraftResponse(resp);
+                        
+                        CalendarService
+                                .exitReservationsView();
+                        
                         App.setRoot("auditorium_form_screen");
                     } else {
-                        String msg = (resp != null) ? resp.getMessage() : "No se pudo conectar al servidor";
+                        
+                        String msg 
+                                = (resp != null) ? resp.getMessage() 
+                                : "No se pudo conectar al servidor";
 
                         PopUp.warning(
                                 "Error",
@@ -197,13 +270,16 @@ public class DayCard {
                     return;
                 }
 
-                Response existingDraftResp = EquipmentReservationDraftService.getEquipmentDraftByClientId(idClient);
+                Response existingDraftResp 
+                        = EquipmentReservationDraftService
+                                .getEquipmentDraftByClientId(idClient);
 
                 if (isSameEquipmentDraft(existingDraftResp, reservation)) {
                     boolean continueDraft = PopUp.warning(
                             "Reserva en proceso",
                             "Se encontro una reserva temporal",
-                            "Parece que tenias una reserva en proceso, deseas continuar?",
+                            "Parece que tenias una reserva en proceso,"
+                            + " deseas continuar?",
                             "question.png",
                             2,
                             3,
@@ -212,25 +288,35 @@ public class DayCard {
 
                     if (continueDraft) {
                         CalendarService.exitReservationsView();
-                        DraftContainer.getInstance().setDraftResponse(existingDraftResp);
+                        
+                        DraftContainer
+                                .getInstance()
+                                .setDraftResponse(existingDraftResp);
+                        
                         App.setRoot("device_form_screen");
                     }
                     return;
                 }
 
-                EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
+                EquipmentReservationDraftRequest request 
+                        = new EquipmentReservationDraftRequest();
+                
                 request.setIdClient(idClient);
                 request.setReservation(reservation);
                 request.setEquipmentList(new ArrayList<>());
 
-                Response resp = EquipmentReservationDraftService.startEquipmentDraft(request);
+                Response resp 
+                        = EquipmentReservationDraftService
+                                .startEquipmentDraft(request);
 
                 if (resp != null && resp.isSuccess()) {
                     CalendarService.exitReservationsView();
                     DraftContainer.getInstance().setDraftResponse(resp);
                     App.setRoot("device_form_screen");
                 } else {
-                    String msg = (resp != null) ? resp.getMessage() : "No se pudo conectar al servidor";
+                    String msg 
+                            = (resp != null) ? resp.getMessage() 
+                            : "No se pudo conectar al servidor";
 
                     PopUp.warning(
                             "Error",
@@ -244,45 +330,103 @@ public class DayCard {
                 }
 
             } catch (IOException ex) {
-                Logger.getLogger(DayCard.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DayCard.class.getName())
+                        .log(Level.SEVERE, null, ex);
             }
         });
 
         return button;
     }
-
-    private boolean isSameAuditoriumDraft(Response response, Reservation reservation) {
-        if (response == null || !response.isSuccess() || !(response.getData() instanceof AuditoriumDraftRequest)) {
+    
+    /**
+    * Verifica si el draft de equipos existente corresponde
+    * a la misma reserva seleccionada actualmente.
+    *
+    * @param response respuesta obtenida del servidor
+    * @param reservation reserva seleccionada por el usuario
+    * @return true si ambas reservas coinciden; false en caso contrario
+    */
+    
+    private boolean isSameAuditoriumDraft(
+            Response response, 
+            Reservation reservation) {
+        
+        if (
+            response == null || 
+            !response.isSuccess() || 
+            !(response.getData() instanceof AuditoriumDraftRequest)) {
+            
             return false;
         }
 
-        AuditoriumDraftRequest draft = (AuditoriumDraftRequest) response.getData();
+        AuditoriumDraftRequest draft 
+                = (AuditoriumDraftRequest) response.getData();
+        
         return sameReservation(draft.getReservation(), reservation);
     }
 
-    private boolean isSameEquipmentDraft(Response response, Reservation reservation) {
-        if (response == null || !response.isSuccess() || !(response.getData() instanceof EquipmentReservationDraft)) {
+    private boolean isSameEquipmentDraft(
+            Response response, 
+            Reservation reservation) {
+        
+        if (
+            response == null || 
+            !response.isSuccess() || 
+            !(response.getData() instanceof EquipmentReservationDraft)) {
+            
             return false;
         }
 
-        EquipmentReservationDraft draft = (EquipmentReservationDraft) response.getData();
+        EquipmentReservationDraft draft 
+                = (EquipmentReservationDraft) response.getData();
+        
         return sameReservation(draft.getReservation(), reservation);
     }
+    
+    /**
+    * Compara dos reservas para determinar si pertenecen
+    * a la misma fecha y sección.
+    *
+    * @param existing reserva existente
+    * @param selected reserva seleccionada
+    * @return true si ambas reservas representan el mismo espacio reservado
+    */
 
-    private boolean sameReservation(Reservation existing, Reservation selected) {
+    private boolean sameReservation(
+            Reservation existing, 
+            Reservation selected) {
+        
         if (existing == null || selected == null) {
             return false;
         }
 
-        if (existing.getReservationDate() == null || selected.getReservationDate() == null) {
+        if (
+            existing.getReservationDate() == null || 
+            selected.getReservationDate() == null) {
+            
             return false;
         }
 
         return existing.getIdSection() == selected.getIdSection()
-                && existing.getReservationDate().equals(selected.getReservationDate());
+                && existing.getReservationDate().equals(
+                        selected.getReservationDate());
     }
-
-    private String getSectionStatus(Date date, int idSection, List<CalendarBlock> blocks) {
+    
+    /**
+    * Obtiene el estado actual de una sección específica
+    * en una fecha determinada.
+    *
+    * @param date fecha consultada
+    * @param idSection identificador de la sección
+    * @param blocks lista de bloques del calendario
+    * @return estado de la sección según los bloques registrados
+    */
+    
+    private String getSectionStatus(
+            Date date, 
+            int idSection, 
+            List<CalendarBlock> blocks) {
+        
         if (blocks == null || blocks.isEmpty()) {
             return CalendarConstants.STATUS_AVAILABLE;
         }
@@ -296,7 +440,19 @@ public class DayCard {
 
         return CalendarConstants.STATUS_AVAILABLE;
     }
-
+    
+    /**
+    * Aplica los estilos visuales y restricciones de interacción
+    * a un botón según el estado de la reserva.
+    *
+    * <p>
+    * También configura los tooltips informativos asociados
+    * al estado actual de la sección.
+    * </p>
+    *
+    * @param button botón al que se aplicarán los cambios
+    * @param status estado actual de la sección
+    */
     private void applyButtonStatus(Button button, String status) {
 
         button.getStyleClass().removeAll(
@@ -342,7 +498,13 @@ public class DayCard {
                 break;
         }
     }
-
+    /**
+    * Obtiene el nombre del día de la semana en español
+    * a partir de una fecha.
+    *
+    * @param date fecha utilizada para obtener el día
+    * @return nombre del día con la primera letra en mayúscula
+    */
     private String getDayName(Date date) {
         String dayName = date.toLocalDate()
                 .getDayOfWeek()

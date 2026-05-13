@@ -89,6 +89,12 @@ public class register_screen_controller implements Initializable {
     private HBox hb_form3;
 
     /**
+     * Inicializa animaciones y elementos visuales de la pantalla de registro.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
+    /**
      * Initializes the controller class.
      */
     @Override
@@ -110,16 +116,28 @@ public class register_screen_controller implements Initializable {
         anim3.appear(hb_form3, 100, 2, 2000);
     }
 
-    @FXML
-    private void GoToLogin(ActionEvent event) throws IOException {
-        App.setRoot("login_screen");
-    }
-
     private static final String NAME_REGEX = "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$";
     private static final String ID_CARD_REGEX = "^[A-Za-z0-9]{9,20}$";
     private static final String USERNAME_REGEX = "[a-zA-Z0-9_]+";
     private static final String EMAIL_REGEX = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
 
+    /**
+     * Regresa a la pantalla de inicio de sesion.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
+    @FXML
+    private void GoToLogin(ActionEvent event) throws IOException {
+        App.setRoot("login_screen");
+    }
+
+    /**
+     * Valida los datos del formulario y registra un nuevo cliente.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void RegisterUser(ActionEvent event) throws IOException {
         clearMessages();
@@ -178,7 +196,11 @@ public class register_screen_controller implements Initializable {
         if (username.isEmpty()) {
             showError(msg_user, "El nombre de usuario es obligatorio");
             hasErrors = true;
-        } else if (username.length() < 4 || username.length() > 50 || !username.matches(USERNAME_REGEX)) {
+        } else if (
+                username.length() < 4 
+                || username.length() > 50 
+                || !username.matches(USERNAME_REGEX)) {
+            
             showError(msg_user, "El nombre de usuario es inválido");
             hasErrors = true;
         }
@@ -186,7 +208,11 @@ public class register_screen_controller implements Initializable {
         if (password.isEmpty()) {
             showError(msg_pass, "La contraseña es obligatoria");
             hasErrors = true;
-        } else if (password.length() < 8 || !password.matches(".*[A-Z].*") || !password.matches(".*[0-9].*")) {
+        } else if (
+                password.length() < 8 
+                || !password.matches(".*[A-Z].*") 
+                || !password.matches(".*[0-9].*")) {
+            
             showError(msg_pass, "La contraseña es inválida");
             hasErrors = true;
         }
@@ -233,6 +259,11 @@ public class register_screen_controller implements Initializable {
         }
     }
 
+    /**
+     * Redirige un mensaje del servidor al campo mas relacionado.
+     *
+     * @param msg mensaje recibido desde el servidor
+     */
     private void routeServerError(String msg) {
         if (msg == null) {
             showError(msg_user, "Error desconocido");
@@ -240,31 +271,55 @@ public class register_screen_controller implements Initializable {
         }
         String low = msg.toLowerCase();
         Label target;
-        if (low.contains("nombre de usuario") || low.contains("ya está en uso")) {
+        if (
+            low.contains("nombre de usuario") 
+            || low.contains("ya está en uso")) {
             target = msg_user;
+            
         } else if (low.contains("contraseña")) {
             target = msg_pass;
+            
         } else if (low.contains("primer nombre")) {
             target = msg_name;
+            
         } else if (low.contains("primer apellido")) {
             target = msg_surname;
+            
         } else if (low.contains("segundo apellido")) {
             target = msg_Sec_surname;
+            
         } else if (low.contains("cédula")) {
             target = msg_card;
-        } else if (low.contains("contacto") || low.contains("teléfono") || low.contains("correo")) {
+            
+        } else if (
+                low.contains("contacto") 
+                || low.contains("teléfono") 
+                || low.contains("correo")) {
             target = msg_contact;
+            
         } else {
             target = msg_user;
         }
         showError(target, msg);
     }
 
+    /**
+     * Muestra un mensaje de error en una etiqueta del formulario.
+     *
+     * @param label etiqueta donde se mostrara el error
+     * @param msg mensaje de error a presentar
+     */
     private void showError(Label label, String msg) {
-        label.setStyle("-fx-text-fill: #ba1a1a; -fx-font-weight:600; -fx-font-size:12px;");
+        label.setStyle(
+                "-fx-text-fill: #ba1a1a;"
+                + " -fx-font-weight:600; "
+                + "-fx-font-size:12px;");
         label.setText(msg);
     }
 
+    /**
+     * Limpia los mensajes de validacion visibles en el formulario.
+     */
     private void clearMessages() {
         msg_name.setText("");
         msg_surname.setText("");

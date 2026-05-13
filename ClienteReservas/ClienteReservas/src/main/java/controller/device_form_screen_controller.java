@@ -75,6 +75,12 @@ public class device_form_screen_controller implements Initializable {
     private Runnable expiredListener;
 
     /**
+     * Carga el draft activo, los equipos disponibles y el indicador de tiempo.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
+    /**
      * Initializes the controller class.
      */
     @Override
@@ -82,14 +88,21 @@ public class device_form_screen_controller implements Initializable {
 
         Response draftResp = DraftContainer.getInstance().getDraftResponse();
 
-        if (draftResp != null && draftResp.getData() instanceof EquipmentReservationDraft) {
+        if (draftResp != null
+                && draftResp.getData() instanceof EquipmentReservationDraft) {
+
             currentDraft = (EquipmentReservationDraft) draftResp.getData();
 
             currentDraftId = currentDraft.getIdDraft();
             Session.getInstance().setCurrentEquipmentDraftId(currentDraftId);
 
-            System.out.println("Draft recuperado desde DraftContainer: " + currentDraft);
-            System.out.println("ID draft guardado en Session: " + currentDraftId);
+            System.out.println(
+                    "Draft recuperado desde DraftContainer: "
+                    + currentDraft);
+
+            System.out.println(
+                    "ID draft guardado en Session: "
+                    + currentDraftId);
 
             loadAvailableEquipment();
             loadDraftEquipmentCards();
@@ -98,10 +111,15 @@ public class device_form_screen_controller implements Initializable {
 
         } else {
             currentDraftId = Session.getInstance().getCurrentEquipmentDraftId();
-            System.out.println("No se encontró draft en DraftContainer. ID en Session: " + currentDraftId);
+            System.out.println(
+                    "No se encontró draft en DraftContainer. ID en Session: "
+                    + currentDraftId);
         }
     }
 
+    /**
+     * Configura el chip que muestra el tiempo restante del draft.
+     */
     private void setupTtlChip() {
         if (currentDraft == null
                 || currentDraft.getCreatedAt() == null
@@ -119,12 +137,16 @@ public class device_form_screen_controller implements Initializable {
         ReservationNotificationHandler.addOnDraftExpired(expiredListener);
     }
 
+    /**
+     * Atiende la expiracion del draft y redirige al calendario.
+     */
     private void handleDraftExpired() {
         if (ttlChip != null) {
             ttlChip.stop();
         }
         if (expiredListener != null) {
-            ReservationNotificationHandler.removeOnDraftExpired(expiredListener);
+            ReservationNotificationHandler.removeOnDraftExpired(
+                    expiredListener);
             expiredListener = null;
         }
 
@@ -134,7 +156,8 @@ public class device_form_screen_controller implements Initializable {
         PopUp.warning(
                 "Reserva vencida",
                 "Tiempo agotado",
-                "Su reserva temporal ha vencido. Debe iniciar el proceso nuevamente.",
+                "Su reserva temporal ha vencido. Debe iniciar el proceso "
+                + "nuevamente.",
                 "back_hand.png",
                 1,
                 1,
@@ -153,7 +176,9 @@ public class device_form_screen_controller implements Initializable {
             ttlChip = null;
         }
         if (expiredListener != null) {
-            ReservationNotificationHandler.removeOnDraftExpired(expiredListener);
+            ReservationNotificationHandler.removeOnDraftExpired(
+                    expiredListener);
+
             expiredListener = null;
         }
         if (ttl_chip_container != null) {
@@ -161,13 +186,20 @@ public class device_form_screen_controller implements Initializable {
         }
     }
 
+    /**
+     * Descarta el draft activo y regresa al calendario de reservas.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToHome(ActionEvent event) throws IOException {
 
         boolean confirm = PopUp.warning(
                 "Confirmación",
                 "Salir de la reserva",
-                "Si sale de esta pantalla, perderá la reserva actual y tendrá que iniciar el proceso desde cero. ¿Desea continuar?",
+                "Si sale de esta pantalla, perderá la reserva actual y tendrá "
+                + "que iniciar el proceso desde cero. ¿Desea continuar?",
                 "back_hand.png",
                 2,
                 3,
@@ -178,20 +210,26 @@ public class device_form_screen_controller implements Initializable {
             return;
         }
 
-        int idClient = Session.getInstance().getClient().getClient().getIdClient();
+        int idClient
+                = Session.getInstance().getClient().getClient().getIdClient();
 
         if (currentDraftId > 0) {
-            EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
+            EquipmentReservationDraftRequest request
+                    = new EquipmentReservationDraftRequest();
+
             request.setIdDraft(currentDraftId);
             request.setIdClient(idClient);
 
-            Response resp = ReservationDraftService.discardEquipmentDraft(request);
+            Response resp
+                    = ReservationDraftService.discardEquipmentDraft(request);
 
             if (resp == null || !resp.isSuccess()) {
                 PopUp.warning(
                         "Error",
                         "No se pudo descartar",
-                        resp != null ? resp.getMessage() : "No se pudo conectar con el servidor.",
+                        resp != null
+                                ? resp.getMessage()
+                                : "No se pudo conectar con el servidor.",
                         "dangerous.png",
                         1,
                         1,
@@ -209,12 +247,19 @@ public class device_form_screen_controller implements Initializable {
         App.setRoot("device_schedule_screen");
     }
 
+    /**
+     * Agrega una nueva tarjeta de equipo a la reserva temporal.
+     *
+     * @param event evento generado por la accion del usuario
+     */
     @FXML
     private void AddDeviceToList(ActionEvent event) {
 
         loadAvailableEquipment();
 
-        if (availableEquipmentList == null || availableEquipmentList.isEmpty()) {
+        if (availableEquipmentList == null
+                || availableEquipmentList.isEmpty()) {
+
             PopUp.warning(
                     "Aviso",
                     "Sin equipos disponibles",
@@ -231,7 +276,8 @@ public class device_form_screen_controller implements Initializable {
 
         for (Node n : vb_added_devices.getChildren()) {
             if (n instanceof ListDeviceCard) {
-                Equipment selected = ((ListDeviceCard) n).getSelectedEquipment();
+                Equipment selected
+                        = ((ListDeviceCard) n).getSelectedEquipment();
 
                 if (selected != null) {
                     usedIds.add(selected.getIdEquipment());
@@ -278,7 +324,8 @@ public class device_form_screen_controller implements Initializable {
             boolean confirm = PopUp.warning(
                     "Confirmación",
                     "Eliminar dispositivo",
-                    "¿Está seguro que desea eliminar este dispositivo de la lista?",
+                    "¿Está seguro que desea eliminar este dispositivo de "
+                    + "la lista?",
                     "back_hand.png",
                     2,
                     3,
@@ -309,6 +356,11 @@ public class device_form_screen_controller implements Initializable {
         refreshDraftInServer();
     }
 
+    /**
+     * Confirma la reserva de equipos usando el draft activo.
+     *
+     * @param event evento generado por la accion del usuario
+     */
     @FXML
     private void SaveReservation(ActionEvent event) {
 
@@ -353,7 +405,8 @@ public class device_form_screen_controller implements Initializable {
             PopUp.warning(
                     "Aviso",
                     "Equipo requerido",
-                    "Debe seleccionar al menos un equipo para confirmar la reserva.",
+                    "Debe seleccionar al menos un equipo para confirmar la "
+                    + "reserva.",
                     "back_hand.png",
                     1,
                     2,
@@ -362,18 +415,24 @@ public class device_form_screen_controller implements Initializable {
             return;
         }
 
-        EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
+        EquipmentReservationDraftRequest request
+                = new EquipmentReservationDraftRequest();
+
         request.setIdDraft(currentDraftId);
         request.setIdClient(idClient);
         request.setEquipmentList(equipmentList);
 
-        Response updateResp = EquipmentReservationDraftService.updateEquipmentDraft(request);
+        Response updateResp
+                = EquipmentReservationDraftService
+                        .updateEquipmentDraft(request);
 
         if (updateResp == null || !updateResp.isSuccess()) {
             PopUp.warning(
                     "Error",
                     "No se pudo actualizar",
-                    updateResp != null ? updateResp.getMessage() : "No se pudo conectar con el servidor.",
+                    updateResp != null
+                            ? updateResp.getMessage()
+                            : "No se pudo conectar con el servidor.",
                     "back_hand.png",
                     1,
                     1,
@@ -382,10 +441,11 @@ public class device_form_screen_controller implements Initializable {
             return;
         }
 
-        Response confirmResp = EquipmentReservationDraftService.confirmEquipmentDraft(
-                currentDraftId,
-                idClient
-        );
+        Response confirmResp
+                = EquipmentReservationDraftService.confirmEquipmentDraft(
+                        currentDraftId,
+                        idClient
+                );
 
         if (confirmResp != null && confirmResp.isSuccess()) {
 
@@ -411,7 +471,9 @@ public class device_form_screen_controller implements Initializable {
             PopUp.warning(
                     "Error",
                     "No se pudo confirmar",
-                    confirmResp != null ? confirmResp.getMessage() : "Error desconocido.",
+                    confirmResp != null
+                            ? confirmResp.getMessage()
+                            : "Error desconocido.",
                     "back_hand.png",
                     1,
                     1,
@@ -419,64 +481,70 @@ public class device_form_screen_controller implements Initializable {
             );
         }
     }
-private void loadDraftEquipmentCards() {
 
-    if (currentDraft == null || currentDraft.getEquipmentList() == null) {
-        return;
-    }
+    private void loadDraftEquipmentCards() {
 
-    vb_added_devices.getChildren().clear();
-
-    for (RXE item : currentDraft.getEquipmentList()) {
-
-        List<Equipment> filtered = availableEquipmentList.stream()
-                .filter(eq -> eq.getIdEquipment() == item.getIdEquipment())
-                .collect(Collectors.toList());
-
-        if (filtered.isEmpty()) {
-            continue;
-        }
-
-        ListDeviceCard card = new ListDeviceCard(filtered);
-
-        card.setOnQuantityChange(() -> {
-            refreshDraftInServer();
-        });
-
-        card.setOnDelete(() -> {
-
-            boolean confirm = PopUp.warning(
-                    "Confirmación",
-                    "Eliminar dispositivo",
-                    "¿Está seguro que desea eliminar este dispositivo de la lista?",
-                    "back_hand.png",
-                    2,
-                    3,
-                    "Eliminar"
-            );
-
-            if (!confirm) {
-                return;
-            }
-
-            vb_added_devices.getChildren().remove(card);
-            refreshDraftInServer();
-        });
-
-        VBox.setMargin(card, new Insets(0, 0, 10, 0));
-        vb_added_devices.getChildren().add(card);
-
-        card.setSelectedQuantity(item.getQuantity());
-    }
-}
-    private void loadAvailableEquipment() {
-
-        if (currentDraft == null || currentDraft.getReservation() == null) {
-            System.out.println("No hay draft o reservación para cargar equipos");
+        if (currentDraft == null || currentDraft.getEquipmentList() == null) {
             return;
         }
 
-        java.sql.Date reservationDate = currentDraft.getReservation().getReservationDate();
+        vb_added_devices.getChildren().clear();
+
+        for (RXE item : currentDraft.getEquipmentList()) {
+
+            List<Equipment> filtered = availableEquipmentList.stream()
+                    .filter(eq -> eq.getIdEquipment() == item.getIdEquipment())
+                    .collect(Collectors.toList());
+
+            if (filtered.isEmpty()) {
+                continue;
+            }
+
+            ListDeviceCard card = new ListDeviceCard(filtered);
+
+            card.setOnQuantityChange(() -> {
+                refreshDraftInServer();
+            });
+
+            card.setOnDelete(() -> {
+
+                boolean confirm = PopUp.warning(
+                        "Confirmación",
+                        "Eliminar dispositivo",
+                        "¿Está seguro que desea eliminar este dispositivo de "
+                        + "la lista?",
+                        "back_hand.png",
+                        2,
+                        3,
+                        "Eliminar"
+                );
+
+                if (!confirm) {
+                    return;
+                }
+
+                vb_added_devices.getChildren().remove(card);
+                refreshDraftInServer();
+            });
+
+            VBox.setMargin(card, new Insets(0, 0, 10, 0));
+            vb_added_devices.getChildren().add(card);
+
+            card.setSelectedQuantity(item.getQuantity());
+        }
+    }
+
+    private void loadAvailableEquipment() {
+
+        if (currentDraft == null || currentDraft.getReservation() == null) {
+            System.out.println(
+                    "No hay draft o reservación para cargar equipos");
+            return;
+        }
+
+        java.sql.Date reservationDate
+                = currentDraft.getReservation().getReservationDate();
+
         int idSection = currentDraft.getReservation().getIdSection();
 
         Response resp = EquipmentService.getAvailableEquipmentByDateAndSection(
@@ -500,49 +568,55 @@ private void loadDraftEquipmentCards() {
                 hb_device_container.getChildren().add(card);
             }
 
-            System.out.println("Equipos cargados: " + availableEquipmentList.size());
+            System.out.println(
+                    "Equipos cargados: "
+                    + availableEquipmentList.size());
 
         } else {
-            String msg = (resp != null) ? resp.getMessage() : "No se pudo conectar al servidor";
+            String msg = (resp != null)
+                    ? resp.getMessage()
+                    : "No se pudo conectar al servidor";
             System.out.println(msg);
         }
     }
 
-   private void refreshDraftInServer() {
+    private void refreshDraftInServer() {
 
-    int idClient = Session.getInstance()
-            .getClient()
-            .getClient()
-            .getIdClient();
+        int idClient = Session.getInstance()
+                .getClient()
+                .getClient()
+                .getIdClient();
 
-    if (currentDraftId <= 0) {
-        return;
-    }
+        if (currentDraftId <= 0) {
+            return;
+        }
 
-    List<RXE> equipmentList = new ArrayList<>();
+        List<RXE> equipmentList = new ArrayList<>();
 
-    for (Node node : vb_added_devices.getChildren()) {
-        if (node instanceof ListDeviceCard) {
+        for (Node node : vb_added_devices.getChildren()) {
+            if (node instanceof ListDeviceCard) {
 
-            ListDeviceCard c = (ListDeviceCard) node;
-            Equipment eq = c.getSelectedEquipment();
-            Integer quantity = c.getSelectedQuantity();
+                ListDeviceCard c = (ListDeviceCard) node;
+                Equipment eq = c.getSelectedEquipment();
+                Integer quantity = c.getSelectedQuantity();
 
-            if (eq != null && quantity != null) {
-                RXE rxe = new RXE();
-                rxe.setIdEquipment(eq.getIdEquipment());
-                rxe.setQuantity(quantity);
+                if (eq != null && quantity != null) {
+                    RXE rxe = new RXE();
+                    rxe.setIdEquipment(eq.getIdEquipment());
+                    rxe.setQuantity(quantity);
 
-                equipmentList.add(rxe);
+                    equipmentList.add(rxe);
+                }
             }
         }
+
+        EquipmentReservationDraftRequest request
+                = new EquipmentReservationDraftRequest();
+
+        request.setIdDraft(currentDraftId);
+        request.setIdClient(idClient);
+        request.setEquipmentList(equipmentList);
+
+        EquipmentReservationDraftService.updateEquipmentDraft(request);
     }
-
-    EquipmentReservationDraftRequest request = new EquipmentReservationDraftRequest();
-    request.setIdDraft(currentDraftId);
-    request.setIdClient(idClient);
-    request.setEquipmentList(equipmentList);
-
-    EquipmentReservationDraftService.updateEquipmentDraft(request);
-}
 }

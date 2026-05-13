@@ -3,6 +3,9 @@ package model;
 import java.io.Serializable;
 import java.sql.Date;
 
+/**
+ * Representa una reserva con su fecha y bloque horario.
+ */
 public class Reservation implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -10,9 +13,19 @@ public class Reservation implements Serializable {
     private Date reservationDate;
     private int idSection;
 
+    /**
+     * Crea una reserva vacia.
+     */
     public Reservation() {
     }
 
+    /**
+     * Crea una reserva con su identificador, fecha y seccion.
+     *
+     * @param idReservation identificador de la reserva
+     * @param reservationDate fecha reservada
+     * @param idSection identificador del bloque horario
+     */
     public Reservation(int idReservation, Date reservationDate, int idSection) {
         this.idReservation = idReservation;
         this.reservationDate = reservationDate;

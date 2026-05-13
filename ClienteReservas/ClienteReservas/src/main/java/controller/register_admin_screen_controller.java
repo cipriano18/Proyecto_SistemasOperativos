@@ -20,6 +20,9 @@ import service.RegisterAdmin;
 import service.Response;
 import utils.Animations;
 
+/**
+ * Controlador de la pantalla de registro de administradores.
+ */
 public class register_admin_screen_controller implements Initializable {
 
     @FXML
@@ -80,6 +83,12 @@ public class register_admin_screen_controller implements Initializable {
     private static final String USERNAME_REGEX = "[a-zA-Z0-9_]+";
     private static final String EMAIL_REGEX = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
 
+    /**
+     * Inicializa animaciones y elementos visuales de la pantalla.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Animations anim = new Animations();
@@ -98,6 +107,12 @@ public class register_admin_screen_controller implements Initializable {
         anim2.appear(hb_form3, 100, 2, 2000);
     }
 
+    /**
+     * Valida y registra un nuevo administrador en el sistema.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void RegisterAdmin(ActionEvent event) throws IOException {
         clearMessages();
@@ -156,7 +171,11 @@ public class register_admin_screen_controller implements Initializable {
         if (username.isEmpty()) {
             showError(msg_user, "El nombre de usuario es obligatorio");
             hasErrors = true;
-        } else if (username.length() < 4 || username.length() > 50 || !username.matches(USERNAME_REGEX)) {
+        } else if (
+                username.length() < 4 
+                || username.length() > 50 
+                || !username.matches(USERNAME_REGEX)) {
+            
             showError(msg_user, "El nombre de usuario es inválido");
             hasErrors = true;
         }
@@ -164,7 +183,11 @@ public class register_admin_screen_controller implements Initializable {
         if (password.isEmpty()) {
             showError(msg_pass, "La contraseña es obligatoria");
             hasErrors = true;
-        } else if (password.length() < 8 || !password.matches(".*[A-Z].*") || !password.matches(".*[0-9].*")) {
+        } else if (
+                password.length() < 8 
+                || !password.matches(".*[A-Z].*") 
+                || !password.matches(".*[0-9].*")) {
+            
             showError(msg_pass, "La contraseña es inválida");
             hasErrors = true;
         }
@@ -207,15 +230,28 @@ public class register_admin_screen_controller implements Initializable {
                     1,
                     "Aceptar"
             );
-            routeServerError(resp != null ? resp.getMessage() : "Error al conectar con el servidor");
+            routeServerError(resp != null 
+                    ? resp.getMessage() 
+                    : "Error al conectar con el servidor");
         }
     }
 
+    /**
+     * Regresa a la pantalla de inicio de sesion.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToSuperAdminHome(ActionEvent event) throws IOException {
         App.setRoot("login_screen");
     }
 
+    /**
+     * Redirige un mensaje del servidor al campo mas relacionado.
+     *
+     * @param msg mensaje recibido desde el servidor
+     */
     private void routeServerError(String msg) {
         if (msg == null) {
             showError(msg_user, "Error desconocido");
@@ -225,20 +261,32 @@ public class register_admin_screen_controller implements Initializable {
         String low = msg.toLowerCase();
         Label target;
 
-        if (low.contains("nombre de usuario") || low.contains("ya está en uso")) {
+        if (
+            low.contains("nombre de usuario") 
+            || low.contains("ya está en uso")) {
             target = msg_user;
+            
         } else if (low.contains("contraseña")) {
             target = msg_pass;
+            
         } else if (low.contains("primer nombre")) {
             target = msg_name;
+            
         } else if (low.contains("primer apellido")) {
             target = msg_surname;
+            
         } else if (low.contains("segundo apellido")) {
             target = msg_Sec_surname;
+            
         } else if (low.contains("cédula")) {
             target = msg_card;
-        } else if (low.contains("contacto") || low.contains("teléfono") || low.contains("correo")) {
+            
+        } else if (
+                low.contains("contacto") 
+                || low.contains("teléfono") 
+                || low.contains("correo")) {
             target = msg_contact;
+            
         } else {
             target = msg_user;
         }
@@ -246,11 +294,23 @@ public class register_admin_screen_controller implements Initializable {
         showError(target, msg);
     }
 
+    /**
+     * Muestra un mensaje de error en una etiqueta del formulario.
+     *
+     * @param label etiqueta donde se mostrara el error
+     * @param msg mensaje de error a presentar
+     */
     private void showError(Label label, String msg) {
-        label.setStyle("-fx-text-fill: #ba1a1a; -fx-font-weight:600; -fx-font-size:12px;");
+        label.setStyle(
+                "-fx-text-fill: #ba1a1a; "
+                + "-fx-font-weight:600; "
+                + "-fx-font-size:12px;");
         label.setText(msg);
     }
 
+    /**
+     * Limpia los mensajes de validacion del formulario.
+     */
     private void clearMessages() {
         msg_name.setText("");
         msg_surname.setText("");

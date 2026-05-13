@@ -2,6 +2,9 @@ package dto;
 
 import java.io.Serializable;
 
+/**
+ * Representa los parametros necesarios para consultar un calendario.
+ */
 public class CalendarRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -9,9 +12,19 @@ public class CalendarRequest implements Serializable {
     private int year;
     private int idClient;
 
+    /**
+     * Crea una solicitud vacia de calendario.
+     */
     public CalendarRequest() {
     }
 
+    /**
+     * Crea una solicitud con el periodo y cliente a consultar.
+     *
+     * @param month mes a consultar
+     * @param year anio a consultar
+     * @param idClient identificador del cliente
+     */
     public CalendarRequest(int month, int year, int idClient) {
         this.month = month;
         this.year = year;
@@ -42,6 +55,11 @@ public class CalendarRequest implements Serializable {
         this.idClient = idClient;
     }
 
+    /**
+     * Devuelve una representacion textual resumida de la solicitud.
+     *
+     * @return cadena con los datos principales de la solicitud
+     */
     @Override
     public String toString() {
         return "CalendarRequest{" +

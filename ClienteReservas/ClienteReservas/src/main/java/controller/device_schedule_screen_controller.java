@@ -33,6 +33,9 @@ import session.Session;
 import utils.CalendarBuilder;
 import utils.DraftContainer;
 
+/**
+ * Controlador de la pantalla de calendario para seleccionar reservas.
+ */
 public class device_schedule_screen_controller implements Initializable {
 
     @FXML
@@ -69,6 +72,12 @@ public class device_schedule_screen_controller implements Initializable {
         "Septiembre", "Octubre", "Noviembre", "Diciembre"
     };
 
+    /**
+     * Inicializa filtros, calendario e indicador de tiempo del draft.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         setupYearField();
@@ -84,7 +93,11 @@ public class device_schedule_screen_controller implements Initializable {
 
         loadMonths();
 
-        chb_month.getSelectionModel().selectedIndexProperty().addListener((obs, oldValue, newValue) -> {
+        chb_month.getSelectionModel().selectedIndexProperty().addListener((
+                obs, 
+                oldValue, 
+                newValue) -> {
+            
             if (newValue.intValue() >= 0) {
                 loadCalendar();
             }
@@ -118,20 +131,33 @@ public class device_schedule_screen_controller implements Initializable {
         });
     }
 
+    /**
+     * Configura el indicador de tiempo restante del draft activo.
+     *
+     * @param idClient identificador del cliente autenticado
+     */
     private void setupTtlIndicator(int idClient) {
         if (hb_ttl_indicator == null) {
             return;
         }
 
         try {
-            Response resp = EquipmentReservationDraftService.getEquipmentDraftByClientId(idClient);
+            Response resp 
+                    = EquipmentReservationDraftService
+                            .getEquipmentDraftByClientId(idClient);
+            
             if (resp == null || !resp.isSuccess()
                     || !(resp.getData() instanceof EquipmentReservationDraft)) {
                 return;
             }
 
-            EquipmentReservationDraft draft = (EquipmentReservationDraft) resp.getData();
-            if (draft.getCreatedAt() == null || draft.getExpiresAt() == null || draft.isExpired()) {
+            EquipmentReservationDraft draft 
+                    = (EquipmentReservationDraft) resp.getData();
+            if (
+                draft.getCreatedAt() == null 
+                || draft.getExpiresAt() == null 
+                || draft.isExpired()) {
+                
                 return;
             }
 
@@ -153,17 +179,24 @@ public class device_schedule_screen_controller implements Initializable {
             };
             ReservationNotificationHandler.addOnDraftExpired(expiredListener);
         } catch (Exception e) {
-            System.out.println("No se pudo cargar el indicador de TTL: " + e.getMessage());
+            System.out.println(
+                    "No se pudo cargar el indicador de TTL: " 
+                    + e.getMessage());
         }
     }
 
+    /**
+     * Libera el indicador de tiempo restante y sus listeners asociados.
+     */
     private void teardownTtlIndicator() {
         if (ttlChip != null) {
             ttlChip.stop();
             ttlChip = null;
         }
         if (expiredListener != null) {
-            ReservationNotificationHandler.removeOnDraftExpired(expiredListener);
+            ReservationNotificationHandler
+                    .removeOnDraftExpired(expiredListener);
+            
             expiredListener = null;
         }
         if (hb_ttl_indicator != null) {
@@ -173,22 +206,38 @@ public class device_schedule_screen_controller implements Initializable {
         }
     }
 
+    /**
+     * Regresa a la pantalla principal y libera recursos del calendario.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToLogin(ActionEvent event) throws IOException {
         CalendarService.exitReservationsView();
         teardownTtlIndicator();
         if (refreshListener != null) {
-            ReservationNotificationHandler.removeOnDraftExpired(refreshListener);
+            ReservationNotificationHandler
+                    .removeOnDraftExpired(refreshListener);
+            
             refreshListener = null;
         }
         App.setRoot("home_screen");
     }
 
+    /**
+     * Aplica el filtro de fecha y vuelve a cargar el calendario.
+     *
+     * @param event evento generado por la accion del usuario
+     */
     @FXML
     private void GetCalendar(ActionEvent event) {
         clampYearAndRefresh();
     }
 
+    /**
+     * Carga los meses disponibles segun el anio seleccionado.
+     */
     private void loadMonths() {
         chb_month.getItems().clear();
         monthValues.clear();
@@ -207,6 +256,11 @@ public class device_schedule_screen_controller implements Initializable {
         chb_month.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Obtiene el anio digitado o devuelve el anio actual si es invalido.
+     *
+     * @return anio a utilizar en la consulta
+     */
     private int parseYearOrCurrent() {
         int currentYear = java.time.LocalDate.now().getYear();
 
@@ -227,6 +281,9 @@ public class device_schedule_screen_controller implements Initializable {
         }
     }
 
+    /**
+     * Ajusta el anio al rango permitido y recarga filtros y calendario.
+     */
     private void clampYearAndRefresh() {
         int currentYear = java.time.LocalDate.now().getYear();
         int yearTyped = parseYearOrCurrent();
@@ -245,6 +302,9 @@ public class device_schedule_screen_controller implements Initializable {
         loadCalendar();
     }
 
+    /**
+     * Consulta los bloques disponibles y reconstruye el calendario.
+     */
     private void loadCalendar() {
         int selectedIndex = chb_month.getSelectionModel().getSelectedIndex();
 
@@ -271,7 +331,11 @@ public class device_schedule_screen_controller implements Initializable {
         Response response;
 
         if ("AUDITORIUM".equals(flowType)) {
-            response = CalendarService.getAuditoriumCalendarBlocks(month, year, idClient);
+            response = CalendarService.getAuditoriumCalendarBlocks(
+                    month, 
+                    year, 
+                    idClient);
+            
         } else {
             response = CalendarService.getCalendarBlocks(month, year, idClient);
         }
@@ -280,14 +344,20 @@ public class device_schedule_screen_controller implements Initializable {
             PopUp.warning(
                     "Error de conexión",
                     "No se pudo obtener el calendario",
-                    "No se pudo contactar el servidor. Verifique su conexión o intente nuevamente.",
+                    "No se pudo contactar el servidor. Verifique su conexión o "
+                    + "intente nuevamente.",
                     "power_off.png",
                     1,
                     1,
                     "Aceptar"
             );
 
-            builder.buildCalendar(month, year, grid_calendar, new ArrayList<>());
+            builder.buildCalendar(
+                    month, 
+                    year, 
+                    grid_calendar, 
+                    new ArrayList<>());
+            
             return;
         }
 
@@ -295,14 +365,21 @@ public class device_schedule_screen_controller implements Initializable {
             PopUp.warning(
                     "Error al cargar calendario",
                     "No se pudo obtener la información",
-                    response.getMessage() != null ? response.getMessage() : "Ocurrió un error inesperado.",
+                    response.getMessage() != null 
+                            ? response.getMessage() 
+                            : "Ocurrió un error inesperado.",
                     "error.png",
                     1,
                     1,
                     "Aceptar"
             );
 
-            builder.buildCalendar(month, year, grid_calendar, new ArrayList<>());
+            builder.buildCalendar(
+                    month, 
+                    year, 
+                    grid_calendar, 
+                    new ArrayList<>());
+            
             return;
         }
 
@@ -310,6 +387,9 @@ public class device_schedule_screen_controller implements Initializable {
         builder.buildCalendar(month, year, grid_calendar, blocks);
     }
 
+    /**
+     * Restringe el campo de anio a valores numericos de cuatro digitos.
+     */
     private void setupYearField() {
         UnaryOperator<TextFormatter.Change> filter = change -> {
             String newText = change.getControlNewText();

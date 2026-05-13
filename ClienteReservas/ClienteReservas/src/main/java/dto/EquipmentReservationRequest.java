@@ -5,6 +5,9 @@ import java.util.List;
 import model.RXE;
 import model.Reservation;
 
+/**
+ * Agrupa la informacion principal de una reserva de equipos.
+ */
 public class EquipmentReservationRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -13,10 +16,24 @@ public class EquipmentReservationRequest implements Serializable {
     private String clientName;
     private List<RXE> equipmentList;
 
+    /**
+     * Crea una solicitud vacia de reserva de equipos.
+     */
     public EquipmentReservationRequest() {
     }
 
-    public EquipmentReservationRequest(Reservation reservation, int idClient, List<RXE> equipmentList) {
+    /**
+     * Crea una solicitud con la informacion base de la reserva.
+     *
+     * @param reservation reserva asociada
+     * @param idClient identificador del cliente
+     * @param equipmentList equipos incluidos en la reserva
+     */
+    public EquipmentReservationRequest(
+            Reservation reservation, 
+            int idClient, 
+            List<RXE> equipmentList) {
+        
         this.reservation = reservation;
         this.idClient = idClient;
         this.equipmentList = equipmentList;

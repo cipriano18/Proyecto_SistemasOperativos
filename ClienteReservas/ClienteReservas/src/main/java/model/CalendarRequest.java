@@ -7,8 +7,7 @@ package model;
 import java.io.Serializable;
 
 /**
- *
- * @author cipriano
+ * Representa los parametros basicos para consultar un calendario.
  */
 public class CalendarRequest implements Serializable {
 
@@ -16,6 +15,12 @@ public class CalendarRequest implements Serializable {
     private int month;
     private int year;
 
+    /**
+     * Crea una solicitud de calendario con mes y anio.
+     *
+     * @param month mes a consultar
+     * @param year anio a consultar
+     */
     public CalendarRequest(int month, int year) {
         this.month = month;
         this.year = year;
@@ -29,6 +34,11 @@ public class CalendarRequest implements Serializable {
         return year;
     }
 
+    /**
+     * Devuelve una representacion textual resumida de la solicitud.
+     *
+     * @return cadena con los datos principales de la solicitud
+     */
     @Override
     public String toString() {
         return "CalendarRequest{month=" + month + ", year=" + year + '}';

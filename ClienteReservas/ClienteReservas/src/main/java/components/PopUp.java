@@ -25,11 +25,27 @@ import javafx.stage.Modality;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 
+/**
+ * Utilidad para mostrar ventanas emergentes de notificacion y advertencia.
+ */
 public class PopUp {
 
     private static final double WIDTH = 650;
 
-    public static void notification(String title, String info, String icon, int type) {
+    /**
+     * Muestra una notificacion temporal con sonido y cierre automatico.
+     *
+     * @param title titulo principal del encabezado
+     * @param info mensaje secundario de la notificacion
+     * @param icon nombre del icono ubicado en la carpeta de recursos
+     * @param type tipo visual del mensaje
+     */
+    public static void notification(
+            String title, 
+            String info, 
+            String icon, 
+            int type) {
+        
         Stage stage = new Stage();
         stage.initStyle(StageStyle.UNDECORATED);
         stage.setAlwaysOnTop(true);
@@ -46,11 +62,16 @@ public class PopUp {
         stage.show();
 
         try {
-            String soundPath = PopUp.class.getResource("/sounds/notification.mp3").toExternalForm();
+            String soundPath 
+                    = PopUp.class
+                            .getResource("/sounds/notification.mp3")
+                            .toExternalForm();
+            
             AudioClip sound = new AudioClip(soundPath);
             sound.play();
         } catch (Exception e) {
-            System.out.println("No se pudo reproducir el sonido predeterminado");
+            System.out.println("No se pudo reproducir el "
+                    + "sonido predeterminado");
         }
 
         PauseTransition delay = new PauseTransition(Duration.seconds(3));
@@ -58,6 +79,18 @@ public class PopUp {
         delay.play();
     }
 
+    /**
+     * Muestra una ventana modal de advertencia o confirmacion.
+     *
+     * @param title titulo principal del encabezado
+     * @param titleInfo texto descriptivo mostrado bajo el titulo
+     * @param body mensaje principal del cuadro emergente
+     * @param icon nombre del icono ubicado en la carpeta de recursos
+     * @param buttons cantidad de botones a mostrar
+     * @param type tipo visual del mensaje
+     * @param buttonConfirmText texto del boton de confirmacion
+     * @return {@code true} si el usuario confirma; en otro caso {@code false}
+     */
     public static boolean warning(
             String title,
             String titleInfo,
@@ -80,7 +113,13 @@ public class PopUp {
         root.setMaxHeight(300);
 
         HBox header = createHeader(title, titleInfo, icon, type);
-        HBox bodyContent = createBody(stage, result, body, buttons, type, buttonConfirmText);
+        HBox bodyContent = createBody(
+                stage, 
+                result, 
+                body, 
+                buttons, 
+                type, 
+                buttonConfirmText);
 
         root.getChildren().addAll(header, bodyContent);
 
@@ -89,7 +128,10 @@ public class PopUp {
 
         stage.setScene(scene);
         try {
-            String soundPath = PopUp.class.getResource("/sounds/warning.mp3").toExternalForm();
+            String soundPath 
+                    = PopUp.class
+                    .getResource("/sounds/warning.mp3").toExternalForm();
+            
             AudioClip sound = new AudioClip(soundPath);
             sound.play();
         } catch (Exception e) {
@@ -100,11 +142,26 @@ public class PopUp {
         return result.get();
     }
 
-    private static HBox createHeader(String title, String info, String icon, int type) {
+    /**
+     * Crea el encabezado comun para los distintos tipos de ventana emergente.
+     *
+     * @param title titulo principal del encabezado
+     * @param info texto descriptivo secundario
+     * @param icon nombre del icono a cargar
+     * @param type tipo visual aplicado al encabezado
+     * @return contenedor configurado para el encabezado
+     */
+    private static HBox createHeader(
+            String title, 
+            String info, 
+            String icon, 
+            int type) {
+        
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPrefHeight(105);
         header.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        
         switch (type) {
             case 1:
                 header.getStyleClass().add("hero-panel");//errores
@@ -126,7 +183,10 @@ public class PopUp {
         iconView.setPickOnBounds(true);
 
         try {
-            Image image = new Image(PopUp.class.getResourceAsStream("/assets/" + icon));
+            Image image = new Image(
+                        PopUp.class
+                        .getResourceAsStream("/assets/" + icon));
+            
             iconView.setImage(image);
         } catch (Exception e) {
             System.out.println("No se pudo cargar el icono: " + icon);
@@ -154,6 +214,17 @@ public class PopUp {
         return header;
     }
 
+    /**
+     * Construye el cuerpo del cuadro modal y sus acciones de confirmacion.
+     *
+     * @param stage ventana asociada al cuadro emergente
+     * @param result contenedor del resultado seleccionado por el usuario
+     * @param body mensaje principal mostrado en el contenido
+     * @param buttons cantidad de botones a mostrar
+     * @param type tipo visual usado por los controles
+     * @param buttonConfirmText texto del boton de confirmacion
+     * @return contenedor configurado para el cuerpo del dialogo
+     */
     private static HBox createBody(
             Stage stage,
             AtomicBoolean result,
@@ -222,6 +293,13 @@ public class PopUp {
         return bodyRoot;
     }
 
+    /**
+     * Crea un boton con el estilo visual correspondiente al tipo indicado.
+     *
+     * @param text texto mostrado en el boton
+     * @param type tipo visual aplicado al boton
+     * @return boton configurado
+     */
     private static Button createButton(String text, int type) {
         Button button = new Button();
         button.setPrefHeight(44);
@@ -249,10 +327,21 @@ public class PopUp {
         return button;
     }
 
+    /**
+     * Agrega las hojas de estilo requeridas por la ventana emergente.
+     *
+     * @param scene escena a la que se aplicaran los estilos
+     */
     private static void addStyles(Scene scene) {
         try {
-            scene.getStylesheets().add(PopUp.class.getResource("/styles/main.css").toExternalForm());
-            scene.getStylesheets().add(PopUp.class.getResource("/styles/text.css").toExternalForm());
+            scene.getStylesheets()
+                    .add(PopUp.class
+                        .getResource("/styles/main.css").toExternalForm());
+            
+            scene.getStylesheets()
+                    .add(PopUp.class
+                        .getResource("/styles/text.css").toExternalForm());
+            
         } catch (Exception e) {
             System.out.println("No se pudieron cargar los estilos del PopUp.");
         }

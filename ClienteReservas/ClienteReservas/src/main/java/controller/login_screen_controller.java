@@ -25,6 +25,10 @@ import session.Session;
 import utils.Animations;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+/**
+ * Controlador de la pantalla de inicio de sesion.
+ */
 public class login_screen_controller implements Initializable {
 
     @FXML
@@ -55,6 +59,12 @@ public class login_screen_controller implements Initializable {
     private Button btn_show_pass;
 
     /**
+     * Inicializa animaciones y estado visual del formulario de acceso.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
+    /**
      * Initializes the controller class.
      */
     @Override
@@ -68,15 +78,21 @@ public class login_screen_controller implements Initializable {
         anim.typeWriter(lbl_audInfo, 200, 30);
         anim.typeWriter(lbl_welcome, 400, 50);
         setEyeIcon("visibility_of.png");
-        
+
     }
 
+    /**
+     * Autentica al usuario y redirige segun el rol recibido.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void handleLogin(ActionEvent event) throws IOException {
         String username = tf_user.getText().trim();
-     String password = tf_pass.isVisible()
-        ? tf_pass.getText().trim()
-        : tf_pass_visible.getText().trim();
+        String password = tf_pass.isVisible()
+                ? tf_pass.getText().trim()
+                : tf_pass_visible.getText().trim();
         if (username.isEmpty() || password.isEmpty()) {
             showError("Por favor complete todos los campos.");
             return;
@@ -88,7 +104,9 @@ public class login_screen_controller implements Initializable {
             PopUp.warning(
                     "Error de conexión",
                     "Verifique su conexión o intente nuevamente.",
-                    "Es posible que el servicio esté temporalmente no disponible o que exista un problema con su conexión a internet.\n"
+                    "Es posible que el servicio esté temporalmente no "
+                    + "disponible o que exista un problema con su conexión a "
+                    + "internet.\n"
                     + "Por favor, intente nuevamente más tarde.",
                     "power_off.png",
                     1,
@@ -102,7 +120,9 @@ public class login_screen_controller implements Initializable {
             PopUp.warning(
                     "Credenciales inválidas",
                     "Usuario o contraseña incorrectos",
-                    resp.getMessage() != null ? resp.getMessage() : "Intente nuevamente.",
+                    resp.getMessage() != null
+                    ? resp.getMessage()
+                    : "Intente nuevamente.",
                     "person_off.png",
                     1,
                     1,
@@ -177,54 +197,81 @@ public class login_screen_controller implements Initializable {
         );
     }
 
+    /**
+     * Muestra un mensaje de error general en la pantalla.
+     *
+     * @param msg mensaje de error a presentar
+     */
     private void showError(String msg) {
-        messageLabel.setStyle("-fx-text-fill: #ba1a1a; -fx-font-weight:600; -fx-font-size:12px;");
+        messageLabel.setStyle(
+                "-fx-text-fill: #ba1a1a; "
+                + "-fx-font-weight:600; "
+                + "-fx-font-size:12px;");
+
         messageLabel.setText(msg);
     }
 
+    /**
+     * Abre la pantalla de registro de clientes.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToRegister(ActionEvent event) throws IOException {
         App.setRoot("register_screen");
     }
 
+    /**
+     * Alterna entre mostrar y ocultar la contrasena ingresada.
+     *
+     * @param event evento generado por la accion del usuario
+     */
     @FXML
-private void togglePassword(ActionEvent event) {
+    private void togglePassword(ActionEvent event) {
 
-    if (tf_pass.isVisible()) {
+        if (tf_pass.isVisible()) {
 
-        tf_pass_visible.setText(tf_pass.getText());
+            tf_pass_visible.setText(tf_pass.getText());
 
-        tf_pass.setVisible(false);
-        tf_pass.setManaged(false);
+            tf_pass.setVisible(false);
+            tf_pass.setManaged(false);
 
-        tf_pass_visible.setVisible(true);
-        tf_pass_visible.setManaged(true);
+            tf_pass_visible.setVisible(true);
+            tf_pass_visible.setManaged(true);
 
-        setEyeIcon("visibility.png");
+            setEyeIcon("visibility.png");
 
-    } else {
+        } else {
 
-        tf_pass.setText(tf_pass_visible.getText());
+            tf_pass.setText(tf_pass_visible.getText());
 
-        tf_pass_visible.setVisible(false);
-        tf_pass_visible.setManaged(false);
+            tf_pass_visible.setVisible(false);
+            tf_pass_visible.setManaged(false);
 
-        tf_pass.setVisible(true);
-        tf_pass.setManaged(true);
+            tf_pass.setVisible(true);
+            tf_pass.setManaged(true);
 
-        setEyeIcon("visibility_of.png"); 
+            setEyeIcon("visibility_of.png");
+        }
     }
-}
-private void setEyeIcon(String imageName) {
+    /**
+     * Actualiza el icono del boton segun el estado de visibilidad actual.
+     *
+     * @param imageName nombre del recurso de imagen a cargar
+     */
+    private void setEyeIcon(String imageName) {
 
-    ImageView icon = new ImageView(
-            new Image(getClass().getResourceAsStream("/assets/" + imageName))
-    );
+        ImageView icon = new ImageView(
+                new Image(getClass()
+                        .getResourceAsStream("/assets/" + imageName))
+        );
 
-    icon.setFitWidth(24);
-    icon.setFitHeight(24);
-    //icon.setPreserveRatio(true);
+        icon.setFitWidth(24);
+        icon.setFitHeight(24);
+        //icon.setPreserveRatio(true);
 
-    btn_show_pass.setGraphic(icon);
-}
+        btn_show_pass.setGraphic(icon);
+    }
+    
 }

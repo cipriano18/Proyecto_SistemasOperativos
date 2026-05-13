@@ -16,9 +16,24 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+/**
+ * Dialogo modal para registrar o editar la informacion basica de un 
+ * dispositivo.
+ */
 public class DeviceFormDialog {
 
+    /**
+     * Define la accion que se ejecuta cuando el formulario es validado y 
+     * confirmado.
+     */
     public interface DeviceFormAction {
+
+        /**
+         * Procesa los datos confirmados por el usuario.
+         *
+         * @param name nombre del dispositivo
+         * @param quantity cantidad ingresada para el dispositivo
+         */
         void execute(String name, int quantity);
     }
 
@@ -26,6 +41,17 @@ public class DeviceFormDialog {
     private final TextField tfDeviceName;
     private final TextField tfDeviceQuantity;
 
+    /**
+     * Crea un dialogo modal con valores iniciales opcionales 
+     * y una accion de confirmacion.
+     *
+     * @param title titulo principal mostrado en el encabezado
+     * @param info texto descriptivo que orienta al usuario
+     * @param initialName nombre inicial del dispositivo; puede ser {@code null}
+     * @param initialQuantity cantidad inicial; puede ser {@code null}
+     * @param confirmButtonText texto del boton de confirmacion
+     * @param confirmAction accion a ejecutar cuando los datos son validos
+     */
     public DeviceFormDialog(
             String title,
             String info,
@@ -42,8 +68,13 @@ public class DeviceFormDialog {
         VBox root = new VBox();
         root.setPrefWidth(461);
         root.setPrefHeight(282);
-        root.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
-        root.getStylesheets().add(getClass().getResource("/styles/text.css").toExternalForm());
+        root.getStylesheets()
+                .add(getClass()
+                        .getResource("/styles/main.css").toExternalForm());
+        
+        root.getStylesheets()
+                .add(getClass()
+                        .getResource("/styles/text.css").toExternalForm());
 
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
@@ -107,7 +138,8 @@ public class DeviceFormDialog {
         tfDeviceQuantity = new TextField();
         tfDeviceQuantity.setMaxHeight(20);
         tfDeviceQuantity.setMaxWidth(200);
-        tfDeviceQuantity.setText(initialQuantity != null ? String.valueOf(initialQuantity) : "");
+        tfDeviceQuantity.setText(
+                initialQuantity != null ? String.valueOf(initialQuantity) : "");
 
         quantityBox.getChildren().addAll(lblQuantity, tfDeviceQuantity);
 
@@ -124,14 +156,22 @@ public class DeviceFormDialog {
         btnCancel.setPrefHeight(36);
         btnCancel.setPrefWidth(72);
         btnCancel.getStyleClass().add("hero-panel");
-        btnCancel.setStyle("-fx-background-radius: 0; -fx-border-radius: 0; -fx-text-fill: white;");
+        btnCancel.setStyle(
+                "-fx-background-radius: 0;"
+                + " -fx-border-radius: 0;"
+                + " -fx-text-fill: white;");
+        
         btnCancel.setOnAction(e -> stage.close());
 
         Button btnSave = new Button(confirmButtonText);
         btnSave.setPrefHeight(36);
         btnSave.setPrefWidth(78);
         btnSave.getStyleClass().add("hero-panel");
-        btnSave.setStyle("-fx-background-radius: 0; -fx-border-radius: 0; -fx-text-fill: white;");
+        btnSave.setStyle(
+                "-fx-background-radius: 0; "
+                + "-fx-border-radius: 0; "
+                + "-fx-text-fill: white;");
+        
         btnSave.setOnAction(e -> apply(confirmAction));
 
         buttonContainer.getChildren().addAll(btnCancel, btnSave);
@@ -142,6 +182,12 @@ public class DeviceFormDialog {
         stage.setScene(scene);
     }
 
+    /**
+     * Valida los campos del formulario y ejecuta la accion de confirmacion si 
+     * los datos son validos.
+     *
+     * @param confirmAction accion a ejecutar tras una validacion exitosa
+     */
     private void apply(DeviceFormAction confirmAction) {
         String name = tfDeviceName.getText().trim();
         String quantityText = tfDeviceQuantity.getText().trim();
@@ -177,50 +223,11 @@ public class DeviceFormDialog {
         stage.close();
     }
 
+    /**
+     * Muestra el dialogo y bloquea la interaccion con la ventana propietaria 
+     * hasta que se cierre.
+     */
     public void show() {
         stage.showAndWait();
     }
 }
-
-
-/* 
-Ejemplo de agregar
-
-DeviceFormDialog dialog = new DeviceFormDialog(
-        "Nuevo Equipo",
-        "Ingrese los siguientes datos para registrar un nuevo equipo.",
-        null,
-        null,
-        "Agregar",
-        (name, quantity) -> {
-            System.out.println("Agregar equipo:");
-            System.out.println("Nombre: " + name);
-            System.out.println("Cantidad: " + quantity);
-
-            // Aquí llamas tu servicio:
-            // EquipmentService.createEquipment(name, quantity);
-        }
-);
-
-dialog.show();
-
-Ejemplo de Editar
-
-DeviceFormDialog dialog = new DeviceFormDialog(
-        "Editar Equipo",
-        "Modifique los datos del equipo seleccionado.",
-        "Micrófono",
-        5,
-        "Guardar",
-        (name, quantity) -> {
-            System.out.println("Editar equipo:");
-            System.out.println("Nombre: " + name);
-            System.out.println("Cantidad: " + quantity);
-
-            // Aquí llamas tu servicio:
-            // EquipmentService.updateEquipment(idEquipment, name, quantity);
-        }
-);
-
-dialog.show();
-*/

@@ -22,6 +22,9 @@ import service.ClientProfileService;
 import session.Session;
 import utils.Animations;
 
+/**
+ * Controlador de la pantalla de perfil del cliente.
+ */
 public class profile_screen_controller implements Initializable {
 
     @FXML
@@ -91,6 +94,12 @@ public class profile_screen_controller implements Initializable {
     @FXML
     private Label lbl_title;
 
+    /**
+     * Carga los datos del cliente en sesion e inicializa la vista.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -107,7 +116,15 @@ public class profile_screen_controller implements Initializable {
         User u = session.getUser();
         Contact ct = session.getContact();
 
-        lbl_card_name.setText(nullSafe(c.getfName()) +" "+nullSafe(c.getmName()) +" "+ nullSafe(c.getfSurname()) +" "+ nullSafe(c.getmSurname()));
+        lbl_card_name.setText(
+                nullSafe(c.getfName()) 
+                        +" "
+                        +nullSafe(c.getmName()) 
+                        +" "
+                        + nullSafe(c.getfSurname()) 
+                        +" "
+                        + nullSafe(c.getmSurname()));
+        
         lbl_card_ced.setText(nullSafe(c.getIdentityCard()));
         lbl_card_contact.setText(nullSafe(ct.getContactValue()));
 
@@ -144,15 +161,33 @@ public class profile_screen_controller implements Initializable {
 
     }
 
+    /**
+     * Evita valores nulos al preparar texto para la interfaz.
+     *
+     * @param s texto de entrada
+     * @return cadena vacia si el valor es nulo
+     */
     private String nullSafe(String s) {
         return s == null ? "" : s;
     }
 
+    /**
+     * Regresa a la pantalla principal del cliente.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoBack(ActionEvent event) throws IOException {
         App.setRoot("home_screen");
     }
 
+    /**
+     * Valida y guarda los cambios realizados en el perfil del cliente.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void SaveChanges(ActionEvent event) throws IOException {
         clearMessages();
@@ -207,7 +242,11 @@ public class profile_screen_controller implements Initializable {
         String passwordToSend;
         if (newPassword.isEmpty()) {
             passwordToSend = session.getUser().getPassword();
-        } else if (newPassword.length() < 8 || !newPassword.matches(".*[A-Z].*") || !newPassword.matches(".*[0-9].*")) {
+        } else if (
+                newPassword.length() < 8 
+                || !newPassword.matches(".*[A-Z].*") 
+                || !newPassword.matches(".*[0-9].*")) {
+            
             showError(msg_pass, "La contraseña es inválida");
             hasErrors = true;
             passwordToSend = null;
@@ -219,7 +258,8 @@ public class profile_screen_controller implements Initializable {
             PopUp.warning(
                     "Campos obligatorios",
                     "Faltan datos",
-                    "Debe completar todos los campos requeridos antes de continuar.",
+                    "Debe completar todos los campos requeridos antes "
+                    + "de continuar.",
                     "back_hand.png",
                     1,
                     2,
@@ -235,12 +275,17 @@ public class profile_screen_controller implements Initializable {
         User user = new User(currentUser.getIdUser(), currentUser.getIdRole(),
                 currentUser.getUsername(), passwordToSend);
 
-        Client client = new Client(currentClient.getIdClient(), currentUser.getIdUser(),
-                fName, mName, fSurname, mSurname, currentClient.getIdentityCard());
+        Client client = new Client(
+                currentClient.getIdClient(), currentUser.getIdUser(),
+                fName, mName, 
+                fSurname, mSurname, 
+                currentClient.getIdentityCard());
 
         Contact contact;
         if (currentContact != null) {
-            contact = new Contact(currentContact.getIdContact(), "EMAIL", contactValue);
+            contact = new Contact(
+                    currentContact.getIdContact(), 
+                    "EMAIL", contactValue);
         } else {
             contact = new Contact("EMAIL", contactValue);
         }
@@ -262,7 +307,8 @@ public class profile_screen_controller implements Initializable {
             PopUp.warning(
                     "Algo salio mal",
                     "El servidor negó tus cambios.",
-                    "Es posible que alguno de los datos incumpla formatos o ya esté ocupado.",
+                    "Es posible que alguno de los datos incumpla formatos o "
+                    + "ya esté ocupado.",
                     "power_off.png",
                     1,
                     1,
@@ -272,6 +318,12 @@ public class profile_screen_controller implements Initializable {
         }
     }
 
+    /**
+     * Elimina la cuenta del cliente tras confirmacion del usuario.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void DeleteAccount(ActionEvent event) throws IOException {
         ClientRequest session = Session.getInstance().getClient();
@@ -280,7 +332,8 @@ public class profile_screen_controller implements Initializable {
             PopUp.warning(
                     "Sesión inválida",
                     "Debe iniciar sesión",
-                    "No se encontró una sesión activa. Por favor, inicie sesión nuevamente.",
+                    "No se encontró una sesión activa. Por favor, inicie "
+                    + "sesión nuevamente.",
                     "person_off.png",
                     1,
                     1,
@@ -294,7 +347,8 @@ public class profile_screen_controller implements Initializable {
         boolean confirm = PopUp.warning(
                 "Eliminar cuenta",
                 "¿Está seguro?",
-                "Esta acción eliminará su cuenta de forma permanente y no se puede deshacer.",
+                "Esta acción eliminará su cuenta de forma permanente y no "
+                + "se puede deshacer.",
                 "question.png",
                 2,
                 3,
@@ -337,7 +391,9 @@ public class profile_screen_controller implements Initializable {
         PopUp.warning(
                 "Error",
                 "No se pudo eliminar la cuenta",
-                resp.getMessage() != null ? resp.getMessage() : "Ocurrió un error inesperado.",
+                resp.getMessage() != null 
+                        ? resp.getMessage() 
+                        : "Ocurrió un error inesperado.",
                 "error.png",
                 1,
                 1,
@@ -345,6 +401,11 @@ public class profile_screen_controller implements Initializable {
         );
     }
 
+    /**
+     * Redirige un mensaje del servidor al campo mas relacionado.
+     *
+     * @param msg mensaje recibido desde el servidor
+     */
     private void routeServerError(String msg) {
         if (msg == null) {
             showError(msg_global, "Error desconocido");
@@ -352,29 +413,49 @@ public class profile_screen_controller implements Initializable {
         }
         String low = msg.toLowerCase();
         Label target;
-        if (low.contains("nombre de usuario") || low.contains("ya está en uso")) {
+        if (
+            low.contains("nombre de usuario") 
+            || low.contains("ya está en uso")) {
             target = msg_global;
+            
         } else if (low.contains("contraseña")) {
             target = msg_pass;
+            
         } else if (low.contains("primer nombre")) {
             target = msg_name;
+            
         } else if (low.contains("primer apellido")) {
             target = msg_surname;
+            
         } else if (low.contains("segundo apellido")) {
             target = msg_Sec_surname;
+            
         } else if (low.contains("contacto") || low.contains("correo")) {
             target = msg_contact;
+            
         } else {
             target = msg_global;
         }
         showError(target, msg);
     }
 
+    /**
+     * Muestra un mensaje de error en la etiqueta indicada.
+     *
+     * @param label etiqueta donde se mostrara el error
+     * @param msg mensaje de error a presentar
+     */
     private void showError(Label label, String msg) {
-        label.setStyle("-fx-text-fill: #ba1a1a; -fx-font-weight:600; -fx-font-size:12px;");
+        label.setStyle(
+                "-fx-text-fill: #ba1a1a; "
+                + "-fx-font-weight:600; "
+                + "-fx-font-size:12px;");
         label.setText(msg);
     }
 
+    /**
+     * Limpia los mensajes de validacion visibles en la pantalla.
+     */
     private void clearMessages() {
         msg_name.setText("");
         msg_surname.setText("");

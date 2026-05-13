@@ -31,7 +31,11 @@ import service.EquipmentReservationService;
 import service.EquipmentService;
 import service.Response;
 
-public class admin_manage_device_reservation_screen_controller implements Initializable {
+/**
+ * Controlador de la pantalla administrativa de reservas de equipos.
+ */
+public class admin_manage_device_reservation_screen_controller 
+        implements Initializable {
 
     @FXML
     private Button btn_goback;
@@ -72,6 +76,12 @@ public class admin_manage_device_reservation_screen_controller implements Initia
         "Septiembre", "Octubre", "Noviembre", "Diciembre"
     };
 
+    /**
+     * Inicializa filtros y carga las reservas del periodo actual.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         setupYearField();
@@ -81,7 +91,10 @@ public class admin_manage_device_reservation_screen_controller implements Initia
 
         loadMonths();
 
-        chb_month.getSelectionModel().selectedIndexProperty().addListener((obs, oldIndex, newIndex) -> {
+        chb_month.getSelectionModel()
+                .selectedIndexProperty()
+                .addListener((obs, oldIndex, newIndex) -> {
+                    
             if (newIndex != null && newIndex.intValue() >= 0) {
                 loadReservationsByMonth();
             }
@@ -97,6 +110,12 @@ public class admin_manage_device_reservation_screen_controller implements Initia
         loadReservationsByMonth();
     }
 
+    /**
+     * Regresa a la pantalla principal del administrador.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToHome(ActionEvent event) throws IOException {
         App.setRoot("admin_home_screen");
@@ -161,19 +180,24 @@ public class admin_manage_device_reservation_screen_controller implements Initia
         Map<Integer, String> equipmentNames =
                 buildEquipmentNameMap((List<?>) equipmentResponse.getData());
 
-        Response response = EquipmentReservationService.getEquipmentReservationsByMonth(month, year);
+        Response response 
+                = EquipmentReservationService
+                .getEquipmentReservationsByMonth(month, year);
+        
         if (response == null) {
             showLoadError("No se pudo conectar con el servidor.");
             return;
         }
 
         if (!response.isSuccess()) {
-            showEmptyState("No se encontraron reservaciones de equipos para el periodo indicado.");
+            showEmptyState("No se encontraron reservaciones de equipos para el "
+                    + "periodo indicado.");
             return;
         }
 
         if (!(response.getData() instanceof List<?>)) {
-            showLoadError("Se recibieron datos de reservas con un formato inesperado.");
+            showLoadError("Se recibieron datos de reservas con un formato "
+                    + "inesperado.");
             return;
         }
 
@@ -181,20 +205,27 @@ public class admin_manage_device_reservation_screen_controller implements Initia
 
         for (Object item : rawReservations) {
             if (!(item instanceof EquipmentReservationRequest)) {
-                showLoadError("Se recibieron datos de reservas con un formato inesperado.");
+                showLoadError("Se recibieron datos de reservas con un formato "
+                        + "inesperado.");
                 vb_list_reservation_auditorium.getChildren().clear();
                 return;
             }
 
-            EquipmentReservationRequest request = (EquipmentReservationRequest) item;
+            EquipmentReservationRequest request 
+                    = (EquipmentReservationRequest) item;
+            
             Reservation reservation = request.getReservation();
 
-            if (reservation == null || reservation.getReservationDate() == null) {
+            if (
+                reservation == null || 
+                reservation.getReservationDate() == null) {
                 continue;
             }
 
             List<ReservationCard.DeviceItem> devices =
-                    buildDeviceItems(request.getEquipmentList(), equipmentNames);
+                    buildDeviceItems(
+                            request.getEquipmentList(), 
+                            equipmentNames);
 
             ReservationCard card = new ReservationCard(
                     reservation.getReservationDate().toLocalDate(),
@@ -208,11 +239,13 @@ public class admin_manage_device_reservation_screen_controller implements Initia
         }
 
         if (vb_list_reservation_auditorium.getChildren().isEmpty()) {
-            showEmptyState("No se encontraron reservaciones de equipos para el periodo indicado.");
+            showEmptyState("No se encontraron reservaciones de equipos para el "
+                    + "periodo indicado.");
         }
     }
     
-    private void cancelDeviceReservation(EquipmentReservationRequest currentReservation) {
+    private void cancelDeviceReservation(
+            EquipmentReservationRequest currentReservation) {
 
         boolean confirm = PopUp.warning(
                 "Confirmación",
@@ -242,7 +275,8 @@ public class admin_manage_device_reservation_screen_controller implements Initia
 
         request.setReservation(reservation);
 
-        Response response = EquipmentReservationService.deleteReservationById(request);
+        Response response 
+                = EquipmentReservationService.deleteReservationById(request);
 
         if (response != null && response.isSuccess()) {
             PopUp.notification(
@@ -259,7 +293,9 @@ public class admin_manage_device_reservation_screen_controller implements Initia
         PopUp.warning(
                 "Error",
                 "No se pudo cancelar la reserva",
-                response != null ? response.getMessage() : "No se pudo conectar con el servidor.",
+                response != null 
+                        ? response.getMessage() 
+                        : "No se pudo conectar con el servidor.",
                 "error.png",
                 1,
                 1,
@@ -267,13 +303,17 @@ public class admin_manage_device_reservation_screen_controller implements Initia
         );
     }
 
-    private Map<Integer, String> buildEquipmentNameMap(List<?> rawEquipmentList) {
+    private Map<Integer, String> buildEquipmentNameMap(
+            List<?> rawEquipmentList) {
+        
         Map<Integer, String> equipmentNames = new HashMap<>();
 
         for (Object item : rawEquipmentList) {
             if (item instanceof Equipment) {
                 Equipment equipment = (Equipment) item;
-                equipmentNames.put(equipment.getIdEquipment(), equipment.getName());
+                equipmentNames.put(
+                        equipment.getIdEquipment(), 
+                        equipment.getName());
             }
         }
 
@@ -300,7 +340,9 @@ public class admin_manage_device_reservation_screen_controller implements Initia
                     "Equipo #" + item.getIdEquipment()
             );
 
-            devices.add(new ReservationCard.DeviceItem(deviceName, item.getQuantity()));
+            devices.add(new ReservationCard.DeviceItem(
+                    deviceName, 
+                    item.getQuantity()));
         }
 
         return devices;

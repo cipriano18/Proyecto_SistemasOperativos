@@ -4,6 +4,9 @@
  */
 package utils;
 
+/**
+ * Reune constantes usadas para identificar secciones y estados del calendario.
+ */
 public class CalendarConstants {
 
     public static final int SECTION_MORNING = 1;
@@ -15,6 +18,9 @@ public class CalendarConstants {
     public static final String STATUS_BLOCKED = "BLOCKED";
     public static final String STATUS_OWN_DRAFT = "OWN_DRAFT";
 
+    /**
+     * Evita la creacion de instancias de esta clase utilitaria.
+     */
     private CalendarConstants() {
         // Evita que se creen objetos de esta clase
     }

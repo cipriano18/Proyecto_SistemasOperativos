@@ -30,6 +30,9 @@ import service.EquipmentService;
 import service.Response;
 import session.Session;
 
+/**
+ * Controlador de la pantalla que lista las reservas activas del cliente.
+ */
 public class client_schedule_screen_controller implements Initializable {
 
     @FXML
@@ -55,11 +58,20 @@ public class client_schedule_screen_controller implements Initializable {
     @FXML
     private VBox vb_list_reservation_device;
 
+    /**
+     * Inicializa la pantalla cargando las reservas del cliente.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadReservations();
     }
 
+    /**
+     * Carga las reservas de auditorio y equipos del cliente en sesion.
+     */
     private void loadReservations() {
         vb_list_reservation_auditorium.getChildren().clear();
         vb_list_reservation_device.getChildren().clear();
@@ -82,17 +94,24 @@ public class client_schedule_screen_controller implements Initializable {
             return;
         }
 
-        Map<Integer, String> equipmentNames = buildEquipmentNameMap((List<?>) equipmentResponse.getData());
+        Map<Integer, String> equipmentNames 
+                = buildEquipmentNameMap((List<?>) equipmentResponse.getData());
 
         loadAuditoriumReservations(equipmentNames);
         loadDeviceReservations(equipmentNames);
     }
 
-    private void loadAuditoriumReservations(Map<Integer, String> equipmentNames) {
+    private void loadAuditoriumReservations(
+            Map<Integer, String> equipmentNames) {
+        
         vb_list_reservation_auditorium.getChildren().clear();
 
-        int idClient = Session.getInstance().getClient().getClient().getIdClient();
-        Response response = AuditoriumReservationService.getAuditoriumReservationsByClientId(idClient);
+        int idClient 
+                = Session.getInstance().getClient().getClient().getIdClient();
+        
+        Response response 
+                = AuditoriumReservationService
+                  .getAuditoriumReservationsByClientId(idClient);
 
         if (response == null) {
             showLoadError("No se pudo conectar con el servidor.");
@@ -100,12 +119,17 @@ public class client_schedule_screen_controller implements Initializable {
         }
 
         if (!response.isSuccess()) {
-            showEmptyState(vb_list_reservation_auditorium, "No hay reservas de auditorio activas.");
+            showEmptyState(
+                    vb_list_reservation_auditorium, 
+                    "No hay reservas de auditorio activas.");
+            
             return;
         }
 
         if (!(response.getData() instanceof List<?>)) {
-            showLoadError("Se recibieron datos de reservas de auditorio con un formato inesperado.");
+            showLoadError("Se recibieron datos de reservas de auditorio con "
+                    + "un formato inesperado.");
+            
             return;
         }
 
@@ -113,7 +137,9 @@ public class client_schedule_screen_controller implements Initializable {
 
         for (Object item : rawReservations) {
             if (!(item instanceof AuditoriumDraftRequest)) {
-                showLoadError("Se recibieron datos de reservas de auditorio con un formato inesperado.");
+                showLoadError("Se recibieron datos de reservas de auditorio "
+                        + "con un formato inesperado.");
+                
                 vb_list_reservation_auditorium.getChildren().clear();
                 return;
             }
@@ -121,12 +147,16 @@ public class client_schedule_screen_controller implements Initializable {
             AuditoriumDraftRequest request = (AuditoriumDraftRequest) item;
             Reservation reservation = request.getReservation();
 
-            if (reservation == null || reservation.getReservationDate() == null) {
+            if (
+                reservation == null 
+                || reservation.getReservationDate() == null) {
                 continue;
             }
 
-            List<ReservationCard.DeviceItem> devices =
-                    buildDeviceItems(request.getEquipmentList(), equipmentNames);
+            List<ReservationCard.DeviceItem> devices 
+                    = buildDeviceItems(
+                            request.getEquipmentList(), 
+                            equipmentNames);
 
             AuditoriumDraft auditoriumDraft = request.getAuditoriumDraft();
 
@@ -135,23 +165,35 @@ public class client_schedule_screen_controller implements Initializable {
                     reservation.getIdSection(),
                     devices,
                     () -> cancelAuditoriumReservation(request),
-                    auditoriumDraft != null ? auditoriumDraft.getEventName() : null,
-                    auditoriumDraft != null ? auditoriumDraft.getAttendeesCount() : 0,
-                    auditoriumDraft != null ? auditoriumDraft.getObservations() : null
+                    auditoriumDraft != null 
+                            ? auditoriumDraft.getEventName() 
+                            : null,
+                    auditoriumDraft != null 
+                            ? auditoriumDraft.getAttendeesCount() 
+                            : 0,
+                    auditoriumDraft != null 
+                            ? auditoriumDraft.getObservations() 
+                            : null
             );
             vb_list_reservation_auditorium.getChildren().add(card);
         }
 
         if (vb_list_reservation_auditorium.getChildren().isEmpty()) {
-            showEmptyState(vb_list_reservation_auditorium, "No hay reservas de auditorio activas.");
+            showEmptyState(
+                    vb_list_reservation_auditorium, 
+                    "No hay reservas de auditorio activas.");
         }
     }
 
     private void loadDeviceReservations(Map<Integer, String> equipmentNames) {
         vb_list_reservation_device.getChildren().clear();
 
-        int idClient = Session.getInstance().getClient().getClient().getIdClient();
-        Response response = EquipmentReservationService.getReservationsByClientId(idClient);
+        int idClient 
+                = Session.getInstance().getClient().getClient().getIdClient();
+        
+        Response response 
+                = EquipmentReservationService
+                        .getReservationsByClientId(idClient);
 
         if (response == null) {
             showLoadError("No se pudo conectar con el servidor.");
@@ -159,12 +201,17 @@ public class client_schedule_screen_controller implements Initializable {
         }
 
         if (!response.isSuccess()) {
-            showEmptyState(vb_list_reservation_device, "No hay reservas de equipos activas.");
+            showEmptyState(
+                    vb_list_reservation_device, 
+                    "No hay reservas de equipos activas.");
+            
             return;
         }
 
         if (!(response.getData() instanceof List<?>)) {
-            showLoadError("Se recibieron datos de reservas de equipos con un formato inesperado.");
+            showLoadError("Se recibieron datos de reservas de equipos con un "
+                    + "formato inesperado.");
+            
             return;
         }
 
@@ -172,20 +219,28 @@ public class client_schedule_screen_controller implements Initializable {
 
         for (Object item : rawReservations) {
             if (!(item instanceof EquipmentReservationRequest)) {
-                showLoadError("Se recibieron datos de reservas de equipos con un formato inesperado.");
+                showLoadError("Se recibieron datos de reservas de equipos "
+                        + "con un formato inesperado.");
+                
                 vb_list_reservation_device.getChildren().clear();
                 return;
             }
 
-            EquipmentReservationRequest request = (EquipmentReservationRequest) item;
+            EquipmentReservationRequest request 
+                    = (EquipmentReservationRequest) item;
+            
             Reservation reservation = request.getReservation();
 
-            if (reservation == null || reservation.getReservationDate() == null) {
+            if (
+                reservation == null 
+                || reservation.getReservationDate() == null) {
                 continue;
             }
 
-            List<ReservationCard.DeviceItem> devices =
-                    buildDeviceItems(request.getEquipmentList(), equipmentNames);
+            List<ReservationCard.DeviceItem> devices 
+                    = buildDeviceItems(
+                            request.getEquipmentList(), 
+                            equipmentNames);
 
             ReservationCard card = new ReservationCard(
                     reservation.getReservationDate().toLocalDate(),
@@ -198,17 +253,24 @@ public class client_schedule_screen_controller implements Initializable {
         }
 
         if (vb_list_reservation_device.getChildren().isEmpty()) {
-            showEmptyState(vb_list_reservation_device, "No hay reservas de equipos activas.");
+            showEmptyState(
+                    vb_list_reservation_device, 
+                    "No hay reservas de equipos activas.");
         }
     }
 
-    private Map<Integer, String> buildEquipmentNameMap(List<?> rawEquipmentList) {
+    private Map<Integer, String> buildEquipmentNameMap(
+            List<?> rawEquipmentList) {
+        
         Map<Integer, String> equipmentNames = new HashMap<>();
 
         for (Object item : rawEquipmentList) {
             if (item instanceof Equipment) {
                 Equipment equipment = (Equipment) item;
-                equipmentNames.put(equipment.getIdEquipment(), equipment.getName());
+                
+                equipmentNames.put(
+                        equipment.getIdEquipment(), 
+                        equipment.getName());
             }
         }
 
@@ -235,13 +297,17 @@ public class client_schedule_screen_controller implements Initializable {
                     "Equipo #" + item.getIdEquipment()
             );
 
-            devices.add(new ReservationCard.DeviceItem(deviceName, item.getQuantity()));
+            devices.add(new ReservationCard.DeviceItem(
+                    deviceName, 
+                    item.getQuantity()));
         }
 
         return devices;
     }
 
-    private void cancelAuditoriumReservation(AuditoriumDraftRequest currentReservation) {
+    private void cancelAuditoriumReservation(
+            AuditoriumDraftRequest currentReservation) {
+        
         boolean confirm = PopUp.warning(
                 "Confirmación",
                 "Cancelar reserva",
@@ -257,15 +323,19 @@ public class client_schedule_screen_controller implements Initializable {
         }
 
         AuditoriumDraftRequest request = new AuditoriumDraftRequest();
-        request.setIdClient(Session.getInstance().getClient().getClient().getIdClient());
+        request.setIdClient(
+                Session.getInstance().getClient().getClient().getIdClient());
 
         Reservation reservation = new Reservation();
         if (currentReservation.getReservation() != null) {
-            reservation.setIdReservation(currentReservation.getReservation().getIdReservation());
+            reservation.setIdReservation(
+                    currentReservation.getReservation().getIdReservation());
         }
         request.setReservation(reservation);
 
-        Response response = AuditoriumReservationService.deleteAuditoriumReservationById(request);
+        Response response 
+                = AuditoriumReservationService
+                        .deleteAuditoriumReservationById(request);
 
         if (response != null && response.isSuccess()) {
             PopUp.notification(
@@ -281,7 +351,9 @@ public class client_schedule_screen_controller implements Initializable {
         PopUp.warning(
                 "Error",
                 "No se pudo cancelar la reserva",
-                response != null ? response.getMessage() : "No se pudo conectar con el servidor.",
+                response != null 
+                        ? response.getMessage() 
+                        : "No se pudo conectar con el servidor.",
                 "error.png",
                 1,
                 1,
@@ -289,7 +361,9 @@ public class client_schedule_screen_controller implements Initializable {
         );
     }
 
-    private void cancelDeviceReservation(EquipmentReservationRequest currentReservation) {
+    private void cancelDeviceReservation(
+            EquipmentReservationRequest currentReservation) {
+        
         boolean confirm = PopUp.warning(
                 "Confirmación",
                 "Cancelar reserva",
@@ -305,15 +379,19 @@ public class client_schedule_screen_controller implements Initializable {
         }
 
         EquipmentReservationRequest request = new EquipmentReservationRequest();
-        request.setIdClient(Session.getInstance().getClient().getClient().getIdClient());
+        
+        request.setIdClient(
+                Session.getInstance().getClient().getClient().getIdClient());
 
         Reservation reservation = new Reservation();
         if (currentReservation.getReservation() != null) {
-            reservation.setIdReservation(currentReservation.getReservation().getIdReservation());
+            reservation.setIdReservation(
+                    currentReservation.getReservation().getIdReservation());
         }
         request.setReservation(reservation);
 
-        Response response = EquipmentReservationService.deleteReservationById(request);
+        Response response 
+                = EquipmentReservationService.deleteReservationById(request);
 
         if (response != null && response.isSuccess()) {
             PopUp.notification(
@@ -329,7 +407,9 @@ public class client_schedule_screen_controller implements Initializable {
         PopUp.warning(
                 "Error",
                 "No se pudo cancelar la reserva",
-                response != null ? response.getMessage() : "No se pudo conectar con el servidor.",
+                response != null 
+                        ? response.getMessage() 
+                        : "No se pudo conectar con el servidor.",
                 "error.png",
                 1,
                 1,
@@ -355,6 +435,12 @@ public class client_schedule_screen_controller implements Initializable {
         );
     }
 
+    /**
+     * Regresa a la pantalla principal del cliente.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToLogin(ActionEvent event) throws IOException {
         App.setRoot("home_screen");

@@ -5,6 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+/**
+ * Representa una conexion de sockets con el servidor principal.
+ */
 public class ServerConnection {
 
     private static final String HOST = "10.35.142.88";
@@ -16,6 +19,11 @@ public class ServerConnection {
 
     private ServerListener listener;
 
+    /**
+     * Abre la conexion, inicializa los flujos y arranca el listener.
+     *
+     * @throws IOException si ocurre un error al conectar con el servidor
+     */
     public ServerConnection() throws IOException {
         socket = new Socket(HOST, PORT);
 
@@ -38,6 +46,13 @@ public class ServerConnection {
         return objectInput;
     }
 
+    /**
+     * Envia un comando y su carga asociada al servidor.
+     *
+     * @param command comando a enviar
+     * @param data datos asociados al comando
+     * @throws IOException si ocurre un error al escribir en el socket
+     */
    public void sendRequest(String command, Object data) throws IOException {
     synchronized (objectOutput) {
         objectOutput.writeObject(command);
@@ -50,6 +65,9 @@ public class ServerConnection {
     }
 }
 
+    /**
+     * Cierra la conexion, el listener y los flujos asociados.
+     */
     public void close() {
         try {
             if (listener != null) {
@@ -64,7 +82,9 @@ public class ServerConnection {
                 objectOutput.close();
             }
         } catch (IOException e) {
-            System.out.println("Error al cerrar ObjectOutputStream: " + e.getMessage());
+            System.out.println(
+                    "Error al cerrar ObjectOutputStream: " 
+                    + e.getMessage());
         }
 
         try {
@@ -72,7 +92,9 @@ public class ServerConnection {
                 objectInput.close();
             }
         } catch (IOException e) {
-            System.out.println("Error al cerrar ObjectInputStream: " + e.getMessage());
+            System.out.println(
+                    "Error al cerrar ObjectInputStream: " 
+                    + e.getMessage());
         }
 
         try {
@@ -85,6 +107,11 @@ public class ServerConnection {
         }
     }
 
+    /**
+     * Indica si el socket permanece conectado y abierto.
+     *
+     * @return {@code true} si la conexion sigue activa
+     */
     public boolean isConnected() {
         return socket != null && socket.isConnected() && !socket.isClosed();
     }

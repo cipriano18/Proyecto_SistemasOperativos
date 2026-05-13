@@ -13,6 +13,9 @@ import model.Client;
 import model.Contact;
 import model.User;
 
+/**
+ * Agrupa la informacion necesaria para operar con un cliente.
+ */
 public class ClientRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -20,9 +23,19 @@ public class ClientRequest implements Serializable {
     private Client client;
     private Contact contact;
 
+    /**
+     * Crea una solicitud vacia de cliente.
+     */
     public ClientRequest() {
     }
 
+    /**
+     * Crea una solicitud con los datos del usuario, cliente y contacto.
+     *
+     * @param user credenciales del usuario asociado
+     * @param client informacion personal del cliente
+     * @param contact informacion de contacto asociada
+     */
     public ClientRequest(User user, Client client, Contact contact) {
         this.user = user;
         this.client = client;
@@ -53,6 +66,11 @@ public class ClientRequest implements Serializable {
         this.contact = contact;
     }
 
+    /**
+     * Devuelve una representacion textual resumida de la solicitud.
+     *
+     * @return cadena con los datos principales de la solicitud
+     */
     @Override
     public String toString() {
         return "ClientRequest{"

@@ -20,7 +20,7 @@ import javafx.scene.layout.VBox;
 /**
  * FXML Controller class
  *
- * @author Alvaro Artavia
+ * @author Makin Artavia
  */
 public class admin_home_screen_controller implements Initializable {
 
@@ -52,34 +52,69 @@ public class admin_home_screen_controller implements Initializable {
     private ImageView img_image11;
 
     /**
-     * Initializes the controller class.
+     * Inicializa la pantalla principal del administrador.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
      */
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
 
+    /**
+     * Abre la pantalla de administracion de equipos.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToDevices(ActionEvent event) throws IOException {
         System.out.println("entro");
          App.setRoot("admin_device_screen");
     }
 
+    /**
+     * Abre la pantalla de gestion de reservas de equipos.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToDeviceReservations(ActionEvent event) throws IOException {
         App.setRoot("admin_manage_device_reservation_screen");
     }
 
+    /**
+     * Abre la pantalla de gestion de reservas de auditorio.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
-    private void GoToAuditoriomReservations(ActionEvent event) throws IOException {
+    private void GoToAuditoriomReservations(ActionEvent event)
+        throws IOException {
         App.setRoot("admin_manage_auditorium_reservation_screen");
     }
 
+    /**
+     * Abre la pantalla de perfil del administrador.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToProfile(ActionEvent event) throws IOException {
         App.setRoot("admin_profile_screen");
     }
 
+    /**
+     * Regresa a la pantalla de inicio de sesion.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToLogin(ActionEvent event) throws IOException {
         App.setRoot("login_screen");

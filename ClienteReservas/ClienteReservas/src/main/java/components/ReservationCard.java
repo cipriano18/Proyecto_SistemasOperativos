@@ -19,19 +19,43 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+/**
+ * Tarjeta visual que muestra la informacion principal de una reserva
+ * y los equipos asociados.
+ */
 public class ReservationCard extends HBox {
 
     private final VBox vboxDeviceList = new VBox();
 
+    /**
+     * Crea una tarjeta de reserva con informacion basica.
+     *
+     * @param date fecha de la reserva
+     * @param blockType bloque horario reservado
+     * @param devices equipos solicitados
+     * @param cancelAction accion a ejecutar al cancelar la reserva
+     */
     public ReservationCard(
             LocalDate date,
             int blockType,
             List<DeviceItem> devices,
             Runnable cancelAction
     ) {
-        buildCard(date, blockType, devices, cancelAction, false, null, false, null, 0, null);
+        buildCard(
+                date, blockType, devices, cancelAction,
+                false, null, false, null, 0, null);
     }
 
+    /**
+     * Crea una tarjeta de reserva con informacion basica y del cliente.
+     *
+     * @param date fecha de la reserva
+     * @param blockType bloque horario reservado
+     * @param devices equipos solicitados
+     * @param cancelAction accion a ejecutar al cancelar la reserva
+     * @param showClientInfo indica si debe mostrarse la informacion del cliente
+     * @param clientName nombre del cliente asociado
+     */
     public ReservationCard(
             LocalDate date,
             int blockType,
@@ -40,9 +64,23 @@ public class ReservationCard extends HBox {
             boolean showClientInfo,
             String clientName
     ) {
-        buildCard(date, blockType, devices, cancelAction, showClientInfo, clientName, false, null, 0, null);
+        buildCard(
+                date, blockType, devices, cancelAction, 
+                showClientInfo, clientName, false, null, 
+                0, null);
     }
 
+    /**
+     * Crea una tarjeta de reserva con informacion del evento y auditorio.
+     *
+     * @param date fecha de la reserva
+     * @param blockType bloque horario reservado
+     * @param devices equipos solicitados
+     * @param cancelAction accion a ejecutar al cancelar la reserva
+     * @param eventName nombre del evento asociado
+     * @param attendeesCount cantidad de asistentes
+     * @param observations observaciones adicionales de la reserva
+     */
     public ReservationCard(
             LocalDate date,
             int blockType,
@@ -52,9 +90,25 @@ public class ReservationCard extends HBox {
             int attendeesCount,
             String observations
     ) {
-        buildCard(date, blockType, devices, cancelAction, false, null, true, eventName, attendeesCount, observations);
+        buildCard(
+                date, blockType, devices, cancelAction, 
+                false, null, true, eventName, 
+                attendeesCount, observations);
     }
 
+    /**
+     * Crea una tarjeta de reserva con informacion completa del cliente
+     * y del evento.
+     *
+     * @param date fecha de la reserva
+     * @param blockType bloque horario reservado
+     * @param devices equipos solicitados
+     * @param cancelAction accion a ejecutar al cancelar la reserva
+     * @param clientName nombre del cliente asociado
+     * @param eventName nombre del evento asociado
+     * @param attendeesCount cantidad de asistentes
+     * @param observations observaciones adicionales de la reserva
+     */
     public ReservationCard(
             LocalDate date,
             int blockType,
@@ -65,9 +119,26 @@ public class ReservationCard extends HBox {
             int attendeesCount,
             String observations
     ) {
-        buildCard(date, blockType, devices, cancelAction, true, clientName, true, eventName, attendeesCount, observations);
+        buildCard(
+                date, blockType, devices, cancelAction, 
+                true, clientName, true, eventName, 
+                attendeesCount, observations);
     }
 
+    /**
+     * Construye la tarjeta segun la informacion disponible para la reserva.
+     *
+     * @param date fecha de la reserva
+     * @param blockType bloque horario reservado
+     * @param devices equipos solicitados
+     * @param cancelAction accion a ejecutar al cancelar la reserva
+     * @param showClientInfo indica si debe mostrarse la informacion del cliente
+     * @param clientName nombre del cliente asociado
+     * @param showAuditoriumInfo indica si deben mostrarse datos del evento
+     * @param eventName nombre del evento asociado
+     * @param attendeesCount cantidad de asistentes
+     * @param observations observaciones adicionales de la reserva
+     */
     private void buildCard(
             LocalDate date,
             int blockType,
@@ -88,7 +159,8 @@ public class ReservationCard extends HBox {
                 + "-fx-border-radius: 5;"
         );
 
-        ImageView imgBlockIcon = new ImageView(loadImage(getBlockIcon(blockType)));
+        ImageView imgBlockIcon 
+                = new ImageView(loadImage(getBlockIcon(blockType)));
         imgBlockIcon.setFitHeight(50);
         imgBlockIcon.setFitWidth(50);
         imgBlockIcon.setOpacity(0.6);
@@ -148,7 +220,9 @@ public class ReservationCard extends HBox {
 
             VBox attendeesBox = createInfoBox(
                     "ASISTENTES",
-                    attendeesCount > 0 ? String.valueOf(attendeesCount) : "No indicado"
+                    attendeesCount > 0 
+                            ? String.valueOf(attendeesCount) 
+                            : "No indicado"
             );
 
             infoBox.getChildren().addAll(eventBox, attendeesBox);
@@ -224,6 +298,13 @@ public class ReservationCard extends HBox {
         );
     }
 
+    /**
+     * Crea un bloque de informacion con un titulo y su valor.
+     *
+     * @param title titulo del dato mostrado
+     * @param value valor asociado al titulo
+     * @return contenedor visual del dato
+     */
     private VBox createInfoBox(String title, String value) {
         VBox box = new VBox(5);
         box.setMinWidth(Region.USE_PREF_SIZE);
@@ -245,6 +326,11 @@ public class ReservationCard extends HBox {
         return box;
     }
 
+    /**
+     * Carga la lista de equipos solicitados dentro de la tarjeta.
+     *
+     * @param devices equipos asociados a la reserva
+     */
     private void loadDevices(List<DeviceItem> devices) {
         vboxDeviceList.getChildren().clear();
 
@@ -260,6 +346,12 @@ public class ReservationCard extends HBox {
         }
     }
 
+    /**
+     * Crea una tarjeta compacta para representar un equipo solicitado.
+     *
+     * @param device equipo a representar
+     * @return contenedor visual del equipo
+     */
     private HBox createDeviceCard(DeviceItem device) {
         HBox card = new HBox(5);
         card.setMaxHeight(29);
@@ -295,6 +387,12 @@ public class ReservationCard extends HBox {
         return card;
     }
 
+    /**
+     * Convierte una fecha al formato usado por la tarjeta.
+     *
+     * @param date fecha a formatear
+     * @return fecha formateada o una cadena vacia si no hay fecha
+     */
     private String formatDate(LocalDate date) {
         if (date == null) {
             return "";
@@ -304,6 +402,12 @@ public class ReservationCard extends HBox {
         return date.format(formatter);
     }
 
+    /**
+     * Obtiene el nombre visible del bloque horario indicado.
+     *
+     * @param blockType identificador del bloque horario
+     * @return nombre asociado al bloque
+     */
     private String getBlockName(int blockType) {
         switch (blockType) {
             case 1:
@@ -317,6 +421,12 @@ public class ReservationCard extends HBox {
         }
     }
 
+    /**
+     * Obtiene la ruta del icono correspondiente al bloque horario.
+     *
+     * @param blockType identificador del bloque horario
+     * @return ruta del recurso de imagen
+     */
     private String getBlockIcon(int blockType) {
         switch (blockType) {
             case 1:
@@ -330,68 +440,69 @@ public class ReservationCard extends HBox {
         }
     }
 
+    /**
+     * Carga una imagen desde recursos y usa una imagen de respaldo
+     * si la ruta solicitada no existe.
+     *
+     * @param path ruta del recurso de imagen
+     * @return imagen cargada
+     */
     private Image loadImage(String path) {
         InputStream stream = getClass().getResourceAsStream(path);
 
         if (stream == null) {
             System.out.println("Recurso de imagen no encontrado: " + path);
 
-            InputStream fallbackStream = getClass().getResourceAsStream("/assets/unknown_item.png");
+            InputStream fallbackStream 
+                    = getClass().getResourceAsStream(
+                            "/assets/unknown_item.png");
             if (fallbackStream != null) {
                 return new Image(fallbackStream);
             }
 
-            throw new IllegalStateException("No se encontró el recurso solicitado ni el fallback de imagen.");
+            throw new IllegalStateException("No se encontró el recurso "
+                    + "solicitado ni el fallback de imagen.");
         }
 
         return new Image(stream);
     }
 
+    /**
+     * Representa un equipo solicitado dentro de una reserva.
+     */
     public static class DeviceItem {
 
         private final String name;
         private final int quantity;
 
+        /**
+         * Crea una representacion simple de equipo y cantidad.
+         *
+         * @param name nombre del equipo
+         * @param quantity cantidad solicitada
+         */
         public DeviceItem(String name, int quantity) {
             this.name = name;
             this.quantity = quantity;
         }
 
+        /**
+         * Obtiene el nombre del equipo.
+         *
+         * @return nombre del equipo
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Obtiene la cantidad solicitada del equipo.
+         *
+         * @return cantidad del equipo
+         */
         public int getQuantity() {
             return quantity;
         }
     }
 }
-//Ejemplo de uso sin datos del cliente
-/*
-ReservationCard card = new ReservationCard(
-        LocalDate.of(2026, 5, 28),
-        3,
-        devices,
-        () -> {
-            System.out.println("Cancelar reserva");
-        }
-);
 
-vb_info.getChildren().add(card);
-*/
-
-//Ejemplo de uso con datos del cliente
-/*
-ReservationCard card = new ReservationCard(
-        LocalDate.of(2026, 1, 3),
-        3,
-        devices,
-        () -> {
-            System.out.println("Administrador cancelando reserva");
-        },
-        true,
-        "Makin Artavia Zúñiga"
-);
-
-vb_info.getChildren().add(card);
-*/

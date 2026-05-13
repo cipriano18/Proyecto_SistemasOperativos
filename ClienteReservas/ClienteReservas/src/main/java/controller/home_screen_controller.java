@@ -33,7 +33,9 @@ import service.Response;
 import session.Session;
 import utils.DraftContainer;
 
-
+/**
+ * Controlador de la pantalla principal del cliente.
+ */
 public class home_screen_controller implements Initializable {
 
     @FXML
@@ -82,6 +84,12 @@ public class home_screen_controller implements Initializable {
     private String recoveredFlowType;
 
     /**
+     * Verifica la sesion activa y prepara la recuperacion de drafts.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
+    /**
      * Initializes the controller class.
      */
     @Override
@@ -93,7 +101,8 @@ public class home_screen_controller implements Initializable {
             PopUp.warning(
                     "Sesión expirada",
                     "Debe iniciar sesión",
-                    "Su sesión ha expirado o no es válida. Por favor, inicie sesión nuevamente.",
+                    "Su sesión ha expirado o no es válida. Por favor, inicie "
+                    + "sesión nuevamente.",
                     "error.png",
                     1,
                     1,
@@ -108,17 +117,28 @@ public class home_screen_controller implements Initializable {
         }
 
         if (lbl_welcome != null && session.getClient() != null) {
-            lbl_welcome.setText("¿Qué hacemos " + session.getClient().getfName() + "?");
+            lbl_welcome.setText(
+                    "¿Qué hacemos " 
+                    + session.getClient().getfName() 
+                    + "?");
         }
 
         hideRecoveryBanner();
 
-        int idClient = session.getClient() != null ? session.getClient().getIdClient() : 0;
+        int idClient = session.getClient() != null 
+                ? session.getClient().getIdClient() 
+                : 0;
+        
         if (idClient > 0) {
             checkActiveDraftsAsync(idClient);
         }
     }
 
+    /**
+     * Consulta de forma asincrona los drafts activos del cliente.
+     *
+     * @param idClient identificador del cliente autenticado
+     */
     private void checkActiveDraftsAsync(int idClient) {
         Task<Object[]> task = new Task<Object[]>() {
             @Override
@@ -126,11 +146,15 @@ public class home_screen_controller implements Initializable {
                 Response equipResp = null;
                 Response audResp = null;
                 try {
-                    equipResp = EquipmentReservationDraftService.getEquipmentDraftByClientId(idClient);
+                    equipResp = EquipmentReservationDraftService
+                            .getEquipmentDraftByClientId(idClient);
+                    
                 } catch (Exception ignored) {
                 }
                 try {
-                    audResp = AuditoriumDraftService.getAuditoriumDraftByClientId(idClient);
+                    audResp = AuditoriumDraftService
+                            .getAuditoriumDraftByClientId(idClient);
+                    
                 } catch (Exception ignored) {
                 }
                 return new Object[] { equipResp, audResp };
@@ -149,16 +173,28 @@ public class home_screen_controller implements Initializable {
         t.start();
     }
 
+    /**
+     * Muestra el banner de recuperacion si existe un draft vigente.
+     *
+     * @param equipResp respuesta del draft de equipos
+     * @param audResp respuesta del draft de auditorio
+     */
     private void showRecoveryBannerIfAny(Response equipResp, Response audResp) {
 
         if (equipResp != null && equipResp.isSuccess()
                 && equipResp.getData() instanceof EquipmentReservationDraft) {
 
-            EquipmentReservationDraft draft = (EquipmentReservationDraft) equipResp.getData();
+            EquipmentReservationDraft draft 
+                    = (EquipmentReservationDraft) equipResp.getData();
+            
             if (draft.getExpiresAt() != null && !draft.isExpired()) {
                 recoveredDraftResp = equipResp;
                 recoveredFlowType = "DEVICE";
-                showBanner("Tienes una reserva de equipos activa", draft.getCreatedAt(), draft.getExpiresAt());
+                showBanner(
+                        "Tienes una reserva de equipos activa", 
+                        draft.getCreatedAt(), 
+                        draft.getExpiresAt());
+                
                 return;
             }
         }
@@ -166,7 +202,9 @@ public class home_screen_controller implements Initializable {
         if (audResp != null && audResp.isSuccess()
                 && audResp.getData() instanceof AuditoriumDraftRequest) {
 
-            AuditoriumDraftRequest draft = (AuditoriumDraftRequest) audResp.getData();
+            AuditoriumDraftRequest draft 
+                    = (AuditoriumDraftRequest) audResp.getData();
+            
             Timestamp[] ttl = tryReadAuditoriumTtl(draft);
 
             recoveredDraftResp = audResp;
@@ -174,23 +212,32 @@ public class home_screen_controller implements Initializable {
 
             if (ttl != null && ttl[0] != null && ttl[1] != null
                     && System.currentTimeMillis() < ttl[1].getTime()) {
-                showBanner("Tienes una reserva de auditorio activa", ttl[0], ttl[1]);
+                showBanner(
+                        "Tienes una reserva de auditorio activa", 
+                        ttl[0],
+                        ttl[1]);
+                
             } else {
-                // TODO: el servidor aún no envía createdAt/expiresAt en AuditoriumDraftRequest.
-                // Mientras tanto, mostrar banner sin contador.
                 showBannerNoChip("Tienes una reserva de auditorio activa");
             }
         }
     }
 
-    private void showBanner(String text, Timestamp createdAt, Timestamp expiresAt) {
+    private void showBanner(
+            String text, 
+            Timestamp createdAt, 
+            Timestamp expiresAt) {
+        
         if (draft_recovery_banner == null) return;
 
         lbl_recovery_text.setText(text);
         draft_recovery_banner.setVisible(true);
         draft_recovery_banner.setManaged(true);
 
-        if (ttl_banner_chip_container != null && createdAt != null && expiresAt != null) {
+        if (ttl_banner_chip_container != null 
+                && createdAt != null 
+                && expiresAt != null) {
+            
             bannerChip = new TtlChip();
             bannerChip.setCompact(true);
             bannerChip.setOnExpired(this::hideRecoveryBanner);
@@ -224,7 +271,9 @@ public class home_screen_controller implements Initializable {
                 bannerChip = null;
             }
             if (bannerExpiredListener != null) {
-                ReservationNotificationHandler.removeOnDraftExpired(bannerExpiredListener);
+                ReservationNotificationHandler
+                        .removeOnDraftExpired(bannerExpiredListener);
+                
                 bannerExpiredListener = null;
             }
             if (ttl_banner_chip_container != null) {
@@ -239,7 +288,9 @@ public class home_screen_controller implements Initializable {
         });
     }
 
-    private static Timestamp[] tryReadAuditoriumTtl(AuditoriumDraftRequest req) {
+    private static Timestamp[] tryReadAuditoriumTtl(
+            AuditoriumDraftRequest req) {
+        
         if (req == null) return null;
         try {
             Method m1 = req.getClass().getMethod("getCreatedAt");
@@ -254,6 +305,11 @@ public class home_screen_controller implements Initializable {
         return null;
     }
 
+    /**
+     * Continua el flujo del draft recuperado.
+     *
+     * @param event evento generado por la accion del usuario
+     */
     @FXML
     private void OnContinueDraft(ActionEvent event) {
         if (recoveredDraftResp == null || recoveredFlowType == null) {
@@ -265,9 +321,14 @@ public class home_screen_controller implements Initializable {
         DraftContainer.getInstance().setFlowType(recoveredFlowType);
 
         if ("DEVICE".equals(recoveredFlowType)) {
-            if (recoveredDraftResp.getData() instanceof EquipmentReservationDraft) {
-                Session.getInstance().setCurrentEquipmentDraftId(
-                        ((EquipmentReservationDraft) recoveredDraftResp.getData()).getIdDraft());
+            
+            if (recoveredDraftResp.getData() 
+                instanceof EquipmentReservationDraft) {
+                
+                Session.getInstance()
+                        .setCurrentEquipmentDraftId(
+                        ((EquipmentReservationDraft) 
+                        recoveredDraftResp.getData()).getIdDraft());
             }
             hideRecoveryBanner();
             try {
@@ -283,6 +344,11 @@ public class home_screen_controller implements Initializable {
         }
     }
 
+    /**
+     * Descarta el draft recuperado tras confirmacion del usuario.
+     *
+     * @param event evento generado por la accion del usuario
+     */
     @FXML
     private void OnDiscardDraft(ActionEvent event) {
         if (recoveredDraftResp == null || recoveredFlowType == null) {
@@ -304,16 +370,27 @@ public class home_screen_controller implements Initializable {
             return;
         }
 
-        int idClient = Session.getInstance().getClient().getClient().getIdClient();
+        int idClient 
+                = Session.getInstance().getClient().getClient().getIdClient();
 
         if ("DEVICE".equals(recoveredFlowType)
-                && recoveredDraftResp.getData() instanceof EquipmentReservationDraft) {
-            EquipmentReservationDraft d = (EquipmentReservationDraft) recoveredDraftResp.getData();
-            EquipmentReservationDraftService.discardEquipmentDraft(d.getIdDraft(), idClient);
+                && recoveredDraftResp.getData() 
+                instanceof EquipmentReservationDraft) {
+            
+            EquipmentReservationDraft d 
+                    = (EquipmentReservationDraft) recoveredDraftResp.getData();
+            
+            EquipmentReservationDraftService
+                    .discardEquipmentDraft(d.getIdDraft(), idClient);
+            
             Session.getInstance().setCurrentEquipmentDraftId(0);
         } else if ("AUDITORIUM".equals(recoveredFlowType)
-                && recoveredDraftResp.getData() instanceof AuditoriumDraftRequest) {
-            AuditoriumDraftRequest req = (AuditoriumDraftRequest) recoveredDraftResp.getData();
+                && recoveredDraftResp.getData() 
+                instanceof AuditoriumDraftRequest) {
+            
+            AuditoriumDraftRequest req 
+                    = (AuditoriumDraftRequest) recoveredDraftResp.getData();
+            
             AuditoriumDraftService.discardAuditoriumDraft(req);
         }
 
@@ -321,11 +398,23 @@ public class home_screen_controller implements Initializable {
         hideRecoveryBanner();
     }
 
+    /**
+     * Abre la pantalla de perfil del cliente.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToProfile(ActionEvent event) throws IOException {
         App.setRoot("profile_screen");
     }
 
+    /**
+     * Inicia el flujo de reserva de auditorio.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToAuditorium(ActionEvent event) throws IOException {
         int idClient = Session.getInstance()
@@ -342,7 +431,9 @@ public class home_screen_controller implements Initializable {
             PopUp.warning(
                     "Error de conexión",
                     "Verifique su conexión o intente nuevamente.",
-                    "Es posible que el servicio esté temporalmente no disponible o que exista un problema con su conexión a internet.\n"
+                    "Es posible que el servicio esté temporalmente no "
+                    + "disponible o que exista un problema con su conexión "
+                    + "a internet.\n"
                     + "Por favor, intente nuevamente más tarde.",
                     "power_off.png",
                     1,
@@ -352,6 +443,12 @@ public class home_screen_controller implements Initializable {
         }
     }
 
+    /**
+     * Inicia el flujo de reserva de equipos.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToDevices(ActionEvent event) throws IOException {
         int idClient = Session.getInstance()
@@ -368,7 +465,9 @@ public class home_screen_controller implements Initializable {
             PopUp.warning(
                     "Error de conexión",
                     "Verifique su conexión o intente nuevamente.",
-                    "Es posible que el servicio esté temporalmente no disponible o que exista un problema con su conexión a internet.\n"
+                    "Es posible que el servicio esté temporalmente no "
+                    + "disponible o que exista un problema con su conexión a "
+                    + "internet.\n"
                     + "Por favor, intente nuevamente más tarde.",
                     "power_off.png",
                     1,
@@ -378,11 +477,23 @@ public class home_screen_controller implements Initializable {
         }
     }
 
+    /**
+     * Abre la pantalla con las reservas activas del cliente.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToSchedule(ActionEvent event) throws IOException {
         App.setRoot("client_schedule_screen");
     }
 
+    /**
+     * Regresa a la pantalla de inicio de sesion.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToLogin(ActionEvent event) throws IOException {
         App.setRoot("login_screen");

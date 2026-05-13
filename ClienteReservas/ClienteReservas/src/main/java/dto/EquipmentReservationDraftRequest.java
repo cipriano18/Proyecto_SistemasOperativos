@@ -9,6 +9,9 @@ import java.util.List;
 import model.RXE;
 import model.Reservation;
 
+/**
+ * Representa la informacion necesaria para trabajar un draft de equipos.
+ */
 public class EquipmentReservationDraftRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -17,10 +20,25 @@ public class EquipmentReservationDraftRequest implements Serializable {
     private int idClient;
     private List<RXE> equipmentList;
 
+    /**
+     * Crea una solicitud vacia de draft de equipos.
+     */
     public EquipmentReservationDraftRequest() {
     }
 
-    public EquipmentReservationDraftRequest(int idDraft, Reservation reservation, int idClient, List<RXE> equipmentList) {
+    /**
+     * Crea una solicitud con la informacion principal del draft.
+     *
+     * @param idDraft identificador del draft
+     * @param reservation reserva base asociada
+     * @param idClient identificador del cliente
+     * @param equipmentList equipos asociados al draft
+     */
+    public EquipmentReservationDraftRequest(
+            int idDraft, 
+            Reservation reservation, 
+            int idClient, List<RXE> equipmentList) {
+        
         this.idDraft = idDraft;
         this.reservation = reservation;
         this.idClient = idClient;

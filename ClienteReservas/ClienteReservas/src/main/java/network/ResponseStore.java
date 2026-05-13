@@ -7,19 +7,31 @@ package network;
 import service.Response;
 
 /**
- *
- * @author cipriano
+ * Almacena temporalmente la ultima respuesta recibida del servidor.
  */
 public class ResponseStore {
 
     private static Response response;
 
+    /**
+     * Guarda una respuesta y despierta a los hilos en espera.
+     *
+     * @param resp respuesta recibida desde el servidor
+     */
     public static synchronized void setResponse(Response resp) {
         response = resp;
         ResponseStore.class.notifyAll();
     }
 
-    public static synchronized Response waitResponse() throws InterruptedException {
+    /**
+     * Espera hasta que exista una respuesta disponible y la devuelve.
+     *
+     * @return respuesta almacenada
+     * @throws InterruptedException si el hilo es interrumpido mientras espera
+     */
+    public static synchronized Response waitResponse() 
+            throws InterruptedException {
+        
         while (response == null) {
             ResponseStore.class.wait();
         }

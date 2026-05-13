@@ -15,6 +15,10 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import model.Equipment;
 
+/**
+ * Tarjeta de seleccion para escoger un dispositivo, su cantidad
+ * y una accion de eliminacion dentro de una lista.
+ */
 public class ListDeviceCard extends HBox {
 
     private ChoiceBox<Equipment> chbDeviceType;
@@ -22,27 +26,37 @@ public class ListDeviceCard extends HBox {
     private Button btnDeleteThis;
     private Runnable onQuantityChange;
 
+    /**
+     * Crea la tarjeta y carga los dispositivos disponibles.
+     *
+     * @param equipmentList lista de equipos disponibles para seleccionar
+     */
     public ListDeviceCard(List<Equipment> equipmentList) {
         buildComponent();
         setupEquipmentChoiceBox();
-        chbQuantity.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (onQuantityChange != null) {
-                onQuantityChange.run();
-            }
-        });
+        chbQuantity.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldVal, newVal) -> {
+                    if (onQuantityChange != null) {
+                        onQuantityChange.run();
+                    }
+                });
         chbDeviceType.getItems().setAll(equipmentList);
 
-        chbDeviceType.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                loadQuantities(newVal);
-            }
-        });
+        chbDeviceType.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldVal, newVal) -> {
+                    if (newVal != null) {
+                        loadQuantities(newVal);
+                    }
+                });
 
         if (!equipmentList.isEmpty()) {
             chbDeviceType.getSelectionModel().selectFirst();
         }
     }
 
+    /**
+     * Construye la estructura visual base de la tarjeta.
+     */
     private void buildComponent() {
         this.setAlignment(Pos.CENTER_LEFT);
         this.setPrefHeight(74);
@@ -90,8 +104,9 @@ public class ListDeviceCard extends HBox {
                 + "-fx-border-radius: 5;");
 
         ImageView deleteIcon = new ImageView(
-                new Image(getClass().getResource("/assets/delete.png").toExternalForm())
-        );
+                new Image(getClass()
+                    .getResource("/assets/delete.png").toExternalForm()));
+        
         deleteIcon.setFitHeight(24);
         deleteIcon.setFitWidth(24);
         deleteIcon.setPreserveRatio(true);
@@ -101,6 +116,9 @@ public class ListDeviceCard extends HBox {
         this.getChildren().addAll(vbDevice, vbQuantity, spacer, btnDeleteThis);
     }
 
+    /**
+     * Configura como se muestra cada equipo dentro del selector.
+     */
     private void setupEquipmentChoiceBox() {
         chbDeviceType.setConverter(new StringConverter<Equipment>() {
             @Override
@@ -115,6 +133,11 @@ public class ListDeviceCard extends HBox {
         });
     }
 
+    /**
+     * Carga las cantidades disponibles segun el equipo seleccionado.
+     *
+     * @param eq equipo seleccionado
+     */
     private void loadQuantities(Equipment eq) {
         chbQuantity.getItems().clear();
 
@@ -127,30 +150,66 @@ public class ListDeviceCard extends HBox {
         }
     }
 
+    /**
+     * Obtiene el equipo seleccionado actualmente.
+     *
+     * @return equipo seleccionado
+     */
     public Equipment getSelectedEquipment() {
         return chbDeviceType.getValue();
     }
 
+    /**
+     * Obtiene la cantidad seleccionada actualmente.
+     *
+     * @return cantidad seleccionada
+     */
     public Integer getSelectedQuantity() {
         return chbQuantity.getValue();
     }
 
+    /**
+     * Devuelve el boton que elimina esta tarjeta de la lista.
+     *
+     * @return boton de eliminacion
+     */
     public Button getBtnDeleteThis() {
         return btnDeleteThis;
     }
 
+    /**
+     * Define la accion a ejecutar al solicitar la eliminacion de la tarjeta.
+     *
+     * @param action accion asociada al boton de eliminar
+     */
     public void setOnDelete(Runnable action) {
         btnDeleteThis.setOnAction(e -> action.run());
     }
 
+    /**
+     * Habilita o deshabilita la seleccion del dispositivo.
+     *
+     * @param disabled {@code true} para deshabilitar el selector
+     */
     public void setDeviceChoiceDisabled(boolean disabled) {
         chbDeviceType.setDisable(disabled);
     }
 
+    /**
+     * Define la accion que se ejecuta cuando cambia la cantidad seleccionada.
+     *
+     * @param action accion a ejecutar al cambiar la cantidad
+     */
     public void setOnQuantityChange(Runnable action) {
         this.onQuantityChange = action;
     }
+
+    /**
+     * Establece una cantidad seleccionada en el selector.
+     *
+     * @param quantity cantidad a seleccionar
+     */
     public void setSelectedQuantity(Integer quantity) {
-    chbQuantity.setValue(quantity);
-}
+        chbQuantity.setValue(quantity);
+    }
 }

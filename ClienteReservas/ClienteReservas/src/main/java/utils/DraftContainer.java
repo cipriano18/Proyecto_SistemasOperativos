@@ -3,6 +3,9 @@ package utils;
 import model.Reservation;
 import service.Response;
 
+/**
+ * Conserva temporalmente el estado de un flujo de reserva en curso.
+ */
 public class DraftContainer {
 
     private static DraftContainer instance;
@@ -11,9 +14,17 @@ public class DraftContainer {
     private String flowType; // "DEVICE" o "AUDITORIUM"
     private Reservation selectedReservation;
 
+    /**
+     * Crea el contenedor temporal de drafts.
+     */
     private DraftContainer() {
     }
 
+    /**
+     * Obtiene la instancia compartida del contenedor.
+     *
+     * @return instancia unica de {@code DraftContainer}
+     */
     public static DraftContainer getInstance() {
         if (instance == null) {
             instance = new DraftContainer();
@@ -45,14 +56,23 @@ public class DraftContainer {
         return selectedReservation;
     }
 
+    /**
+     * Limpia unicamente la respuesta temporal del draft de equipos.
+     */
     public void clearTempReservationDevice() {
         temp_device_reservation = null;
     }
 
+    /**
+     * Limpia el tipo de flujo actualmente almacenado.
+     */
     public void clearFlowType() {
         flowType = null;
     }
 
+    /**
+     * Limpia toda la informacion temporal del flujo de reserva.
+     */
     public void clearAll() {
         temp_device_reservation = null;
         flowType = null;

@@ -33,7 +33,11 @@ import service.AuditoriumReservationService;
 import service.EquipmentService;
 import service.Response;
 
-public class admin_manage_auditorium_reservation_screen_controller implements Initializable {
+/**
+ * Controlador de la pantalla administrativa de reservas de auditorio.
+ */
+public class admin_manage_auditorium_reservation_screen_controller 
+    implements Initializable {
 
     @FXML
     private Button btn_goback;
@@ -74,6 +78,12 @@ public class admin_manage_auditorium_reservation_screen_controller implements In
         "Septiembre", "Octubre", "Noviembre", "Diciembre"
     };
 
+    /**
+     * Inicializa filtros y carga las reservas del periodo actual.
+     *
+     * @param url ubicacion usada para resolver rutas relativas
+     * @param rb recursos de internacionalizacion asociados a la vista
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         setupYearField();
@@ -83,13 +93,17 @@ public class admin_manage_auditorium_reservation_screen_controller implements In
 
         loadMonths();
 
-        chb_month.getSelectionModel().selectedIndexProperty().addListener((obs, oldIndex, newIndex) -> {
+        chb_month.getSelectionModel()
+                .selectedIndexProperty()
+                .addListener((obs, oldIndex, newIndex) -> {
+                    
             if (newIndex != null && newIndex.intValue() >= 0) {
                 loadReservationsByMonth();
             }
         });
 
-        tf_year.focusedProperty().addListener((obs, oldValue, focused) -> {
+        tf_year.focusedProperty()
+                .addListener((obs, oldValue, focused) -> {
             if (!focused) {
                 clampYearAndRefreshMonths();
                 loadReservationsByMonth();
@@ -99,6 +113,12 @@ public class admin_manage_auditorium_reservation_screen_controller implements In
         loadReservationsByMonth();
     }
 
+    /**
+     * Regresa a la pantalla principal del administrador.
+     *
+     * @param event evento generado por la accion del usuario
+     * @throws IOException si ocurre un error al cambiar de vista
+     */
     @FXML
     private void GoToHome(ActionEvent event) throws IOException {
         App.setRoot("admin_home_screen");
@@ -163,19 +183,23 @@ public class admin_manage_auditorium_reservation_screen_controller implements In
         Map<Integer, String> equipmentNames =
                 buildEquipmentNameMap((List<?>) equipmentResponse.getData());
 
-        Response response = AuditoriumReservationService.getAuditoriumReservationsByMonth(month, year);
+        Response response = 
+                AuditoriumReservationService
+                .getAuditoriumReservationsByMonth(month, year);
         if (response == null) {
             showLoadError("No se pudo conectar con el servidor.");
             return;
         }
 
         if (!response.isSuccess()) {
-            showEmptyState("No se encontraron reservaciones de auditorio para el periodo indicado.");
+            showEmptyState("No se encontraron reservaciones de auditorio para "
+                    + "el periodo indicado.");
             return;
         }
 
         if (!(response.getData() instanceof List<?>)) {
-            showLoadError("Se recibieron datos de reservas con un formato inesperado.");
+            showLoadError("Se recibieron datos de reservas con un formato "
+                    + "inesperado.");
             return;
         }
 
@@ -183,22 +207,30 @@ public class admin_manage_auditorium_reservation_screen_controller implements In
 
         for (Object item : rawReservations) {
             if (!(item instanceof AuditoriumReservationRequest)) {
-                showLoadError("Se recibieron datos de reservas con un formato inesperado.");
+                showLoadError("Se recibieron datos de reservas con un formato "
+                        + "inesperado.");
                 vb_list_reservation_auditorium.getChildren().clear();
                 return;
             }
 
-            AuditoriumReservationRequest request = (AuditoriumReservationRequest) item;
+            AuditoriumReservationRequest request 
+                    = (AuditoriumReservationRequest) item;
+            
             Reservation reservation = request.getReservation();
 
-            if (reservation == null || reservation.getReservationDate() == null) {
+            if (
+                reservation == null || 
+                reservation.getReservationDate() == null) {
                 continue;
             }
 
             List<ReservationCard.DeviceItem> devices =
-                    buildDeviceItems(request.getEquipmentList(), equipmentNames);
+                    buildDeviceItems(
+                            request.getEquipmentList(),
+                            equipmentNames);
 
-            AuditoriumReservation auditoriumReservation = request.getAuditoriumReservation();
+            AuditoriumReservation auditoriumReservation 
+                    = request.getAuditoriumReservation();
 
             ReservationCard card = new ReservationCard(
                     reservation.getReservationDate().toLocalDate(),
@@ -206,19 +238,29 @@ public class admin_manage_auditorium_reservation_screen_controller implements In
                     devices,
                     () -> cancelAuditoriumReservation(request),
                     request.getClientName(),
-                    auditoriumReservation != null ? auditoriumReservation.getEventName() : null,
-                    auditoriumReservation != null ? auditoriumReservation.getAttendeesCount() : 0,
-                    auditoriumReservation != null ? auditoriumReservation.getObservations() : null
+                    auditoriumReservation != null 
+                            ? auditoriumReservation.getEventName() 
+                            : null,
+                    
+                    auditoriumReservation != null 
+                            ? auditoriumReservation.getAttendeesCount() 
+                            : 0,
+                    
+                    auditoriumReservation != null 
+                            ? auditoriumReservation.getObservations() 
+                            : null
             );
             vb_list_reservation_auditorium.getChildren().add(card);
         }
 
         if (vb_list_reservation_auditorium.getChildren().isEmpty()) {
-            showEmptyState("No se encontraron reservaciones de auditorio para el periodo indicado.");
+            showEmptyState("No se encontraron reservaciones de auditorio para "
+                    + "el periodo indicado.");
         }
     }
 
-    private void cancelAuditoriumReservation(AuditoriumReservationRequest currentReservation) {
+    private void cancelAuditoriumReservation(
+            AuditoriumReservationRequest currentReservation) {
 
         boolean confirm = PopUp.warning(
                 "Confirmación",
@@ -247,7 +289,9 @@ public class admin_manage_auditorium_reservation_screen_controller implements In
 
         request.setReservation(reservation);
 
-        Response response = AuditoriumReservationService.deleteAuditoriumReservationById(request);
+        Response response = 
+                AuditoriumReservationService
+                .deleteAuditoriumReservationById(request);
 
         if (response != null && response.isSuccess()) {
             PopUp.notification(
@@ -264,7 +308,9 @@ public class admin_manage_auditorium_reservation_screen_controller implements In
         PopUp.warning(
                 "Error",
                 "No se pudo cancelar la reserva",
-                response != null ? response.getMessage() : "No se pudo conectar con el servidor.",
+                response != null 
+                        ? response.getMessage() 
+                        : "No se pudo conectar con el servidor.",
                 "error.png",
                 1,
                 1,
@@ -272,13 +318,17 @@ public class admin_manage_auditorium_reservation_screen_controller implements In
         );
     }
 
-    private Map<Integer, String> buildEquipmentNameMap(List<?> rawEquipmentList) {
+    private Map<Integer, String> buildEquipmentNameMap(
+            List<?> rawEquipmentList) {
+        
         Map<Integer, String> equipmentNames = new HashMap<>();
 
         for (Object item : rawEquipmentList) {
             if (item instanceof Equipment) {
                 Equipment equipment = (Equipment) item;
-                equipmentNames.put(equipment.getIdEquipment(), equipment.getName());
+                equipmentNames.put(
+                        equipment.getIdEquipment(),
+                        equipment.getName());
             }
         }
 
@@ -305,7 +355,9 @@ public class admin_manage_auditorium_reservation_screen_controller implements In
                     "Equipo #" + item.getIdEquipment()
             );
 
-            devices.add(new ReservationCard.DeviceItem(deviceName, item.getQuantity()));
+            devices.add(new ReservationCard.DeviceItem(
+                    deviceName, 
+                    item.getQuantity()));
         }
 
         return devices;

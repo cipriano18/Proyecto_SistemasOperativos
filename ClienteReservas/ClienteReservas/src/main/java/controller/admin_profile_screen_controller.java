@@ -189,10 +189,15 @@ public class admin_profile_screen_controller implements Initializable {
 
         if (newPassword.isEmpty()) {
             passwordToSend = session.getUser().getPassword();
-        } else if (newPassword.length() < 8 || !newPassword.matches(".*[A-Z].*") || !newPassword.matches(".*[0-9].*")) {
+        } else if (
+                newPassword.length() < 8 
+                || !newPassword.matches(".*[A-Z].*") 
+                || !newPassword.matches(".*[0-9].*")) {
+            
             showError(msg_pass, "La contraseña es inválida");
             hasErrors = true;
             passwordToSend = null;
+            
         } else {
             passwordToSend = newPassword;
         }
@@ -201,7 +206,8 @@ public class admin_profile_screen_controller implements Initializable {
             PopUp.warning(
                     "Campos obligatorios",
                     "Faltan datos",
-                    "Debe completar todos los campos requeridos antes de continuar.",
+                    "Debe completar todos los campos "
+                    + "requeridos antes de continuar.",
                     "back_hand.png",
                     1,
                     1,
@@ -262,14 +268,19 @@ public class admin_profile_screen_controller implements Initializable {
             PopUp.warning(
                     "Algo salió mal",
                     "El servidor negó tus cambios.",
-                    resp != null ? resp.getMessage() : "No se pudo contactar el servidor.",
+                    resp != null 
+                            ? resp.getMessage() 
+                            : "No se pudo contactar el servidor.",
                     "power_off.png",
                     1,
                     1,
                     "Aceptar"
             );
 
-            routeServerError(resp != null ? resp.getMessage() : "Error de conexión");
+            routeServerError(
+                    resp != null 
+                            ? resp.getMessage() 
+                            : "Error de conexión");
         }
     }
 
@@ -282,7 +293,8 @@ public class admin_profile_screen_controller implements Initializable {
             PopUp.warning(
                     "Sesión inválida",
                     "Debe iniciar sesión",
-                    "No se encontró una sesión activa. Por favor, inicie sesión nuevamente.",
+                    "No se encontró una sesión activa. Por favor, inicie "
+                    + "sesión nuevamente.",
                     "person_off.png",
                     1,
                     1,
@@ -296,7 +308,8 @@ public class admin_profile_screen_controller implements Initializable {
         boolean confirm = PopUp.warning(
                 "Eliminar administrador",
                 "¿Está seguro?",
-                "Esta acción eliminará la cuenta del administrador de forma permanente y no se puede deshacer.",
+                "Esta acción eliminará la cuenta del administrador de forma "
+                + "permanente y no se puede deshacer.",
                 "question.png",
                 2,
                 3,
@@ -307,7 +320,8 @@ public class admin_profile_screen_controller implements Initializable {
             return;
         }
 
-        Response resp = AdminProfileService.delete(session.getAdmin().getIdAdmin());
+        Response resp = AdminProfileService.delete(
+                session.getAdmin().getIdAdmin());
 
         if (resp == null) {
             PopUp.warning(
@@ -338,7 +352,9 @@ public class admin_profile_screen_controller implements Initializable {
         PopUp.warning(
                 "Error",
                 "No se pudo eliminar el administrador",
-                resp.getMessage() != null ? resp.getMessage() : "Ocurrió un error inesperado.",
+                resp.getMessage() != null 
+                        ? resp.getMessage() 
+                        : "Ocurrió un error inesperado.",
                 "error.png",
                 1,
                 1,
@@ -355,18 +371,27 @@ public class admin_profile_screen_controller implements Initializable {
         String low = msg.toLowerCase();
         Label target;
 
-        if (low.contains("nombre de usuario") || low.contains("ya está en uso")) {
+        if (low.contains("nombre de usuario") 
+            || low.contains("ya está en uso")) {
             target = msg_global;
+            
         } else if (low.contains("contraseña")) {
             target = msg_pass;
+            
         } else if (low.contains("primer nombre")) {
             target = msg_name;
+            
         } else if (low.contains("primer apellido")) {
             target = msg_surname;
+            
         } else if (low.contains("segundo apellido")) {
             target = msg_Sec_surname;
-        } else if (low.contains("contacto") || low.contains("teléfono") || low.contains("correo")) {
+            
+        } else if (low.contains("contacto") 
+                || low.contains("teléfono") 
+                || low.contains("correo")) {
             target = msg_contact;
+            
         } else {
             target = msg_global;
         }
@@ -375,7 +400,11 @@ public class admin_profile_screen_controller implements Initializable {
     }
 
     private void showError(Label label, String msg) {
-        label.setStyle("-fx-text-fill: #ba1a1a; -fx-font-weight:600; -fx-font-size:12px;");
+        label.setStyle(
+                "-fx-text-fill: #ba1a1a; "
+                + "-fx-font-weight:600; "
+                + "-fx-font-size:12px;");
+        
         label.setText(msg);
     }
 

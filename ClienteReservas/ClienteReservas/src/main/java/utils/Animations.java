@@ -12,12 +12,25 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 /**
- *
- * @author Makin Artavia
+ * Reune animaciones reutilizables para nodos de la interfaz.
  */
 public class Animations {
 
-    public void moveNode(Node node, int desplazamientoX, int desplazamientoY, boolean haciaDerecha, boolean haciaArriba) {
+    /**
+     * Desplaza un nodo gradualmente en los ejes X y Y.
+     *
+     * @param node nodo a desplazar
+     * @param desplazamientoX cantidad de pasos en el eje X
+     * @param desplazamientoY cantidad de pasos en el eje Y
+     * @param haciaDerecha indica si el movimiento horizontal va a la derecha
+     * @param haciaArriba indica si el movimiento vertical va hacia arriba
+     */
+    public void moveNode(
+            Node node, 
+            int desplazamientoX, 
+            int desplazamientoY, 
+            boolean haciaDerecha,
+            boolean haciaArriba) {
 
         Timeline timeline = new Timeline();
 
@@ -31,10 +44,12 @@ public class Animations {
                     Duration.millis(i * 15),
                     event -> {
                         if (count < desplazamientoX) {
-                            node.setTranslateX(node.getTranslateX() + direccionX);
+                            node.setTranslateX(
+                                    node.getTranslateX() + direccionX);
                         }
                         if (count < desplazamientoY) {
-                            node.setTranslateY(node.getTranslateY() + direccionY);
+                            node.setTranslateY(
+                                    node.getTranslateY() + direccionY);
                         }
                     }
             ));
@@ -44,7 +59,19 @@ public class Animations {
         timeline.play();
     }
 
-    public void appear(Node node, int pasos, double duracionSegundos, double delayInicialMs) {
+    /**
+     * Hace aparecer un nodo incrementando su opacidad progresivamente.
+     *
+     * @param node nodo a animar
+     * @param pasos cantidad de pasos de la animacion
+     * @param duracionSegundos duracion total de la animacion
+     * @param delayInicialMs retraso inicial antes de comenzar
+     */
+    public void appear(
+            Node node, 
+            int pasos, 
+            double duracionSegundos, 
+            double delayInicialMs) {
 
         node.setOpacity(0);
 
@@ -65,7 +92,17 @@ public class Animations {
         timeline.play();
     }
 
-    public void breathEffect(Node node, Color baseColor, double duracionSegundos) {
+    /**
+     * Aplica un efecto de respiracion usando sombra interior y color.
+     *
+     * @param node nodo al que se aplicara el efecto
+     * @param baseColor color base del resplandor
+     * @param duracionSegundos duracion del ciclo de animacion
+     */
+    public void breathEffect(
+            Node node, 
+            Color baseColor, 
+            double duracionSegundos) {
 
         InnerShadow shadow = new InnerShadow();
         shadow.setRadius(20);
@@ -84,7 +121,8 @@ public class Animations {
             timeline.getKeyFrames().add(new KeyFrame(
                     Duration.millis(step * interval),
                     event -> {
-                        double opacity = 0.3 * Math.sin((step / (double) steps) * 2 * Math.PI) + 0.5;
+                        double opacity = 0.3 * Math.sin(
+                                (step / (double) steps) * 2 * Math.PI) + 0.5;
 
                         shadow.setColor(Color.rgb(
                                 (int) (baseColor.getRed() * 255),
@@ -100,7 +138,21 @@ public class Animations {
         timeline.play();
     }
 
-    public void breathOpacity(Node node, int pasos, double duracionSegundos, double opacidadMinima, double opacidadMaxima) {
+    /**
+     * Anima la opacidad de un nodo entre un minimo y un maximo.
+     *
+     * @param node nodo a animar
+     * @param pasos cantidad de pasos de la animacion
+     * @param duracionSegundos duracion total de cada ciclo
+     * @param opacidadMinima opacidad minima del efecto
+     * @param opacidadMaxima opacidad maxima del efecto
+     */
+    public void breathOpacity(
+            Node node, 
+            int pasos,
+            double duracionSegundos,
+            double opacidadMinima, 
+            double opacidadMaxima) {
 
         Timeline timeline = new Timeline();
 
@@ -125,7 +177,19 @@ public class Animations {
         timeline.play();
     }
 
-    public void expandWidth(Region node, double aumento, int pasos, double duracionSegundos) {
+    /**
+     * Expande progresivamente el ancho preferido de una region.
+     *
+     * @param node region a expandir
+     * @param aumento incremento total del ancho
+     * @param pasos cantidad de pasos de la animacion
+     * @param duracionSegundos duracion total de la animacion
+     */
+    public void expandWidth(
+            Region node, 
+            double aumento,
+            int pasos, 
+            double duracionSegundos) {
 
         double anchoFinal = node.getWidth();
         double anchoInicial = anchoFinal - aumento;
@@ -153,7 +217,19 @@ public class Animations {
         timeline.play();
     }
 
-    public void growLabel(Label label, double reduccion, int pasos, double duracionSegundos) {
+    /**
+     * Aumenta gradualmente el tamano de fuente de una etiqueta.
+     *
+     * @param label etiqueta a animar
+     * @param reduccion diferencia inicial respecto al tamano final
+     * @param pasos cantidad de pasos de la animacion
+     * @param duracionSegundos duracion total de la animacion
+     */
+    public void growLabel(
+            Label label, 
+            double reduccion,
+            int pasos, 
+            double duracionSegundos) {
 
         Font fontOriginal = label.getFont();
         double tamañoOriginal = fontOriginal.getSize();
@@ -172,9 +248,13 @@ public class Animations {
                     Duration.millis(paso * intervalo),
                     event -> {
                         double progreso = (double) paso / pasos;
-                        double tamañoActual = tamañoInicial + (reduccion * progreso);
+                        double tamañoActual 
+                                = tamañoInicial + (reduccion * progreso);
 
-                        label.setFont(new Font(fontOriginal.getName(), tamañoActual));
+                        label.setFont(
+                                new Font(
+                                        fontOriginal.getName(), 
+                                        tamañoActual));
                     }
             ));
         }
@@ -183,7 +263,18 @@ public class Animations {
         timeline.play();
     }
 
-    public void typeWriter(Label label, double delayInicialMs, double intervaloMilisegundos) {
+    /**
+     * Muestra el texto de una etiqueta caracter por caracter.
+     *
+     * @param label etiqueta cuyo texto se animara
+     * @param delayInicialMs retraso inicial antes de comenzar
+     * @param intervaloMilisegundos intervalo entre caracteres mostrados
+     */
+    public void typeWriter(
+            Label label, 
+            double delayInicialMs, 
+            double intervaloMilisegundos) {
+        
         String textoCompleto = label.getText();
         label.setText("");
 
@@ -193,7 +284,8 @@ public class Animations {
             final int index = i + 1;
 
             timeline.getKeyFrames().add(new KeyFrame(
-                    Duration.millis(delayInicialMs + (intervaloMilisegundos * index)),
+                    Duration.millis(
+                            delayInicialMs + (intervaloMilisegundos * index)),
                     event -> label.setText(textoCompleto.substring(0, index))
             ));
         }

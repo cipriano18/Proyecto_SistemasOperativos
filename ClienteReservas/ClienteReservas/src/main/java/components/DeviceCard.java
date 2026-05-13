@@ -10,11 +10,21 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
+
+/**
+ * Tarjeta visual para mostrar un dispositivo y su cantidad.
+ */
 public class DeviceCard extends VBox {
 
     private Label lblDeviceType;
     private Label lblQuantity;
-
+    
+    /**
+    * Crea una tarjeta de dispositivo.
+    *
+    * @param deviceType tipo de dispositivo
+    * @param quantity cantidad disponible
+    */
     public DeviceCard(String deviceType, int quantity) {
 
         // Configuración del VBox
@@ -23,12 +33,12 @@ public class DeviceCard extends VBox {
         this.setPadding(new Insets(5, 5, 5, 5));
         this.setId("vb_device_card");
 
-        // ───── Label: Tipo de dispositivo ─────
+        //Label: Tipo de dispositivo 
         lblDeviceType = new Label(deviceType);
         lblDeviceType.getStyleClass().add("hero-title-2");
         lblDeviceType.setFont(new Font("Tw Cen MT Bold", 17));
 
-        // ───── Label: Cantidad ─────
+        //Label: Cantidad
         lblQuantity = new Label(String.valueOf(quantity));
         lblQuantity.getStyleClass().add("form-subtitle");
 

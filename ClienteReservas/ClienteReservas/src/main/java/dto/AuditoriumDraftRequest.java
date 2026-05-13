@@ -6,6 +6,9 @@ import java.util.List;
 import model.RXE;
 import model.Reservation;
 
+/**
+ * Representa la informacion necesaria para trabajar un draft de auditorio.
+ */
 public class AuditoriumDraftRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -15,10 +18,28 @@ public class AuditoriumDraftRequest implements Serializable {
     private AuditoriumDraft auditoriumDraft;
     private List<RXE> equipmentList;
 
+    /**
+     * Crea una solicitud vacia de draft de auditorio.
+     */
     public AuditoriumDraftRequest() {
     }
 
-    public AuditoriumDraftRequest(int idDraft, int idClient, Reservation reservation, AuditoriumDraft auditoriumDraft, List<RXE> equipmentList) {
+    /**
+     * Crea una solicitud con la informacion completa del draft.
+     *
+     * @param idDraft identificador del draft
+     * @param idClient identificador del cliente
+     * @param reservation reserva base asociada
+     * @param auditoriumDraft datos especificos del auditorio
+     * @param equipmentList equipos asociados al draft
+     */
+    public AuditoriumDraftRequest(
+            int idDraft, 
+            int idClient, 
+            Reservation reservation, 
+            AuditoriumDraft auditoriumDraft, 
+            List<RXE> equipmentList) {
+        
         this.idDraft = idDraft;
         this.idClient = idClient;
         this.reservation = reservation;

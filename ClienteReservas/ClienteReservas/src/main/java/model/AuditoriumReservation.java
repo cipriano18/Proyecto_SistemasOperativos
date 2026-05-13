@@ -2,6 +2,9 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * Representa la informacion propia de una reserva de auditorio.
+ */
 public class AuditoriumReservation implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -11,10 +14,28 @@ public class AuditoriumReservation implements Serializable {
     private int attendeesCount;
     private String observations;
 
+    /**
+     * Crea una reserva de auditorio vacia.
+     */
     public AuditoriumReservation() {
     }
 
-    public AuditoriumReservation(int idAuditoriumReservation, int idReservation, String eventName, int attendeesCount, String observations) {
+    /**
+     * Crea una reserva de auditorio con su informacion principal.
+     *
+     * @param idAuditoriumReservation identificador de la reserva de auditorio
+     * @param idReservation identificador de la reserva general
+     * @param eventName nombre del evento
+     * @param attendeesCount cantidad de asistentes
+     * @param observations observaciones asociadas al evento
+     */
+    public AuditoriumReservation(
+            int idAuditoriumReservation, 
+            int idReservation, 
+            String eventName, 
+            int attendeesCount,
+            String observations) {
+        
         this.idAuditoriumReservation = idAuditoriumReservation;
         this.idReservation = idReservation;
         this.eventName = eventName;

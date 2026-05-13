@@ -15,11 +15,26 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.ColumnConstraints;
 import model.CalendarBlock;
 
+/**
+ * Construye la grilla visual del calendario a partir de sus bloques.
+ */
 public class CalendarBuilder {
 
     private static final int COLUMNS = 5;
 
-    public void buildCalendar(int month, int year, GridPane grid, List<CalendarBlock> blocks) {
+    /**
+     * Genera el calendario visual del mes solicitado.
+     *
+     * @param month mes a construir
+     * @param year anio a construir
+     * @param grid contenedor donde se renderiza el calendario
+     * @param blocks bloques de calendario disponibles
+     */
+    public void buildCalendar(
+            int month, 
+            int year, 
+            GridPane grid, 
+            List<CalendarBlock> blocks) {
         if (grid == null) {
             return;
         }
@@ -60,6 +75,11 @@ public class CalendarBuilder {
         }
     }
 
+    /**
+     * Configura las columnas que se usaran en la grilla del calendario.
+     *
+     * @param grid contenedor del calendario
+     */
     private void configureColumns(GridPane grid) {
         for (int i = 0; i < COLUMNS; i++) {
             ColumnConstraints column = new ColumnConstraints();
@@ -70,6 +90,12 @@ public class CalendarBuilder {
         }
     }
 
+    /**
+     * Configura la cantidad de filas necesarias para los dias visibles.
+     *
+     * @param grid contenedor del calendario
+     * @param daysInMonth cantidad de dias a mostrar
+     */
     private void configureRows(GridPane grid, int daysInMonth) {
         int rows = (int) Math.ceil(daysInMonth / (double) COLUMNS);
 

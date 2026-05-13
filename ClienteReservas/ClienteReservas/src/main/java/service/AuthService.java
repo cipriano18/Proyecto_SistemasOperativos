@@ -9,8 +9,18 @@ import network.ResponseStore;
 import network.ServerConnection;
 import network.SocketManager;
 
+/**
+ * Gestiona la autenticacion de usuarios contra el servidor.
+ */
 public class AuthService {
 
+    /**
+     * Intenta autenticar un usuario con sus credenciales.
+     *
+     * @param username nombre de usuario
+     * @param password contrasena del usuario
+     * @return respuesta del servidor o una respuesta de error local
+     */
     public static Response login(String username, String password) {
         try {
             SocketManager socketManager = SocketManager.getInstance();
@@ -31,7 +41,11 @@ public class AuthService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new Response(false, "Error al conectar con el servidor: " + e.getMessage(), null);
+            return new Response(
+                    false, 
+                    "Error al conectar con el servidor: " 
+                    + e.getMessage()
+                    , null);
         }
     }
 }

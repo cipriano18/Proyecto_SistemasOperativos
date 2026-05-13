@@ -6,6 +6,9 @@ import model.AuditoriumReservation;
 import model.RXE;
 import model.Reservation;
 
+/**
+ * Agrupa la informacion de una reserva de auditorio y sus equipos.
+ */
 public class AuditoriumReservationRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -15,10 +18,26 @@ public class AuditoriumReservationRequest implements Serializable {
     private AuditoriumReservation auditoriumReservation;
     private List<RXE> equipmentList;
 
+    /**
+     * Crea una solicitud vacia de reserva de auditorio.
+     */
     public AuditoriumReservationRequest() {
     }
 
-    public AuditoriumReservationRequest(Reservation reservation, int idClient, AuditoriumReservation auditoriumReservation, List<RXE> equipmentList) {
+    /**
+     * Crea una solicitud con la informacion principal de la reserva.
+     *
+     * @param reservation reserva base asociada
+     * @param idClient identificador del cliente
+     * @param auditoriumReservation datos del evento de auditorio
+     * @param equipmentList equipos asociados a la reserva
+     */
+    public AuditoriumReservationRequest(
+            Reservation reservation, 
+            int idClient, 
+            AuditoriumReservation auditoriumReservation, 
+            List<RXE> equipmentList) {
+        
         this.reservation = reservation;
         this.idClient = idClient;
         this.auditoriumReservation = auditoriumReservation;
@@ -53,7 +72,9 @@ public class AuditoriumReservationRequest implements Serializable {
         return auditoriumReservation;
     }
 
-    public void setAuditoriumReservation(AuditoriumReservation auditoriumReservation) {
+    public void setAuditoriumReservation(
+            AuditoriumReservation auditoriumReservation) {
+        
         this.auditoriumReservation = auditoriumReservation;
     }
 
