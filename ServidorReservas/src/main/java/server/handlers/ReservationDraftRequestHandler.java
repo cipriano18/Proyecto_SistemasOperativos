@@ -10,90 +10,183 @@ import dto.EquipmentReservationDraftRequest;
 import service.Response;
 
 /**
+ * Manejador encargado de procesar las solicitudes relacionadas con reservas
+ * temporales de equipos.
+ *
+ * <p>
+ * Recibe comandos provenientes del servidor y delega las operaciones
+ * correspondientes al {@code ReservationDraftController}.
+ * </p>
  *
  * @author Cipriano
  */
 public class ReservationDraftRequestHandler {
 
-    public static Response handle(String command, Object obj) {
+    /**
+     * Procesa un comando relacionado con reservas temporales de equipos.
+     *
+     * @param command comando recibido
+     * @param obj objeto asociado al comando
+     * @return respuesta del proceso
+     */
+    public static Response handle(
+            String command,
+            Object obj
+    ) {
 
         switch (command.toUpperCase()) {
 
             case "START_EQUIPMENT_DRAFT": {
-                EquipmentReservationDraftRequest request = (EquipmentReservationDraftRequest) obj;
 
-                System.out.println("---- START_EQUIPMENT_DRAFT ----");
-                System.out.println("Objeto recibido: " + request);
+                EquipmentReservationDraftRequest request
+                        = (EquipmentReservationDraftRequest) obj;
 
-                return ReservationDraftController.startEquipmentDraft(request);
+                System.out.println(
+                        "---- START_EQUIPMENT_DRAFT ----"
+                );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + request
+                );
+
+                return ReservationDraftController
+                        .startEquipmentDraft(
+                                request
+                        );
             }
 
             case "UPDATE_EQUIPMENT_DRAFT": {
-                EquipmentReservationDraftRequest request = (EquipmentReservationDraftRequest) obj;
 
-                System.out.println("---- UPDATE_EQUIPMENT_DRAFT ----");
-                System.out.println("Objeto recibido: " + request);
+                EquipmentReservationDraftRequest request
+                        = (EquipmentReservationDraftRequest) obj;
 
-                return ReservationDraftController.updateEquipmentDraft(request);
+                System.out.println(
+                        "---- UPDATE_EQUIPMENT_DRAFT ----"
+                );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + request
+                );
+
+                return ReservationDraftController
+                        .updateEquipmentDraft(
+                                request
+                        );
             }
 
             case "GET_EQUIPMENT_DRAFT_BY_ID": {
-                Integer idDraft = (Integer) obj;
 
-                System.out.println("---- GET_EQUIPMENT_DRAFT_BY_ID ----");
-                System.out.println("IdDraft recibido: " + idDraft);
+                Integer idDraft
+                        = (Integer) obj;
 
-                return ReservationDraftController.getEquipmentDraftById(idDraft);
+                System.out.println(
+                        "---- GET_EQUIPMENT_DRAFT_BY_ID ----"
+                );
+
+                System.out.println(
+                        "IdDraft recibido: "
+                        + idDraft
+                );
+
+                return ReservationDraftController
+                        .getEquipmentDraftById(
+                                idDraft
+                        );
             }
 
             case "GET_EQUIPMENT_DRAFT_BY_CLIENT_ID": {
-                Integer idClient = (Integer) obj;
 
-                System.out.println("---- GET_EQUIPMENT_DRAFT_BY_CLIENT_ID ----");
-                System.out.println("IdClient recibido: " + idClient);
+                Integer idClient
+                        = (Integer) obj;
 
-                return ReservationDraftController.getEquipmentDraftByClientId(idClient);
+                System.out.println(
+                        "---- GET_EQUIPMENT_DRAFT_BY_CLIENT_ID ----"
+                );
+
+                System.out.println(
+                        "IdClient recibido: "
+                        + idClient
+                );
+
+                return ReservationDraftController
+                        .getEquipmentDraftByClientId(
+                                idClient
+                        );
             }
 
             case "DISCARD_EQUIPMENT_DRAFT": {
-                EquipmentReservationDraftRequest request = (EquipmentReservationDraftRequest) obj;
 
-                System.out.println("---- DISCARD_EQUIPMENT_DRAFT ----");
-                System.out.println("Objeto recibido: " + request);
+                EquipmentReservationDraftRequest request
+                        = (EquipmentReservationDraftRequest) obj;
 
-                return ReservationDraftController.discardEquipmentDraft(
-                        request.getIdDraft(),
-                        request.getIdClient()
+                System.out.println(
+                        "---- DISCARD_EQUIPMENT_DRAFT ----"
                 );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + request
+                );
+
+                return ReservationDraftController
+                        .discardEquipmentDraft(
+                                request.getIdDraft(),
+                                request.getIdClient()
+                        );
             }
 
             case "CONFIRM_EQUIPMENT_DRAFT": {
-                EquipmentReservationDraftRequest request = (EquipmentReservationDraftRequest) obj;
 
-                System.out.println("---- CONFIRM_EQUIPMENT_DRAFT ----");
-                System.out.println("Objeto recibido: " + request);
+                EquipmentReservationDraftRequest request
+                        = (EquipmentReservationDraftRequest) obj;
 
-                return ReservationDraftController.confirmEquipmentDraft(
-                        request.getIdDraft(),
-                        request.getIdClient()
+                System.out.println(
+                        "---- CONFIRM_EQUIPMENT_DRAFT ----"
                 );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + request
+                );
+
+                return ReservationDraftController
+                        .confirmEquipmentDraft(
+                                request.getIdDraft(),
+                                request.getIdClient()
+                        );
             }
-            
+
             case "GET_CALENDAR_BLOCKS": {
-                CalendarRequest request = (CalendarRequest) obj;
 
-                System.out.println("---- GET_CALENDAR_BLOCKS ----");
-                System.out.println("Objeto recibido: " + request);
+                CalendarRequest request
+                        = (CalendarRequest) obj;
 
-                return ReservationDraftController.getCalendarBlocks(
-                        request.getMonth(),
-                        request.getYear(),
-                        request.getIdClient()
+                System.out.println(
+                        "---- GET_CALENDAR_BLOCKS ----"
                 );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + request
+                );
+
+                return ReservationDraftController
+                        .getCalendarBlocks(
+                                request.getMonth(),
+                                request.getYear(),
+                                request.getIdClient()
+                        );
             }
 
             default:
-                return new Response(false, "Comando de drafts no reconocido", null);
+
+                return new Response(
+                        false,
+                        "Comando de drafts no reconocido",
+                        null
+                );
         }
     }
 }

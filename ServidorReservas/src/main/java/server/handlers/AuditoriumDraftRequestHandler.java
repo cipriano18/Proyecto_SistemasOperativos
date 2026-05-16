@@ -4,103 +4,233 @@ import controller.AuditoriumDraftController;
 import dto.AuditoriumDraftRequest;
 import dto.CalendarRequest;
 import service.Response;
-
+/**
+ * Manejador encargado de procesar las solicitudes
+ * relacionadas con reservas temporales de auditorio.
+ *
+ * <p>
+ * Recibe comandos provenientes del servidor y delega
+ * las operaciones correspondientes al
+ * {@code AuditoriumDraftController}.
+ * </p>
+ *
+ * @author Cipriano
+ */
 public class AuditoriumDraftRequestHandler {
 
-    public static Response handle(String command, Object obj) {
+    /**
+     * Procesa un comando relacionado con reservas temporales
+     * de auditorio.
+     *
+     * @param command comando recibido
+     * @param obj objeto asociado al comando
+     * @return respuesta del proceso
+     */
+    public static Response handle(
+            String command,
+            Object obj
+    ) {
 
         switch (command.toUpperCase()) {
 
             case "START_AUDITORIUM_DRAFT": {
-                AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 
-                System.out.println("---- START_AUDITORIUM_DRAFT ----");
-                System.out.println("Objeto recibido: " + request);
+                AuditoriumDraftRequest request =
+                        (AuditoriumDraftRequest) obj;
+
+                System.out.println(
+                        "---- START_AUDITORIUM_DRAFT ----"
+                );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + request
+                );
 
                 if (request != null) {
-                    System.out.println("IdClient: " + request.getIdClient());
-                    System.out.println("Reservation: " + request.getReservation());
-                    System.out.println("AuditoriumDraft: " + request.getAuditoriumDraft());
+
+                    System.out.println(
+                            "IdClient: "
+                            + request.getIdClient()
+                    );
+
+                    System.out.println(
+                            "Reservation: "
+                            + request.getReservation()
+                    );
+
+                    System.out.println(
+                            "AuditoriumDraft: "
+                            + request.getAuditoriumDraft()
+                    );
                 }
 
-                return AuditoriumDraftController.startAuditoriumDraft(request);
+                return AuditoriumDraftController
+                        .startAuditoriumDraft(request);
             }
 
             case "UPDATE_AUDITORIUM_DRAFT": {
-                AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 
-                System.out.println("---- UPDATE_AUDITORIUM_DRAFT ----");
-                System.out.println("Objeto recibido: " + request);
+                AuditoriumDraftRequest request =
+                        (AuditoriumDraftRequest) obj;
+
+                System.out.println(
+                        "---- UPDATE_AUDITORIUM_DRAFT ----"
+                );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + request
+                );
 
                 if (request != null) {
-                    System.out.println("IdDraft: " + request.getIdDraft());
-                    System.out.println("IdClient: " + request.getIdClient());
-                    System.out.println("Reservation: " + request.getReservation());
-                    System.out.println("AuditoriumDraft: " + request.getAuditoriumDraft());
-                    System.out.println("EquipmentList: " + request.getEquipmentList());
+
+                    System.out.println(
+                            "IdDraft: "
+                            + request.getIdDraft()
+                    );
+
+                    System.out.println(
+                            "IdClient: "
+                            + request.getIdClient()
+                    );
+
+                    System.out.println(
+                            "Reservation: "
+                            + request.getReservation()
+                    );
+
+                    System.out.println(
+                            "AuditoriumDraft: "
+                            + request.getAuditoriumDraft()
+                    );
+
+                    System.out.println(
+                            "EquipmentList: "
+                            + request.getEquipmentList()
+                    );
                 }
 
-                return AuditoriumDraftController.updateAuditoriumDraft(request);
+                return AuditoriumDraftController
+                        .updateAuditoriumDraft(request);
             }
 
             case "GET_AUDITORIUM_DRAFT_BY_CLIENT_ID": {
+
                 Integer idClient = (Integer) obj;
 
-                System.out.println("---- GET_AUDITORIUM_DRAFT_BY_CLIENT_ID ----");
-                System.out.println("IdClient recibido: " + idClient);
+                System.out.println(
+                        "---- GET_AUDITORIUM_DRAFT_BY_CLIENT_ID ----"
+                );
 
-                return AuditoriumDraftController.getAuditoriumDraftByClientId(idClient);
+                System.out.println(
+                        "IdClient recibido: "
+                        + idClient
+                );
+
+                return AuditoriumDraftController
+                        .getAuditoriumDraftByClientId(
+                                idClient
+                        );
             }
 
             case "DISCARD_AUDITORIUM_DRAFT": {
-                AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 
-                System.out.println("---- DISCARD_AUDITORIUM_DRAFT ----");
-                System.out.println("Objeto recibido: " + request);
+                AuditoriumDraftRequest request =
+                        (AuditoriumDraftRequest) obj;
+
+                System.out.println(
+                        "---- DISCARD_AUDITORIUM_DRAFT ----"
+                );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + request
+                );
 
                 if (request != null) {
-                    System.out.println("IdDraft: " + request.getIdDraft());
-                    System.out.println("IdClient: " + request.getIdClient());
+
+                    System.out.println(
+                            "IdDraft: "
+                            + request.getIdDraft()
+                    );
+
+                    System.out.println(
+                            "IdClient: "
+                            + request.getIdClient()
+                    );
                 }
 
-                return AuditoriumDraftController.discardAuditoriumDraft(
-                        request.getIdDraft(),
-                        request.getIdClient()
-                );
+                return AuditoriumDraftController
+                        .discardAuditoriumDraft(
+                                request.getIdDraft(),
+                                request.getIdClient()
+                        );
             }
 
             case "CONFIRM_AUDITORIUM_DRAFT": {
-                AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 
-                System.out.println("---- CONFIRM_AUDITORIUM_DRAFT ----");
-                System.out.println("Objeto recibido: " + request);
+                AuditoriumDraftRequest request =
+                        (AuditoriumDraftRequest) obj;
+
+                System.out.println(
+                        "---- CONFIRM_AUDITORIUM_DRAFT ----"
+                );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + request
+                );
 
                 if (request != null) {
-                    System.out.println("IdDraft: " + request.getIdDraft());
-                    System.out.println("IdClient: " + request.getIdClient());
+
+                    System.out.println(
+                            "IdDraft: "
+                            + request.getIdDraft()
+                    );
+
+                    System.out.println(
+                            "IdClient: "
+                            + request.getIdClient()
+                    );
                 }
 
-                return AuditoriumDraftController.confirmAuditoriumDraft(
-                        request.getIdDraft(),
-                        request.getIdClient()
-                );
+                return AuditoriumDraftController
+                        .confirmAuditoriumDraft(
+                                request.getIdDraft(),
+                                request.getIdClient()
+                        );
             }
 
             case "GET_CALENDAR_AUDITORIUM": {
-                CalendarRequest calendarRequest = (CalendarRequest) obj;
 
-                System.out.println("---- GET_CALENDAR_AUDITORIUM ----");
-                System.out.println("Objeto recibido: " + calendarRequest);
+                CalendarRequest calendarRequest =
+                        (CalendarRequest) obj;
 
-                return AuditoriumDraftController.getAuditoriumCalendarBlocks(
-                        calendarRequest.getMonth(),
-                        calendarRequest.getYear(),
-                        calendarRequest.getIdClient()
+                System.out.println(
+                        "---- GET_CALENDAR_AUDITORIUM ----"
                 );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + calendarRequest
+                );
+
+                return AuditoriumDraftController
+                        .getAuditoriumCalendarBlocks(
+                                calendarRequest.getMonth(),
+                                calendarRequest.getYear(),
+                                calendarRequest.getIdClient()
+                        );
             }
 
             default:
-                return new Response(false, "Comando de auditorio no reconocido", null);
+
+                return new Response(
+                        false,
+                        "Comando de auditorio no reconocido",
+                        null
+                );
         }
     }
 }
