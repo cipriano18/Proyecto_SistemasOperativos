@@ -11,208 +11,463 @@ import model.RXE;
 import model.Reservation;
 import service.Response;
 
+/**
+ * Controlador encargado de gestionar las reservas temporales del auditorio.
+ *
+ * <p>
+ * Permite iniciar, actualizar, descartar, consultar y confirmar reservas
+ * temporales de auditorio.
+ * </p>
+ *
+ * @author Cipriano
+ */
 public class AuditoriumDraftController {
 
-    public static Response getAuditoriumCalendarBlocks(int month, int year, Integer idClient) {
+    /**
+     * Obtiene los bloques del calendario del auditorio para un mes y año
+     * determinados.
+     *
+     * @param month mes consultado
+     * @param year año consultado
+     * @param idClient identificador del cliente
+     * @return respuesta con los bloques del calendario
+     */
+    public static Response getAuditoriumCalendarBlocks(
+            int month,
+            int year,
+            Integer idClient
+    ) {
 
         if (month <= 0 || month > 12) {
-            return new Response(false, "El mes es inválido", null);
+            return new Response(
+                    false,
+                    "El mes es inválido",
+                    null
+            );
         }
 
         if (year <= 0) {
-            return new Response(false, "El año es inválido", null);
+            return new Response(
+                    false,
+                    "El año es inválido",
+                    null
+            );
         }
 
         if (idClient != null && idClient <= 0) {
-            return new Response(false, "El cliente es obligatorio", null);
+            return new Response(
+                    false,
+                    "El cliente es obligatorio",
+                    null
+            );
         }
 
         List<CalendarBlock> result = new ArrayList<>();
 
-        List<CalendarBlock> reserved =
-                AuditoriumReservationDAO.getReservedAuditoriumBlocksByMonth(month, year);
+        List<CalendarBlock> reserved
+                = AuditoriumReservationDAO
+                        .getReservedAuditoriumBlocksByMonth(
+                                month,
+                                year
+                        );
+
         result.addAll(reserved);
 
-        // Solo se agregan los bloqueados si hay un cliente válido
         if (idClient != null) {
-            List<CalendarBlock> blocked =
-                    AuditoriumDraftDAO.getBlockedAuditoriumDraftsByMonth(month, year, idClient);
+            List<CalendarBlock> blocked
+                    = AuditoriumDraftDAO
+                            .getBlockedAuditoriumDraftsByMonth(
+                                    month,
+                                    year,
+                                    idClient
+                            );
+
             result.addAll(blocked);
         }
 
-        return new Response(true, "Calendario de auditorio obtenido correctamente", result);
+        return new Response(
+                true,
+                "Calendario de auditorio obtenido correctamente",
+                result
+        );
     }
 
-    public static Response startAuditoriumDraft(AuditoriumDraftRequest request) {
+    /**
+     * Inicia una reserva temporal de auditorio.
+     *
+     * @param request datos necesarios para crear la reserva temporal
+     * @return respuesta del proceso
+     */
+    public static Response startAuditoriumDraft(
+            AuditoriumDraftRequest request
+    ) {
 
         if (request == null) {
-            return new Response(false, "La solicitud de reserva temporal de auditorio es obligatoria", null);
+            return new Response(
+                    false,
+                    "La solicitud de reserva temporal "
+                    + "de auditorio es obligatoria",
+                    null
+            );
         }
 
         if (request.getIdClient() <= 0) {
-            return new Response(false, "El cliente es obligatorio", null);
+            return new Response(
+                    false,
+                    "El cliente es obligatorio",
+                    null
+            );
         }
 
         Reservation reservation = request.getReservation();
 
         if (reservation == null) {
-            return new Response(false, "La reserva base es obligatoria", null);
-        }
-
-        if (reservation.getReservationDate() == null) {
-            return new Response(false, "La fecha de reserva es obligatoria", null);
-        }
-
-        if (reservation.getIdSection() <= 0) {
-            return new Response(false, "La sección es obligatoria", null);
-        }
-
-        List<RXE> equipmentList = request.getEquipmentList();
-
-        if (equipmentList != null) {
-            for (RXE item : equipmentList) {
-                if (item == null) {
-                    return new Response(false, "La lista contiene un equipo inválido", null);
-                }
-
-                if (item.getIdEquipment() <= 0) {
-                    return new Response(false, "Equipo inválido", null);
-                }
-
-                if (item.getQuantity() <= 0) {
-                    return new Response(false, "La cantidad del equipo debe ser mayor que cero", null);
-                }
-            }
-        }
-
-        AuditoriumDraftRequest createdDraft = AuditoriumDraftDAO.createDraft(request);
-
-        if (createdDraft == null) {
             return new Response(
                     false,
-                    "No se pudo crear la reserva temporal. La fecha y sección ya podrían estar ocupadas",
+                    "La reserva base es obligatoria",
                     null
             );
         }
 
-        return new Response(true, "Reserva temporal de auditorio creada correctamente", createdDraft);
-    }
-
-    public static Response updateAuditoriumDraft(AuditoriumDraftRequest request) {
-
-        if (request == null) {
-            return new Response(false, "La solicitud de actualización es obligatoria", null);
+        if (reservation.getReservationDate() == null) {
+            return new Response(
+                    false,
+                    "La fecha de reserva es obligatoria",
+                    null
+            );
         }
 
-        if (request.getIdDraft() <= 0) {
-            return new Response(false, "El id de la reserva temporal es obligatorio", null);
-        }
-
-        AuditoriumDraft auditoriumDraft = request.getAuditoriumDraft();
-
-        if (auditoriumDraft == null) {
-            return new Response(false, "Los datos del auditorio son obligatorios", null);
-        }
-
-        if (auditoriumDraft.getEventName() == null || auditoriumDraft.getEventName().isBlank()) {
-            return new Response(false, "El nombre del evento es obligatorio", null);
-        }
-
-        if (auditoriumDraft.getAttendeesCount() < 0) {
-            return new Response(false, "La cantidad de asistentes no puede ser negativa", null);
-        }
-
-        if (auditoriumDraft.getAttendeesCount() > 200) {
-            return new Response(false, "La cantidad de asistentes no puede superar 200 personas", null);
+        if (reservation.getIdSection() <= 0) {
+            return new Response(
+                    false,
+                    "La sección es obligatoria",
+                    null
+            );
         }
 
         List<RXE> equipmentList = request.getEquipmentList();
 
         if (equipmentList != null) {
             for (RXE item : equipmentList) {
+
                 if (item == null) {
-                    return new Response(false, "La lista contiene un equipo inválido", null);
+                    return new Response(
+                            false,
+                            "La lista contiene un equipo inválido",
+                            null
+                    );
                 }
 
                 if (item.getIdEquipment() <= 0) {
-                    return new Response(false, "Equipo inválido", null);
+                    return new Response(
+                            false,
+                            "Equipo inválido",
+                            null
+                    );
                 }
 
                 if (item.getQuantity() <= 0) {
-                    return new Response(false, "La cantidad del equipo debe ser mayor que cero", null);
+                    return new Response(
+                            false,
+                            "La cantidad del equipo debe ser "
+                            + "mayor que cero",
+                            null
+                    );
                 }
             }
         }
 
-        boolean updated = AuditoriumDraftDAO.updateDraft(request);
+        AuditoriumDraftRequest createdDraft
+                = AuditoriumDraftDAO.createDraft(request);
 
-        if (!updated) {
-            return new Response(false, "No se pudo actualizar la reserva temporal de auditorio", null);
+        if (createdDraft == null) {
+            return new Response(
+                    false,
+                    "No se pudo crear la reserva temporal. "
+                    + "La fecha y sección ya podrían estar ocupadas",
+                    null
+            );
         }
 
-        return new Response(true, "Reserva temporal de auditorio actualizada correctamente", request);
+        return new Response(
+                true,
+                "Reserva temporal de auditorio creada correctamente",
+                createdDraft
+        );
     }
 
-    public static Response discardAuditoriumDraft(int idDraft, int idClient) {
+    /**
+     * Actualiza una reserva temporal de auditorio.
+     *
+     * @param request datos actualizados de la reserva temporal
+     * @return respuesta del proceso
+     */
+    public static Response updateAuditoriumDraft(
+            AuditoriumDraftRequest request
+    ) {
+
+        if (request == null) {
+            return new Response(
+                    false,
+                    "La solicitud de actualización es obligatoria",
+                    null
+            );
+        }
+
+        if (request.getIdDraft() <= 0) {
+            return new Response(
+                    false,
+                    "El id de la reserva temporal es obligatorio",
+                    null
+            );
+        }
+
+        AuditoriumDraft auditoriumDraft
+                = request.getAuditoriumDraft();
+
+        if (auditoriumDraft == null) {
+            return new Response(
+                    false,
+                    "Los datos del auditorio son obligatorios",
+                    null
+            );
+        }
+
+        if (auditoriumDraft.getEventName() == null
+                || auditoriumDraft.getEventName().isBlank()) {
+
+            return new Response(
+                    false,
+                    "El nombre del evento es obligatorio",
+                    null
+            );
+        }
+
+        if (auditoriumDraft.getAttendeesCount() < 0) {
+            return new Response(
+                    false,
+                    "La cantidad de asistentes "
+                    + "no puede ser negativa",
+                    null
+            );
+        }
+
+        if (auditoriumDraft.getAttendeesCount() > 200) {
+            return new Response(
+                    false,
+                    "La cantidad de asistentes no puede "
+                    + "superar 200 personas",
+                    null
+            );
+        }
+
+        List<RXE> equipmentList = request.getEquipmentList();
+
+        if (equipmentList != null) {
+            for (RXE item : equipmentList) {
+
+                if (item == null) {
+                    return new Response(
+                            false,
+                            "La lista contiene un equipo inválido",
+                            null
+                    );
+                }
+
+                if (item.getIdEquipment() <= 0) {
+                    return new Response(
+                            false,
+                            "Equipo inválido",
+                            null
+                    );
+                }
+
+                if (item.getQuantity() <= 0) {
+                    return new Response(
+                            false,
+                            "La cantidad del equipo debe ser "
+                            + "mayor que cero",
+                            null
+                    );
+                }
+            }
+        }
+
+        boolean updated
+                = AuditoriumDraftDAO.updateDraft(request);
+
+        if (!updated) {
+            return new Response(
+                    false,
+                    "No se pudo actualizar la reserva "
+                    + "temporal de auditorio",
+                    null
+            );
+        }
+
+        return new Response(
+                true,
+                "Reserva temporal de auditorio "
+                + "actualizada correctamente",
+                request
+        );
+    }
+
+    /**
+     * Descarta una reserva temporal de auditorio.
+     *
+     * @param idDraft identificador de la reserva temporal
+     * @param idClient identificador del cliente
+     * @return respuesta del proceso
+     */
+    public static Response discardAuditoriumDraft(
+            int idDraft,
+            int idClient
+    ) {
 
         if (idDraft <= 0) {
-            return new Response(false, "El id de la reserva temporal es obligatorio", null);
+            return new Response(
+                    false,
+                    "El id de la reserva temporal es obligatorio",
+                    null
+            );
         }
 
         if (idClient <= 0) {
-            return new Response(false, "El cliente es obligatorio", null);
+            return new Response(
+                    false,
+                    "El cliente es obligatorio",
+                    null
+            );
         }
 
-        AuditoriumDraftRequest draft = AuditoriumDraftDAO.getDraftById(idDraft);
+        AuditoriumDraftRequest draft
+                = AuditoriumDraftDAO.getDraftById(idDraft);
 
         if (draft == null) {
-            return new Response(false, "Reserva temporal no encontrada o expirada", null);
+            return new Response(
+                    false,
+                    "Reserva temporal no encontrada o expirada",
+                    null
+            );
         }
 
         if (draft.getIdClient() != idClient) {
-            return new Response(false, "La reserva temporal no pertenece a este cliente", null);
+            return new Response(
+                    false,
+                    "La reserva temporal no pertenece "
+                    + "a este cliente",
+                    null
+            );
         }
 
-        boolean deleted = AuditoriumDraftDAO.deleteDraft(idDraft);
+        boolean deleted
+                = AuditoriumDraftDAO.deleteDraft(idDraft);
 
         if (!deleted) {
-            return new Response(false, "No se pudo descartar la reserva temporal de auditorio", null);
+            return new Response(
+                    false,
+                    "No se pudo descartar la reserva "
+                    + "temporal de auditorio",
+                    null
+            );
         }
 
-        return new Response(true, "Reserva temporal de auditorio descartada correctamente", draft);
+        return new Response(
+                true,
+                "Reserva temporal de auditorio "
+                + "descartada correctamente",
+                draft
+        );
     }
 
-    public static Response getAuditoriumDraftByClientId(int idClient) {
+    /**
+     * Obtiene la reserva temporal activa de un cliente.
+     *
+     * @param idClient identificador del cliente
+     * @return respuesta con la reserva temporal activa
+     */
+    public static Response getAuditoriumDraftByClientId(
+            int idClient
+    ) {
 
         if (idClient <= 0) {
-            return new Response(false, "El cliente es obligatorio", null);
+            return new Response(
+                    false,
+                    "El cliente es obligatorio",
+                    null
+            );
         }
 
-        AuditoriumDraftRequest draft = AuditoriumDraftDAO.getDraftByClientId(idClient);
+        AuditoriumDraftRequest draft
+                = AuditoriumDraftDAO.getDraftByClientId(
+                        idClient
+                );
 
         if (draft == null) {
-            return new Response(false, "No hay reservas temporales activas para este cliente", null);
+            return new Response(
+                    false,
+                    "No hay reservas temporales activas "
+                    + "para este cliente",
+                    null
+            );
         }
 
-        return new Response(true, "Reserva temporal de auditorio obtenida correctamente", draft);
+        return new Response(
+                true,
+                "Reserva temporal de auditorio "
+                + "obtenida correctamente",
+                draft
+        );
     }
 
-    public static Response confirmAuditoriumDraft(int idDraft, int idClient) {
+    /**
+     * Confirma una reserva temporal de auditorio.
+     *
+     * @param idDraft identificador de la reserva temporal
+     * @param idClient identificador del cliente
+     * @return respuesta del proceso
+     */
+    public static Response confirmAuditoriumDraft(
+            int idDraft,
+            int idClient
+    ) {
 
         if (idDraft <= 0) {
-            return new Response(false, "El id de la reserva temporal es obligatorio", null);
+            return new Response(
+                    false,
+                    "El id de la reserva temporal es obligatorio",
+                    null
+            );
         }
 
         if (idClient <= 0) {
-            return new Response(false, "El cliente es obligatorio", null);
+            return new Response(
+                    false,
+                    "El cliente es obligatorio",
+                    null
+            );
         }
 
-        boolean confirmed = AuditoriumDraftDAO.confirmDraft(idDraft, idClient);
+        boolean confirmed
+                = AuditoriumDraftDAO.confirmDraft(
+                        idDraft,
+                        idClient
+                );
 
         if (!confirmed) {
-            return new Response(false, "No se pudo confirmar la reserva de auditorio", null);
+            return new Response(
+                    false,
+                    "No se pudo confirmar la reserva "
+                    + "de auditorio",
+                    null
+            );
         }
 
-        return new Response(true, "Reserva de auditorio confirmada correctamente", idDraft);
+        return new Response(
+                true,
+                "Reserva de auditorio confirmada correctamente",
+                idDraft
+        );
     }
 }

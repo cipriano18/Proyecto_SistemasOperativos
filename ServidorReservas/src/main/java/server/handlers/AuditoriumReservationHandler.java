@@ -3,70 +3,150 @@ package server.handlers;
 import controller.AuditoriumReservationController;
 import dto.AuditoriumDraftRequest;
 import service.Response;
-
 /**
+ * Manejador encargado de procesar las solicitudes
+ * relacionadas con reservaciones de auditorio.
+ *
+ * <p>
+ * Recibe comandos provenientes del servidor y delega
+ * las operaciones correspondientes al
+ * {@code AuditoriumReservationController}.
+ * </p>
  *
  * @author Reyner
  */
 public class AuditoriumReservationHandler {
 
-    public static Response handle(String command, Object obj) {
+    /**
+     * Procesa un comando relacionado con reservaciones
+     * de auditorio.
+     *
+     * @param command comando recibido
+     * @param obj objeto asociado al comando
+     * @return respuesta del proceso
+     */
+    public static Response handle(
+            String command,
+            Object obj
+    ) {
 
         switch (command.toUpperCase()) {
 
             case "GET_AUDITORIUM_RESERVATION_BY_ID": {
-                Integer idReservation = (Integer) obj;
 
-                System.out.println("---- GET_AUDITORIUM_RESERVATION_BY_ID ----");
-                System.out.println("IdReservation recibido: " + idReservation);
+                Integer idReservation =
+                        (Integer) obj;
 
-                return AuditoriumReservationController.getAuditoriumReservationById(idReservation);
+                System.out.println(
+                        "---- GET_AUDITORIUM_RESERVATION_BY_ID ----"
+                );
+
+                System.out.println(
+                        "IdReservation recibido: "
+                        + idReservation
+                );
+
+                return AuditoriumReservationController
+                        .getAuditoriumReservationById(
+                                idReservation
+                        );
             }
 
             case "GET_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID": {
-                Integer idClient = (Integer) obj;
 
-                System.out.println("---- GET_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID ----");
-                System.out.println("IdClient recibido: " + idClient);
+                Integer idClient =
+                        (Integer) obj;
 
-                return AuditoriumReservationController.getAuditoriumReservationsByClientId(idClient);
+                System.out.println(
+                        "---- GET_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID ----"
+                );
+
+                System.out.println(
+                        "IdClient recibido: "
+                        + idClient
+                );
+
+                return AuditoriumReservationController
+                        .getAuditoriumReservationsByClientId(
+                                idClient
+                        );
             }
 
             case "GET_AUDITORIUM_RESERVATIONS_BY_MONTH": {
-                int[] data = (int[]) obj;
+
+                int[] data =
+                        (int[]) obj;
 
                 int month = data[0];
+
                 int year = data[1];
 
-                System.out.println("---- GET_AUDITORIUM_RESERVATIONS_BY_MONTH ----");
-                System.out.println("Month: " + month + " Year: " + year);
+                System.out.println(
+                        "---- GET_AUDITORIUM_RESERVATIONS_BY_MONTH ----"
+                );
 
-                return AuditoriumReservationController.getAuditoriumReservationsByMonth(month, year);
+                System.out.println(
+                        "Month: " + month
+                        + " Year: " + year
+                );
+
+                return AuditoriumReservationController
+                        .getAuditoriumReservationsByMonth(
+                                month,
+                                year
+                        );
             }
 
             case "DELETE_AUDITORIUM_RESERVATION_BY_ID": {
-                AuditoriumDraftRequest request = (AuditoriumDraftRequest) obj;
 
-                System.out.println("---- DELETE_AUDITORIUM_RESERVATION_BY_ID ----");
-                System.out.println("Objeto recibido: " + request);
+                AuditoriumDraftRequest request =
+                        (AuditoriumDraftRequest) obj;
 
-                return AuditoriumReservationController.deleteAuditoriumReservationById(
-                        request.getReservation().getIdReservation(),
-                        request.getIdClient()
+                System.out.println(
+                        "---- DELETE_AUDITORIUM_RESERVATION_BY_ID ----"
                 );
+
+                System.out.println(
+                        "Objeto recibido: "
+                        + request
+                );
+
+                return AuditoriumReservationController
+                        .deleteAuditoriumReservationById(
+                                request.getReservation()
+                                        .getIdReservation(),
+                                request.getIdClient()
+                        );
             }
 
             case "DELETE_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID": {
-                Integer idClient = (Integer) obj;
 
-                System.out.println("---- DELETE_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID ----");
-                System.out.println("IdClient recibido: " + idClient);
+                Integer idClient =
+                        (Integer) obj;
 
-                return AuditoriumReservationController.deleteAuditoriumReservationsByClientId(idClient);
+                System.out.println(
+                        "---- DELETE_AUDITORIUM_RESERVATIONS_BY_CLIENT_ID ----"
+                );
+
+                System.out.println(
+                        "IdClient recibido: "
+                        + idClient
+                );
+
+                return AuditoriumReservationController
+                        .deleteAuditoriumReservationsByClientId(
+                                idClient
+                        );
             }
 
             default:
-                return new Response(false, "Comando de reservación de auditorio no reconocido", null);
+
+                return new Response(
+                        false,
+                        "Comando de reservación "
+                        + "de auditorio no reconocido",
+                        null
+                );
         }
     }
 }
