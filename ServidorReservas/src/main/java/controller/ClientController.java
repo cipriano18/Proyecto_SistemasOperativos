@@ -17,84 +17,191 @@ import model.User;
 import utils.Validator;
 
 /**
+ * Controlador encargado de gestionar las operaciones
+ * relacionadas con clientes.
+ *
+ * <p>
+ * Permite obtener, crear, actualizar y eliminar clientes,
+ * incluyendo usuarios, contactos y reservas asociadas.
+ * </p>
  *
  * @author Cipriano
  */
 public class ClientController {
 
-    //obtener datos de un cliente 
+      /**
+     * Obtiene la información completa de un cliente.
+     *
+     * @param idClient identificador del cliente
+     * @return datos completos del cliente
+     */
     public static ClientRequest getClient(int idClient) {
 
-        ClientRequest clientRequest = ClientDAO.getFullClientById(idClient);
+        ClientRequest clientRequest =
+                ClientDAO.getFullClientById(idClient);
 
         if (clientRequest == null) {
-            System.out.println("ERROR:Cliente no encontrado");
+
+            System.out.println(
+                    "ERROR: Cliente no encontrado"
+            );
+
             return null;
         }
+
         if (clientRequest.getUser() != null) {
+
             clientRequest.getUser().setUsername(null);
+
             clientRequest.getUser().setPassword(null);
         }
 
         return clientRequest;
     }
 
-    // Eliminar cliente (cascade)
-    public static Response deleteClient(ClientRequest clientRequest) {
+    /**
+     * Elimina un cliente en cascada.
+     *
+     * <p>
+     * También elimina:
+     * </p>
+     *
+     * <ul>
+     *     <li>Reservas</li>
+     *     <li>Contactos</li>
+     *     <li>Usuario asociado</li>
+     * </ul>
+     *
+     * @param clientRequest datos del cliente a eliminar
+     * @return respuesta del proceso
+     */
+    public static Response deleteClient(
+            ClientRequest clientRequest
+    ) {
 
         if (clientRequest == null) {
-            return new Response(false, "La solicitud del cliente es obligatoria", null);
+            return new Response(
+                    false,
+                    "La solicitud del cliente es obligatoria",
+                    null
+            );
         }
 
         User user = clientRequest.getUser();
         Client client = clientRequest.getClient();
 
         if (user == null) {
-            return new Response(false, "El usuario es obligatorio", null);
+            return new Response(
+                    false,
+                    "El usuario es obligatorio",
+                    null
+            );
         }
 
         if (client == null) {
-            return new Response(false, "El cliente es obligatorio", null);
+            return new Response(
+                    false,
+                    "El cliente es obligatorio",
+                    null
+            );
         }
 
         if (client.getIdClient() <= 0) {
-            return new Response(false, "El id del cliente es inválido", null);
+            return new Response(
+                    false,
+                    "El id del cliente es inválido",
+                    null
+            );
         }
 
         if (user.getIdUser() <= 0) {
-            return new Response(false, "El id del usuario es inválido", null);
+            return new Response(
+                    false,
+                    "El id del usuario es inválido",
+                    null
+            );
         }
 
-        boolean reservationsDeleted = ReservationDAO.deleteReservationsByClientId(client.getIdClient());
+        boolean reservationsDeleted =
+                ReservationDAO
+                        .deleteReservationsByClientId(
+                                client.getIdClient()
+                        );
+
         if (!reservationsDeleted) {
-            return new Response(false, "No se pudieron eliminar las reservas del cliente", null);
+            return new Response(
+                    false,
+                    "No se pudieron eliminar "
+                    + "las reservas del cliente",
+                    null
+            );
         }
 
-        boolean contactsDeleted = ContactDAO.deleteContactByClientId(client.getIdClient());
+        boolean contactsDeleted =
+                ContactDAO.deleteContactByClientId(
+                        client.getIdClient()
+                );
+
         if (!contactsDeleted) {
-            return new Response(false, "No se pudieron eliminar los contactos del cliente", null);
+            return new Response(
+                    false,
+                    "No se pudieron eliminar "
+                    + "los contactos del cliente",
+                    null
+            );
         }
 
-        boolean userDeleted = UserDAO.deleteUser(user.getIdUser());
+        boolean userDeleted =
+                UserDAO.deleteUser(user.getIdUser());
+
         if (!userDeleted) {
-            return new Response(false, "No se pudo eliminar el usuario", null);
+            return new Response(
+                    false,
+                    "No se pudo eliminar el usuario",
+                    null
+            );
         }
 
-        return new Response(true, "Cliente eliminado correctamente", null);
+        return new Response(
+                true,
+                "Cliente eliminado correctamente",
+                null
+        );
     }
 
-    // Crear cliente
-    public static Response createClient(ClientRequest clientRequest) {
+    /**
+     * Crea un nuevo cliente.
+     *
+     * @param clientRequest datos del cliente
+     * @return respuesta del proceso
+     */
+    public static Response createClient(
+            ClientRequest clientRequest
+    ) {
 
-        System.out.println("DEBUG - Iniciando createClient");
+        System.out.println(
+                "DEBUG - Iniciando createClient"
+        );
 
         if (clientRequest == null) {
-            return new Response(false, "La solicitud del cliente es obligatoria", null);
+            return new Response(
+                    false,
+                    "La solicitud del cliente es obligatoria",
+                    null
+            );
         }
 
-        List<String> errors = Validator.validateClientRequest(clientRequest);
+        List<String> errors =
+                Validator.validateClientRequest(
+                        clientRequest
+                );
+
         if (!errors.isEmpty()) {
-            return new Response(false, String.join(" | ", errors), null);
+            return new Response(
+                    false,
+                    String.join(" | ", errors),
+                    null
+            );
         }
 
         User user = clientRequest.getUser();
@@ -102,54 +209,133 @@ public class ClientController {
         Contact contact = clientRequest.getContact();
 
         if (user == null) {
-            return new Response(false, "El usuario es obligatorio", null);
+            return new Response(
+                    false,
+                    "El usuario es obligatorio",
+                    null
+            );
         }
 
         if (client == null) {
-            return new Response(false, "El cliente es obligatorio", null);
+            return new Response(
+                    false,
+                    "El cliente es obligatorio",
+                    null
+            );
         }
 
         if (contact == null) {
-            return new Response(false, "El contacto es obligatorio", null);
+            return new Response(
+                    false,
+                    "El contacto es obligatorio",
+                    null
+            );
         }
 
-        if (UserDAO.getUserByUsername(user.getUsername()) != null) {
-            return new Response(false, "El nombre de usuario ya está en uso", null);
+        if (UserDAO.getUserByUsername(
+                user.getUsername()
+        ) != null) {
+
+            return new Response(
+                    false,
+                    "El nombre de usuario "
+                    + "ya está en uso",
+                    null
+            );
         }
-        if (ClientDAO.getClientByIdentityCard(client.getIdentityCard()) != null) {
-            return new Response(false, "La cédula ya está registrada como cliente", null);
+
+        if (ClientDAO.getClientByIdentityCard(
+                client.getIdentityCard()
+        ) != null) {
+
+            return new Response(
+                    false,
+                    "La cédula ya está registrada "
+                    + "como cliente",
+                    null
+            );
         }
+
         user.setIdRole(3);
 
-        boolean userInserted = UserDAO.insertUser(user);
+        boolean userInserted =
+                UserDAO.insertUser(user);
+
         if (!userInserted) {
-            return new Response(false, "No se pudo crear el usuario", null);
+            return new Response(
+                    false,
+                    "No se pudo crear el usuario",
+                    null
+            );
         }
 
-        User createdUser = UserDAO.getUserByUsername(user.getUsername());
+        User createdUser =
+                UserDAO.getUserByUsername(
+                        user.getUsername()
+                );
+
         if (createdUser == null) {
-            return new Response(false, "No se pudo recuperar el usuario creado", null);
+            return new Response(
+                    false,
+                    "No se pudo recuperar "
+                    + "el usuario creado",
+                    null
+            );
         }
 
-        client.setIdUser(createdUser.getIdUser());
-        boolean clientInserted = ClientDAO.createClient(client);
+        client.setIdUser(
+                createdUser.getIdUser()
+        );
+
+        boolean clientInserted =
+                ClientDAO.createClient(client);
+
         if (!clientInserted) {
-            return new Response(false, "No se pudo crear el cliente", null);
+            return new Response(
+                    false,
+                    "No se pudo crear el cliente",
+                    null
+            );
         }
 
-        Client createdClient = ClientDAO.getClientByUserId(client.getIdUser());
+        Client createdClient =
+                ClientDAO.getClientByUserId(
+                        client.getIdUser()
+                );
+
         if (createdClient == null) {
-            return new Response(false, "No se pudo recuperar el cliente creado", null);
+            return new Response(
+                    false,
+                    "No se pudo recuperar "
+                    + "el cliente creado",
+                    null
+            );
         }
 
-        int idContact = ContactDAO.insertContact(contact);
+        int idContact =
+                ContactDAO.insertContact(contact);
+
         if (idContact == -1) {
-            return new Response(false, "No se pudo crear el contacto", null);
+            return new Response(
+                    false,
+                    "No se pudo crear el contacto",
+                    null
+            );
         }
 
-        boolean linked = ContactDAO.insertCXC(createdClient.getIdClient(), idContact);
+        boolean linked =
+                ContactDAO.insertCXC(
+                        createdClient.getIdClient(),
+                        idContact
+                );
+
         if (!linked) {
-            return new Response(false, "No se pudo vincular el contacto al cliente", null);
+            return new Response(
+                    false,
+                    "No se pudo vincular "
+                    + "el contacto al cliente",
+                    null
+            );
         }
 
         contact.setIdContact(idContact);
@@ -157,21 +343,40 @@ public class ClientController {
         createdUser.setUsername(null);
         createdUser.setPassword(null);
 
-        ClientRequest responseData = new ClientRequest();
+        ClientRequest responseData =
+                new ClientRequest();
+
         responseData.setUser(createdUser);
         responseData.setClient(createdClient);
         responseData.setContact(contact);
 
-        return new Response(true, "Cliente creado correctamente", responseData);
+        return new Response(
+                true,
+                "Cliente creado correctamente",
+                responseData
+        );
     }
-    
-    // Actualizar cliente
-     public static Response updateClient(ClientRequest clientRequest) {
 
-        System.out.println("DEBUG - Iniciando updateClient");
+    /**
+     * Actualiza la información de un cliente.
+     *
+     * @param clientRequest datos actualizados del cliente
+     * @return respuesta del proceso
+     */
+    public static Response updateClient(
+            ClientRequest clientRequest
+    ) {
+
+        System.out.println(
+                "DEBUG - Iniciando updateClient"
+        );
 
         if (clientRequest == null) {
-            return new Response(false, "La solicitud del cliente es obligatoria", null);
+            return new Response(
+                    false,
+                    "La solicitud del cliente es obligatoria",
+                    null
+            );
         }
 
         User user = clientRequest.getUser();
@@ -179,82 +384,189 @@ public class ClientController {
         Contact contact = clientRequest.getContact();
 
         if (user == null) {
-            return new Response(false, "El usuario es obligatorio", null);
+            return new Response(
+                    false,
+                    "El usuario es obligatorio",
+                    null
+            );
         }
 
         if (client == null) {
-            return new Response(false, "El cliente es obligatorio", null);
+            return new Response(
+                    false,
+                    "El cliente es obligatorio",
+                    null
+            );
         }
 
         if (client.getIdClient() <= 0) {
-            return new Response(false, "El id del cliente es inválido", null);
+            return new Response(
+                    false,
+                    "El id del cliente es inválido",
+                    null
+            );
         }
 
         if (user.getIdUser() <= 0) {
-            return new Response(false, "El id del usuario es inválido", null);
+            return new Response(
+                    false,
+                    "El id del usuario es inválido",
+                    null
+            );
         }
 
-        if (!Validator.isValidFName(client.getfName())) {
-            return new Response(false, "El campo primer nombre es obligatorio", null);
+        if (!Validator.isValidFName(
+                client.getfName()
+        )) {
+
+            return new Response(
+                    false,
+                    "El campo primer nombre "
+                    + "es obligatorio",
+                    null
+            );
         }
 
-        if (!Validator.isValidFSurname(client.getfSurname())) {
-            return new Response(false, "El campo primer apellido es obligatorio", null);
+        if (!Validator.isValidFSurname(
+                client.getfSurname()
+        )) {
+
+            return new Response(
+                    false,
+                    "El campo primer apellido "
+                    + "es obligatorio",
+                    null
+            );
         }
 
-        if (!Validator.isValidMSurname(client.getmSurname())) {
-            return new Response(false, "El campo segundo apellido es obligatorio", null);
+        if (!Validator.isValidMSurname(
+                client.getmSurname()
+        )) {
+
+            return new Response(
+                    false,
+                    "El campo segundo apellido "
+                    + "es obligatorio",
+                    null
+            );
         }
 
-        if (!Validator.isValidIdentityCard(client.getIdentityCard())) {
-            return new Response(false, "Cédula inválida", null);
+        if (!Validator.isValidIdentityCard(
+                client.getIdentityCard()
+        )) {
+
+            return new Response(
+                    false,
+                    "Cédula inválida",
+                    null
+            );
         }
 
-        if (!Validator.isValidUsername(user.getUsername())) {
-            return new Response(false, "Nombre de usuario inválido", null);
+        if (!Validator.isValidUsername(
+                user.getUsername()
+        )) {
+
+            return new Response(
+                    false,
+                    "Nombre de usuario inválido",
+                    null
+            );
         }
-          
+
         if (contact != null) {
 
-            if (!Validator.isValidContact(contact.getType(), contact.getContactValue())) {
+            if (!Validator.isValidContact(
+                    contact.getType(),
+                    contact.getContactValue()
+            )) {
 
-                if ("PHONE".equalsIgnoreCase(contact.getType())) {
-                    return new Response(false, "El teléfono debe contener exactamente 8 dígitos numéricos", null);
+                if ("PHONE".equalsIgnoreCase(
+                        contact.getType()
+                )) {
+
+                    return new Response(
+                            false,
+                            "El teléfono debe contener "
+                            + "exactamente 8 dígitos "
+                            + "numéricos",
+                            null
+                    );
                 }
 
-                if ("EMAIL".equalsIgnoreCase(contact.getType())) {
-                    return new Response(false, "El correo debe tener un formato válido (ejemplo: usuario@dominio.com)", null);
+                if ("EMAIL".equalsIgnoreCase(
+                        contact.getType()
+                )) {
+
+                    return new Response(
+                            false,
+                            "El correo debe tener "
+                            + "un formato válido "
+                            + "(ejemplo: "
+                            + "usuario@dominio.com)",
+                            null
+                    );
                 }
 
-                return new Response(false, "Valor de contacto inválido", null);
+                return new Response(
+                        false,
+                        "Valor de contacto inválido",
+                        null
+                );
             }
 
-            boolean contactUpdated = ContactDAO.updateContact(contact);
+            boolean contactUpdated =
+                    ContactDAO.updateContact(contact);
+
             if (!contactUpdated) {
-                return new Response(false, "No se pudo actualizar el contacto", null);
+                return new Response(
+                        false,
+                        "No se pudo actualizar "
+                        + "el contacto",
+                        null
+                );
             }
         }
 
         user.setIdRole(3);
 
-        boolean userUpdated = UserDAO.updateUser(user);
+        boolean userUpdated =
+                UserDAO.updateUser(user);
+
         if (!userUpdated) {
-            return new Response(false, "No se pudo actualizar el usuario", null);
+            return new Response(
+                    false,
+                    "No se pudo actualizar "
+                    + "el usuario",
+                    null
+            );
         }
 
-        boolean clientUpdated = ClientDAO.updateClient(client);
+        boolean clientUpdated =
+                ClientDAO.updateClient(client);
+
         if (!clientUpdated) {
-            return new Response(false, "No se pudo actualizar el cliente", null);
+            return new Response(
+                    false,
+                    "No se pudo actualizar "
+                    + "el cliente",
+                    null
+            );
         }
 
         user.setUsername(null);
         user.setPassword(null);
 
-        ClientRequest responseData = new ClientRequest();
+        ClientRequest responseData =
+                new ClientRequest();
+
         responseData.setUser(user);
         responseData.setClient(client);
         responseData.setContact(contact);
 
-        return new Response(true, "Cliente actualizado correctamente", responseData);
+        return new Response(
+                true,
+                "Cliente actualizado correctamente",
+                responseData
+        );
     }
 }
