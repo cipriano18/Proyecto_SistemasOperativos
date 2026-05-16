@@ -8,105 +8,199 @@ import java.util.TimerTask;
 import model.CalendarBlock;
 
 /**
- *
- * @author Cipriano
+ * Gestiona la limpieza automática de drafts expirados.
  */
 public class ReservationDraftCleanupService {
 
     private static Timer timer;
+
     private static boolean running = false;
 
+    /**
+     * Inicia el servicio de limpieza de drafts.
+     */
     public static void start() {
+
         if (running) {
-            System.out.println("El servicio de limpieza de drafts ya está iniciado.");
+
+            System.out.println(
+                    "El servicio de limpieza "
+                    + "de drafts ya está iniciado."
+            );
+
             return;
         }
 
         running = true;
+
         timer = new Timer(true);
 
-        System.out.println("Servicio de limpieza de drafts iniciado...");
+        System.out.println(
+                "Servicio de limpieza "
+                + "de drafts iniciado..."
+        );
 
-        timer.scheduleAtFixedRate(new TimerTask() {
+        timer.scheduleAtFixedRate(
+                new TimerTask() {
+
             @Override
             public void run() {
 
-                System.out.println("\nEjecutando limpieza de drafts...");
-                System.out.println("Hora actual: " + new java.util.Date());
+                System.out.println(
+                        "\nEjecutando limpieza "
+                        + "de drafts..."
+                );
+
+                System.out.println(
+                        "Hora actual: "
+                        + new java.util.Date()
+                );
 
                 limpiarDraftsEquipo();
+
                 limpiarDraftsAuditorio();
             }
+
         }, 0, 15000);
     }
 
+    /**
+     * Limpia drafts expirados de equipos.
+     */
     private static void limpiarDraftsEquipo() {
-        List<CalendarBlock> expiredBlocks = EquipmentReservationDraftDAO.getExpiredDraftBlocks();
 
-        int deleted = EquipmentReservationDraftDAO.cleanupExpiredDraftsAndCount();
+        List<CalendarBlock> expiredBlocks =
+                EquipmentReservationDraftDAO
+                        .getExpiredDraftBlocks();
 
-        System.out.println("Drafts de equipo eliminados: " + deleted);
+        int deleted =
+                EquipmentReservationDraftDAO
+                        .cleanupExpiredDraftsAndCount();
+
+        System.out.println(
+                "Drafts de equipo eliminados: "
+                + deleted
+        );
 
         if (deleted > 0) {
+
             for (CalendarBlock block : expiredBlocks) {
-                NotificationService.notifyReservationViewers(
-                        "RESERVATION_DRAFT_EXPIRED",
-                        block
-                );
+
+                NotificationService
+                        .notifyReservationViewers(
+                                "RESERVATION_DRAFT_EXPIRED",
+                                block
+                        );
             }
+
         } else {
-            System.out.println("No hay drafts de equipo expirados");
-        }
-    }
 
-   private static void limpiarDraftsAuditorio() {
-    List<CalendarBlock> expiredBlocks = AuditoriumDraftDAO.getExpiredDraftBlocks();
-
-    System.out.println("Bloques de auditorio expirados encontrados: " + expiredBlocks.size());
-
-    int deleted = AuditoriumDraftDAO.cleanupExpiredDraftsAndCount();
-
-    System.out.println("Drafts de auditorio eliminados: " + deleted);
-
-    if (deleted > 0) {
-
-        if (expiredBlocks.isEmpty()) {
-            System.out.println("Se eliminaron drafts de auditorio, pero no se encontraron bloques para notificar.");
-        }
-
-        for (CalendarBlock block : expiredBlocks) {
-            System.out.println("Notificando auditorio vencido: "
-                    + block.getReservationDate()
-                    + " sección "
-                    + block.getIdSection());
-
-            NotificationService.notifyReservationViewers(
-                    "AUDITORIUM_DRAFT_EXPIRED",
-                    block
+            System.out.println(
+                    "No hay drafts de equipo "
+                    + "expirados"
             );
         }
-
-    } else {
-        System.out.println("No hay drafts de auditorio expirados");
     }
-}
+
+    /**
+     * Limpia drafts expirados de auditorio.
+     */
+    private static void limpiarDraftsAuditorio() {
+
+        List<CalendarBlock> expiredBlocks =
+                AuditoriumDraftDAO
+                        .getExpiredDraftBlocks();
+
+        System.out.println(
+                "Bloques de auditorio "
+                + "expirados encontrados: "
+                + expiredBlocks.size()
+        );
+
+        int deleted =
+                AuditoriumDraftDAO
+                        .cleanupExpiredDraftsAndCount();
+
+        System.out.println(
+                "Drafts de auditorio eliminados: "
+                + deleted
+        );
+
+        if (deleted > 0) {
+
+            if (expiredBlocks.isEmpty()) {
+
+                System.out.println(
+                        "Se eliminaron drafts "
+                        + "de auditorio, pero no "
+                        + "se encontraron bloques "
+                        + "para notificar."
+                );
+            }
+
+            for (CalendarBlock block : expiredBlocks) {
+
+                System.out.println(
+                        "Notificando auditorio "
+                        + "vencido: "
+                        + block.getReservationDate()
+                        + " sección "
+                        + block.getIdSection()
+                );
+
+                NotificationService
+                        .notifyReservationViewers(
+                                "AUDITORIUM_DRAFT_EXPIRED",
+                                block
+                        );
+            }
+
+        } else {
+
+            System.out.println(
+                    "No hay drafts de auditorio "
+                    + "expirados"
+            );
+        }
+    }
+
+    /**
+     * Detiene el servicio de limpieza de drafts.
+     */
     public static void stop() {
+
         if (!running) {
-            System.out.println("El servicio de limpieza de drafts ya está detenido.");
+
+            System.out.println(
+                    "El servicio de limpieza "
+                    + "de drafts ya está detenido."
+            );
+
             return;
         }
 
         running = false;
 
         if (timer != null) {
+
             timer.cancel();
+
             timer.purge();
+
             timer = null;
         }
 
-        System.out.println("Servicio de limpieza de drafts detenido.");
+        System.out.println(
+                "Servicio de limpieza "
+                + "de drafts detenido."
+        );
     }
 
+    /**
+     * Indica si el servicio está en ejecución.
+     *
+     * @return true si el servicio está activo
+     */
     public static boolean isRunning() {
         return running;
     }
