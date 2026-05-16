@@ -2,6 +2,9 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * Clase base para personas registradas dentro del sistema.
+ */
 public class Person implements Serializable {
     private static final long serialVersionUID = 1L;
     protected int idUser;
@@ -11,10 +14,20 @@ public class Person implements Serializable {
     protected String mSurname;
     protected String identityCard;
 
-    public Person() {
-    }
-
-    public Person(int idUser, String fName, String mName, String fSurname, String mSurname, String identityCard) {
+    /**
+     * Crea una persona con sus datos personales principales.
+     *
+     * @param idUser identificador del usuario asociado
+     * @param fName primer nombre
+     * @param mName segundo nombre
+     * @param fSurname primer apellido
+     * @param mSurname segundo apellido
+     * @param identityCard documento de identidad
+     */
+    public Person(
+            int idUser, String fName, String mName,
+            String fSurname, String mSurname, String identityCard) {
+        
         this.idUser = idUser;
         this.fName = fName;
         this.mName = mName;
@@ -71,6 +84,11 @@ public class Person implements Serializable {
         this.identityCard = identityCard;
     }
 
+    /**
+     * Devuelve el nombre completo de la persona en una sola cadena.
+     *
+     * @return nombre completo de la persona
+     */
     @Override
     public String toString() {
         return fName + " " + mName + " " + fSurname + " " + mSurname;

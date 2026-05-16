@@ -7,8 +7,7 @@ package model;
 import java.io.Serializable;
 
 /**
- *
- * @author Cipriano
+ * Relaciona una reserva con un equipo y la cantidad solicitada.
  */
 public class RXE implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -18,9 +17,20 @@ public class RXE implements Serializable {
     private int idEquipment;
     private int quantity;
 
+    /**
+     * Crea una relacion vacia entre reserva y equipo.
+     */
     public RXE() {
     }
 
+    /**
+     * Crea una relacion con sus identificadores y cantidad asociada.
+     *
+     * @param idRxe identificador de la relacion
+     * @param idReservation identificador de la reserva
+     * @param idEquipment identificador del equipo
+     * @param quantity cantidad solicitada del equipo
+     */
     public RXE(int idRxe, int idReservation, int idEquipment, int quantity) {
         this.idRxe = idRxe;
         this.idReservation = idReservation;

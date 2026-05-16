@@ -2,6 +2,9 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * Representa las credenciales y el rol de un usuario del sistema.
+ */
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -9,9 +12,21 @@ public class User implements Serializable {
     private int idRole;
     private String username;
     private String password;
+
+    /**
+     * Crea un usuario vacio.
+     */
     public User() {
     }
 
+    /**
+     * Crea un usuario con identificador, rol y credenciales.
+     *
+     * @param idUser identificador del usuario
+     * @param idRole identificador del rol asociado
+     * @param username nombre de usuario
+     * @param password contrasena del usuario
+     */
     public User(int idUser, int idRole, String username, String password) {
         this.idUser = idUser;
         this.idRole = idRole;
@@ -19,6 +34,13 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    /**
+     * Crea un usuario nuevo con rol y credenciales.
+     *
+     * @param idRole identificador del rol asociado
+     * @param username nombre de usuario
+     * @param password contrasena del usuario
+     */
     public User(int idRole, String username, String password) {
         this.idRole = idRole;
         this.username = username;
@@ -57,11 +79,13 @@ public class User implements Serializable {
         this.password = password;
     }
 
-
+    /**
+     * Devuelve una representacion textual resumida del usuario.
+     *
+     * @return cadena con los datos principales del usuario
+     */
     @Override
     public String toString() {
         return  idUser + " " + username + " " + idRole;
     }
-
-   
 }
