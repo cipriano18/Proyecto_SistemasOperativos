@@ -43,9 +43,28 @@
                             </children>
                         </VBox>
 
-                        <Region prefHeight="116.0" prefWidth="120.0" HBox.hgrow="ALWAYS" />
-
-                        <HBox fx:id="ttl_chip_container" alignment="CENTER" managed="false" visible="false" />
+                        <Region prefHeight="116.0" prefWidth="58.0" HBox.hgrow="ALWAYS" />
+                  <HBox fx:id="ttl_chip_container" alignment="CENTER">
+                     <children>
+                        <HBox fx:id="ttl_chip" alignment="CENTER" maxHeight="50.0" minWidth="100.0" style="-fx-border-color: white; -fx-border-radius: 50; -fx-background-color: #a12c2c; -fx-background-radius: 50;">
+                           <children>
+                              <ImageView fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../assets/timer.png" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="lbl_timer" alignment="CENTER" prefHeight="30.0" prefWidth="51.0" text="55:55" textFill="WHITE">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets right="2.0" />
+                           </padding>
+                        </HBox>
+                     </children>
+                  </HBox>
 
                         <Region prefHeight="116.0" prefWidth="40.0" />
 
@@ -62,7 +81,7 @@
             </children>
         </HBox>
 
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vvalue="0.16" VBox.vgrow="ALWAYS">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
             <content>
                 <HBox minWidth="840.0" prefWidth="940.0">
                     <children>

@@ -10,8 +10,8 @@ import components.TtlChip;
 import draft.EquipmentReservationDraft;
 import dto.AuditoriumDraftRequest;
 import dto.ClientRequest;
+import dto.EquipmentReservationDraftRequest;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ResourceBundle;
@@ -29,6 +29,7 @@ import network.ReservationNotificationHandler;
 import service.AuditoriumDraftService;
 import service.CalendarService;
 import service.EquipmentReservationDraftService;
+import service.ReservationDraftService;
 import service.Response;
 import session.Session;
 import utils.DraftContainer;
@@ -73,15 +74,15 @@ public class home_screen_controller implements Initializable {
     private Label lbl_recovery_text;
     @FXML
     private HBox ttl_banner_chip_container;
-    @FXML
-    private Button btn_continue_draft;
-    @FXML
-    private Button btn_discard_draft;
 
     private TtlChip bannerChip;
     private Runnable bannerExpiredListener;
     private Response recoveredDraftResp;
     private String recoveredFlowType;
+    @FXML
+    private Button btn_continue_draft;
+    @FXML
+    private Button btn_discard_draft;
 
     /**
      * Verifica la sesion activa y prepara la recuperacion de drafts.
@@ -180,6 +181,7 @@ public class home_screen_controller implements Initializable {
      * @param audResp respuesta del draft de auditorio
      */
     private void showRecoveryBannerIfAny(Response equipResp, Response audResp) {
+        ActiveDraftBanner activeBanner = null;
 
         if (equipResp != null && equipResp.isSuccess()
                 && equipResp.getData() instanceof EquipmentReservationDraft) {
@@ -187,15 +189,16 @@ public class home_screen_controller implements Initializable {
             EquipmentReservationDraft draft 
                     = (EquipmentReservationDraft) equipResp.getData();
             
-            if (draft.getExpiresAt() != null && !draft.isExpired()) {
-                recoveredDraftResp = equipResp;
-                recoveredFlowType = "DEVICE";
-                showBanner(
-                        "Tienes una reserva de equipos activa", 
+            if (draft.getCreatedAt() != null
+                    && draft.getExpiresAt() != null
+                    && !draft.isExpired()) {
+                activeBanner = new ActiveDraftBanner(
+                        equipResp,
+                        "DEVICE",
+                        "Tienes una reserva de equipos activa",
                         draft.getCreatedAt(), 
-                        draft.getExpiresAt());
-                
-                return;
+                        draft.getExpiresAt()
+                );
             }
         }
 
@@ -204,22 +207,58 @@ public class home_screen_controller implements Initializable {
 
             AuditoriumDraftRequest draft 
                     = (AuditoriumDraftRequest) audResp.getData();
-            
-            Timestamp[] ttl = tryReadAuditoriumTtl(draft);
 
-            recoveredDraftResp = audResp;
-            recoveredFlowType = "AUDITORIUM";
+            if (draft.getCreatedAt() != null
+                    && draft.getExpiresAt() != null
+                    && !draft.isExpired()) {
+                ActiveDraftBanner auditoriumBanner = new ActiveDraftBanner(
+                        audResp,
+                        "AUDITORIUM",
+                        "Tienes una reserva de auditorio activa",
+                        draft.getCreatedAt(),
+                        draft.getExpiresAt()
+                );
 
-            if (ttl != null && ttl[0] != null && ttl[1] != null
-                    && System.currentTimeMillis() < ttl[1].getTime()) {
-                showBanner(
-                        "Tienes una reserva de auditorio activa", 
-                        ttl[0],
-                        ttl[1]);
-                
-            } else {
-                showBannerNoChip("Tienes una reserva de auditorio activa");
+                if (activeBanner == null
+                        || auditoriumBanner.createdAt.getTime()
+                        >= activeBanner.createdAt.getTime()) {
+                    activeBanner = auditoriumBanner;
+                }
             }
+        }
+
+        if (activeBanner != null) {
+            recoveredDraftResp = activeBanner.response;
+            recoveredFlowType = activeBanner.flowType;
+            showBanner(
+                    activeBanner.text,
+                    activeBanner.createdAt,
+                    activeBanner.expiresAt
+            );
+        } else {
+            hideRecoveryBanner();
+        }
+    }
+
+    private static final class ActiveDraftBanner {
+
+        private final Response response;
+        private final String flowType;
+        private final String text;
+        private final Timestamp createdAt;
+        private final Timestamp expiresAt;
+
+        private ActiveDraftBanner(
+                Response response,
+                String flowType,
+                String text,
+                Timestamp createdAt,
+                Timestamp expiresAt) {
+            this.response = response;
+            this.flowType = flowType;
+            this.text = text;
+            this.createdAt = createdAt;
+            this.expiresAt = expiresAt;
         }
     }
 
@@ -239,6 +278,7 @@ public class home_screen_controller implements Initializable {
                 && expiresAt != null) {
             
             bannerChip = new TtlChip();
+            bannerChip.setBlackStyle();
             bannerChip.setCompact(true);
             bannerChip.setOnExpired(this::hideRecoveryBanner);
             ttl_banner_chip_container.getChildren().setAll(bannerChip);
@@ -286,23 +326,6 @@ public class home_screen_controller implements Initializable {
             recoveredDraftResp = null;
             recoveredFlowType = null;
         });
-    }
-
-    private static Timestamp[] tryReadAuditoriumTtl(
-            AuditoriumDraftRequest req) {
-        
-        if (req == null) return null;
-        try {
-            Method m1 = req.getClass().getMethod("getCreatedAt");
-            Method m2 = req.getClass().getMethod("getExpiresAt");
-            Object a = m1.invoke(req);
-            Object b = m2.invoke(req);
-            if (a instanceof Timestamp && b instanceof Timestamp) {
-                return new Timestamp[] { (Timestamp) a, (Timestamp) b };
-            }
-        } catch (Exception ignored) {
-        }
-        return null;
     }
 
     /**
@@ -376,22 +399,57 @@ public class home_screen_controller implements Initializable {
         if ("DEVICE".equals(recoveredFlowType)
                 && recoveredDraftResp.getData() 
                 instanceof EquipmentReservationDraft) {
-            
+
             EquipmentReservationDraft d 
                     = (EquipmentReservationDraft) recoveredDraftResp.getData();
-            
-            EquipmentReservationDraftService
-                    .discardEquipmentDraft(d.getIdDraft(), idClient);
-            
+
+            EquipmentReservationDraftRequest request
+                    = new EquipmentReservationDraftRequest();
+            request.setIdDraft(d.getIdDraft());
+            request.setIdClient(idClient);
+
+            Response resp
+                    = ReservationDraftService.discardEquipmentDraft(request);
+
+            if (resp == null || !resp.isSuccess()) {
+                PopUp.warning(
+                        "Error",
+                        "No se pudo descartar",
+                        resp != null
+                                ? resp.getMessage()
+                                : "No se pudo conectar con el servidor.",
+                        "dangerous.png",
+                        1,
+                        1,
+                        "Aceptar"
+                );
+                return;
+            }
+
             Session.getInstance().setCurrentEquipmentDraftId(0);
         } else if ("AUDITORIUM".equals(recoveredFlowType)
                 && recoveredDraftResp.getData() 
                 instanceof AuditoriumDraftRequest) {
-            
+
             AuditoriumDraftRequest req 
                     = (AuditoriumDraftRequest) recoveredDraftResp.getData();
-            
-            AuditoriumDraftService.discardAuditoriumDraft(req);
+
+            Response resp = AuditoriumDraftService.discardAuditoriumDraft(req);
+
+            if (resp == null || !resp.isSuccess()) {
+                PopUp.warning(
+                        "Error",
+                        "No se pudo descartar",
+                        resp != null
+                                ? resp.getMessage()
+                                : "No se pudo conectar con el servidor.",
+                        "dangerous.png",
+                        1,
+                        1,
+                        "Aceptar"
+                );
+                return;
+            }
         }
 
         DraftContainer.getInstance().clearAll();

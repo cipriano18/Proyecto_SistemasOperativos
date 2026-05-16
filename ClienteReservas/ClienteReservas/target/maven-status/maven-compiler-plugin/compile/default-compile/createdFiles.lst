@@ -13,6 +13,7 @@ service\AdminProfileService.class
 model\CalendarRequest.class
 service\EquipmentService.class
 controller\device_schedule_screen_controller.class
+controller\home_screen_controller$ActiveDraftBanner.class
 controller\home_screen_controller$1.class
 model\AuditoriumReservation.class
 controller\profile_screen_controller.class
@@ -40,6 +41,7 @@ network\ServerListener.class
 utils\DraftContainer.class
 session\Session.class
 dto\CalendarRequest.class
+controller\device_schedule_screen_controller$TimestampRange.class
 dto\EquipmentReservationDraftRequest.class
 utils\CalendarConstants.class
 components\ReservationCard.class

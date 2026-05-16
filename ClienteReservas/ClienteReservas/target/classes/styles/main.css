@@ -393,37 +393,31 @@
 
 /* ===== BANNER DE RECUPERACIÓN ===== */
 .recovery-banner {
-    -fx-background-color: linear-gradient(to right, #6F0A18, #C8102E);
-    -fx-background-radius: 14px;
-    -fx-padding: 12 18 12 18;
-    -fx-spacing: 14;
+    -fx-background-color: white;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.25, 0, 2);
 }
-.recovery-banner .recovery-text {
+.recovery-banner .recovery-btn-primary {
+    -fx-background-color: linear-gradient(to right, #6F0A18, #C8102E);
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-font-size: 14px;
-}
-.recovery-banner .recovery-btn-primary {
-    -fx-background-color: white;
-    -fx-text-fill: #C8102E;
-    -fx-font-weight: bold;
-    -fx-background-radius: 18px;
+    -fx-background-radius: 0px;
     -fx-padding: 6 16 6 16;
     -fx-cursor: hand;
+    -fx-border-color: linear-gradient(to right, #6F0A18, #C8102E);
 }
 .recovery-banner .recovery-btn-primary:hover {
-    -fx-background-color: #FFE5E9;
+    -fx-background-color: linear-gradient(to right, #5e0814, #a10e26);
 }
 .recovery-banner .recovery-btn-secondary {
     -fx-background-color: transparent;
-    -fx-border-color: white;
-    -fx-border-radius: 18px;
-    -fx-background-radius: 18px;
-    -fx-text-fill: white;
+    -fx-border-color: black;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+    -fx-text-fill: black;
     -fx-padding: 6 16 6 16;
     -fx-cursor: hand;
 }
 .recovery-banner .recovery-btn-secondary:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-border-color: red;
+    -fx-text-fill: red;
 }

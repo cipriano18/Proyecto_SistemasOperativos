@@ -2,6 +2,7 @@ package dto;
 
 import draft.AuditoriumDraft;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 import model.RXE;
 import model.Reservation;
@@ -17,6 +18,8 @@ public class AuditoriumDraftRequest implements Serializable {
     private Reservation reservation;
     private AuditoriumDraft auditoriumDraft;
     private List<RXE> equipmentList;
+    private Timestamp createdAt;
+    private Timestamp expiresAt;
 
     /**
      * Crea una solicitud vacia de draft de auditorio.
@@ -85,5 +88,31 @@ public class AuditoriumDraftRequest implements Serializable {
 
     public void setEquipmentList(List<RXE> equipmentList) {
         this.equipmentList = equipmentList;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(Timestamp expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+
+    /**
+     * Indica si el draft ya vencio segun la hora actual.
+     *
+     * @return {@code true} si el draft ya expiro
+     */
+    public boolean isExpired() {
+        return expiresAt != null
+                && System.currentTimeMillis() > expiresAt.getTime();
     }
 }

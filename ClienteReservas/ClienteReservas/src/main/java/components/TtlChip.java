@@ -8,21 +8,18 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 public class TtlChip extends HBox {
 
-    private final Label lblIcon = new Label("⏱"); // ⏱
+    private final ImageView imgTimer = new ImageView();
     private final Label lblTime = new Label("--:--");
-    private final ProgressBar pbRemaining = new ProgressBar(1.0);
-    private final Button btnToggleEye = new Button("👁"); // 👁
-    private final VBox vbTimeAndBar = new VBox();
     private final Tooltip tooltip = new Tooltip("Tiempo restante");
 
     private Timeline timeline;
@@ -30,33 +27,43 @@ public class TtlChip extends HBox {
     private long expiresAtMs;
     private long totalDurationMs = 1L;
     private Runnable onExpiredCallback;
-    private boolean expanded = true;
     private boolean expired = false;
 
     public TtlChip() {
         getStyleClass().add("ttl-chip");
-        setAlignment(Pos.CENTER_LEFT);
-        setSpacing(8);
-        setPadding(new Insets(6, 10, 6, 10));
 
-        lblIcon.getStyleClass().add("ttl-icon");
-        lblTime.getStyleClass().add("ttl-time");
-        pbRemaining.getStyleClass().add("ttl-bar");
-        pbRemaining.setPrefWidth(120);
-        pbRemaining.setPrefHeight(6);
-        btnToggleEye.getStyleClass().add("ttl-eye-btn");
-        btnToggleEye.setFocusTraversable(false);
-        btnToggleEye.setOnAction(e -> toggleVisibility());
+        setAlignment(Pos.CENTER);
+        setMaxHeight(50);
+        setMinWidth(100);
+        setPadding(new Insets(0, 2, 0, 0));
+        setSpacing(4);
 
-        vbTimeAndBar.setSpacing(2);
-        vbTimeAndBar.setAlignment(Pos.CENTER_LEFT);
-        vbTimeAndBar.getChildren().addAll(lblTime, pbRemaining);
+        setStyle(
+                "-fx-border-color: white;"
+                + "-fx-border-radius: 50;"
+                + "-fx-background-color: Transparent;"
+                + "-fx-background-radius: 50;"
+        );
+
+        imgTimer.setFitWidth(34);
+        imgTimer.setFitHeight(34);
+        imgTimer.setPreserveRatio(true);
+        imgTimer.setPickOnBounds(true);
+
+        Image timerImage = new Image(
+                getClass().getResource("/assets/timer.png").toExternalForm()
+        );
+        imgTimer.setImage(timerImage);
+
+        lblTime.setAlignment(Pos.CENTER);
+        lblTime.setPrefWidth(51);
+        lblTime.setPrefHeight(30);
+        lblTime.setTextFill(javafx.scene.paint.Color.WHITE);
+        lblTime.setFont(Font.font(20));
 
         Tooltip.install(this, tooltip);
 
-        getChildren().addAll(lblIcon, vbTimeAndBar, btnToggleEye);
-
-        applyColorClass(1.0);
+        getChildren().addAll(imgTimer, lblTime);
     }
 
     public void start(Timestamp createdAt, Timestamp expiresAt) {
@@ -91,13 +98,19 @@ public class TtlChip extends HBox {
 
     public void setCompact(boolean compact) {
         if (compact) {
-            pbRemaining.setPrefWidth(70);
-            vbTimeAndBar.setSpacing(1);
-            setPadding(new Insets(3, 6, 3, 6));
+            setMinWidth(85);
+            setPadding(new Insets(0, 2, 0, 0));
+            imgTimer.setFitWidth(28);
+            imgTimer.setFitHeight(28);
+            lblTime.setFont(Font.font(17));
+            lblTime.setPrefWidth(48);
         } else {
-            pbRemaining.setPrefWidth(120);
-            vbTimeAndBar.setSpacing(2);
-            setPadding(new Insets(6, 10, 6, 10));
+            setMinWidth(100);
+            setPadding(new Insets(0, 2, 0, 0));
+            imgTimer.setFitWidth(34);
+            imgTimer.setFitHeight(34);
+            lblTime.setFont(Font.font(20));
+            lblTime.setPrefWidth(51);
         }
     }
 
@@ -107,53 +120,53 @@ public class TtlChip extends HBox {
 
         if (remaining <= 0) {
             updateLabels(0);
-            applyColorClass(0.0);
+
             if (!expired) {
                 expired = true;
                 stop();
+
                 if (onExpiredCallback != null) {
                     Platform.runLater(onExpiredCallback);
                 }
             }
+
             return;
         }
 
-        double fraction = (double) remaining / (double) totalDurationMs;
-        if (fraction > 1.0) fraction = 1.0;
-
         updateLabels(remaining);
-        pbRemaining.setProgress(fraction);
-        applyColorClass(fraction);
     }
 
     private void updateLabels(long remainingMs) {
         long totalSeconds = Math.max(0, remainingMs / 1000L);
         long minutes = totalSeconds / 60;
         long seconds = totalSeconds % 60;
+
         String text = String.format("%02d:%02d", minutes, seconds);
+
         lblTime.setText(text);
         tooltip.setText("Vence en " + text);
     }
 
-    private void applyColorClass(double fraction) {
-        getStyleClass().removeAll("ttl-ok", "ttl-warn", "ttl-danger");
-        if (fraction > 0.5) {
-            getStyleClass().add("ttl-ok");
-        } else if (fraction > 0.2) {
-            getStyleClass().add("ttl-warn");
-        } else {
-            getStyleClass().add("ttl-danger");
-        }
-    }
-
-    private void toggleVisibility() {
-        expanded = !expanded;
-        vbTimeAndBar.setVisible(expanded);
-        vbTimeAndBar.setManaged(expanded);
-        btnToggleEye.setText(expanded ? "👁" : "👁‍🗨");
-    }
-
     public boolean isExpired() {
         return expired;
+    }
+
+    public void setBlackStyle() {
+        getStyleClass().remove("ttl-chip");
+        setStyle(
+                "-fx-background-color: white;"
+                + "-fx-background-radius: 0;"
+                + "-fx-border-radius: 0;"
+                + "-fx-border-color: transparent;"
+                + "-fx-effect: null;"
+        );
+
+        Image timerImage = new Image(
+                getClass().getResource("/assets/timer_black.png").toExternalForm()
+        );
+
+        imgTimer.setImage(timerImage);
+
+        lblTime.setTextFill(javafx.scene.paint.Color.BLACK);
     }
 }

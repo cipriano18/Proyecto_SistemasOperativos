@@ -19,6 +19,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Polygon?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="840.0" prefHeight="600.0" prefWidth="940.0" stylesheets="@../styles/text.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.device_schedule_screen_controller">
    <top>
@@ -68,74 +69,87 @@
                   <HBox prefHeight="101.0" prefWidth="940.0" spacing="10.0" stylesheets="@../styles/schedule.css">
                      <children>
                         <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                        <VBox prefHeight="55.0" prefWidth="151.0">
+                        <HBox spacing="5.0" style="-fx-border-color: #c9c9c9; -fx-border-radius: 50;">
                            <children>
-                              <Label styleClass="field-label" text=" MES" />
-                              <ChoiceBox fx:id="chb_month" prefHeight="35.0" prefWidth="150.0">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </ChoiceBox>
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="55.0" prefWidth="147.0">
-                           <children>
-                              <Label styleClass="field-label" text=" AÑO" />
-                              <TextField fx:id="tf_year" prefHeight="35.0" prefWidth="120.0">
-                                 <cursor>
-                                    <Cursor fx:constant="TEXT" />
-                                 </cursor>
-                              </TextField>
-                           </children>
-                        </VBox>
-                        <VBox>
-                           <children>
-                              <Label styleClass="field-label" />
-                              <Button fx:id="btn_search" mnemonicParsing="false" onAction="#GetCalendar" prefHeight="35.0" prefWidth="39.0" style="-fx-background-color: red;">
-                                 <graphic>
-                                    <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../assets/search.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER">
-                           <children>
-                              <Label styleClass="field-label" />
-                              <Separator orientation="VERTICAL" prefHeight="200.0" />
-                              <Label styleClass="field-label" />
-                           </children>
-                        </VBox>
-                        <VBox>
-                           <children>
-                              <Label styleClass="field-label" />
-                              <HBox spacing="10.0">
+                              <VBox prefHeight="55.0" prefWidth="151.0">
                                  <children>
-                                    <Button mnemonicParsing="false" prefHeight="35.0" style="-fx-background-color: red;">
+                                    <Label styleClass="field-label" text=" MES" />
+                                    <ChoiceBox fx:id="chb_month" prefHeight="35.0" prefWidth="150.0">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </ChoiceBox>
+                                 </children>
+                              </VBox>
+                              <VBox prefHeight="55.0" prefWidth="147.0">
+                                 <children>
+                                    <Label styleClass="field-label" text=" AÑO" />
+                                    <TextField fx:id="tf_year" prefHeight="35.0" prefWidth="120.0">
+                                       <cursor>
+                                          <Cursor fx:constant="TEXT" />
+                                       </cursor>
+                                    </TextField>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label styleClass="field-label" />
+                                    <Button fx:id="btn_search" mnemonicParsing="false" onAction="#GetCalendar" prefHeight="35.0" prefWidth="39.0" style="-fx-background-color: red;">
                                        <graphic>
                                           <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../assets/previos.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button mnemonicParsing="false" prefHeight="35.0" style="-fx-background-color: red;">
-                                       <graphic>
-                                          <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../assets/next.png" />
+                                                <Image url="@../assets/search.png" />
                                              </image>
                                           </ImageView>
                                        </graphic>
                                     </Button>
                                  </children>
-                              </HBox>
+                              </VBox>
+                              <VBox alignment="CENTER">
+                                 <children>
+                                    <Label prefHeight="9.0" prefWidth="1.0" styleClass="field-label">
+                                       <font>
+                                          <Font size="10.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator orientation="VERTICAL" prefHeight="32.0" prefWidth="6.0" />
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label styleClass="field-label" />
+                                    <HBox spacing="10.0">
+                                       <children>
+                                          <Button mnemonicParsing="false" prefHeight="35.0" style="-fx-background-color: red;">
+                                             <graphic>
+                                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../assets/previos.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button mnemonicParsing="false" prefHeight="35.0" style="-fx-background-color: red;">
+                                             <graphic>
+                                                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../assets/next.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
                            </children>
-                        </VBox>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <padding>
+                              <Insets bottom="7.0" left="20.0" right="20.0" top="2.0" />
+                           </padding>
+                        </HBox>
                         <Region prefHeight="64.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
                         <VBox minHeight="55.0" minWidth="223.0" prefHeight="55.0" prefWidth="223.0" style="-fx-border-color: #c9c9c9; -fx-border-radius: 5;">
                            <children>

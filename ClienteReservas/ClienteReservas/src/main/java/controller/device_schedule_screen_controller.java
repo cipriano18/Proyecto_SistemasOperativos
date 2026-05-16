@@ -3,6 +3,7 @@ package controller;
 import com.auditorio.clientereservas.App;
 import components.PopUp;
 import components.TtlChip;
+import dto.AuditoriumDraftRequest;
 import draft.EquipmentReservationDraft;
 import java.io.IOException;
 import java.net.URL;
@@ -26,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.CalendarBlock;
 import network.ReservationNotificationHandler;
+import service.AuditoriumDraftService;
 import service.CalendarService;
 import service.EquipmentReservationDraftService;
 import service.Response;
@@ -142,22 +144,49 @@ public class device_schedule_screen_controller implements Initializable {
         }
 
         try {
-            Response resp 
-                    = EquipmentReservationDraftService
-                            .getEquipmentDraftByClientId(idClient);
-            
-            if (resp == null || !resp.isSuccess()
-                    || !(resp.getData() instanceof EquipmentReservationDraft)) {
-                return;
+            String flowType = DraftContainer.getInstance().getFlowType();
+            TimestampRange ttl = null;
+
+            if ("AUDITORIUM".equals(flowType)) {
+                Response resp = AuditoriumDraftService
+                        .getAuditoriumDraftByClientId(idClient);
+
+                if (resp != null && resp.isSuccess()
+                        && resp.getData() instanceof AuditoriumDraftRequest) {
+                    AuditoriumDraftRequest draft
+                            = (AuditoriumDraftRequest) resp.getData();
+
+                    if (draft.getCreatedAt() != null
+                            && draft.getExpiresAt() != null
+                            && !draft.isExpired()) {
+                        ttl = new TimestampRange(
+                                draft.getCreatedAt(),
+                                draft.getExpiresAt()
+                        );
+                    }
+                }
+            } else {
+                Response resp = EquipmentReservationDraftService
+                        .getEquipmentDraftByClientId(idClient);
+
+                if (resp != null && resp.isSuccess()
+                        && resp.getData() instanceof EquipmentReservationDraft) {
+                    EquipmentReservationDraft draft
+                            = (EquipmentReservationDraft) resp.getData();
+
+                    if (draft.getCreatedAt() != null
+                            && draft.getExpiresAt() != null
+                            && !draft.isExpired()) {
+                        ttl = new TimestampRange(
+                                draft.getCreatedAt(),
+                                draft.getExpiresAt()
+                        );
+                    }
+                }
             }
 
-            EquipmentReservationDraft draft 
-                    = (EquipmentReservationDraft) resp.getData();
-            if (
-                draft.getCreatedAt() == null 
-                || draft.getExpiresAt() == null 
-                || draft.isExpired()) {
-                
+            if (ttl == null) {
+                teardownTtlIndicator();
                 return;
             }
 
@@ -172,7 +201,7 @@ public class device_schedule_screen_controller implements Initializable {
             hb_ttl_indicator.setVisible(true);
             hb_ttl_indicator.setManaged(true);
 
-            ttlChip.start(draft.getCreatedAt(), draft.getExpiresAt());
+            ttlChip.start(ttl.createdAt, ttl.expiresAt);
 
             expiredListener = () -> {
                 teardownTtlIndicator();
@@ -402,5 +431,18 @@ public class device_schedule_screen_controller implements Initializable {
         };
 
         tf_year.setTextFormatter(new TextFormatter<>(filter));
+    }
+
+    private static final class TimestampRange {
+
+        private final java.sql.Timestamp createdAt;
+        private final java.sql.Timestamp expiresAt;
+
+        private TimestampRange(
+                java.sql.Timestamp createdAt,
+                java.sql.Timestamp expiresAt) {
+            this.createdAt = createdAt;
+            this.expiresAt = expiresAt;
+        }
     }
 }

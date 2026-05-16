@@ -9,7 +9,6 @@ import draft.AuditoriumDraft;
 import dto.AuditoriumDraftRequest;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +34,7 @@ import network.ReservationNotificationHandler;
 import service.AuditoriumDraftService;
 import service.EquipmentService;
 import service.Response;
+import session.Session;
 import utils.DraftContainer;
 
 /**
@@ -90,6 +90,7 @@ public class auditorium_form_screen_controller implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 
         loadingData = true;
+        DraftContainer.getInstance().setFlowType("AUDITORIUM");
 
         Response draftResponse 
                 = DraftContainer.getInstance().getDraftResponse();
@@ -99,6 +100,15 @@ public class auditorium_form_screen_controller implements Initializable {
                 && draftResponse.getData() instanceof AuditoriumDraftRequest) {
 
             currentDraft = (AuditoriumDraftRequest) draftResponse.getData();
+        }
+
+        if (currentDraft == null
+                || currentDraft.getCreatedAt() == null
+                || currentDraft.getExpiresAt() == null) {
+            hydrateCurrentDraft();
+        }
+
+        if (currentDraft != null && currentDraft.getReservation() != null) {
             selectedReservation = currentDraft.getReservation();
 
         } else {
@@ -137,19 +147,7 @@ public class auditorium_form_screen_controller implements Initializable {
         loadDraftEquipmentCards();
 
         addAutosaveListeners();
-        
-    ReservationNotificationHandler.setOnDraftExpired(() -> {
 
-        System.out.println("Broadcast recibido en formulario de auditorio");
-
-        DraftContainer.getInstance().setFlowType("AUDITORIUM");
-
-        try {
-            App.setRoot("device_schedule_screen");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    });
         setupTtlChip();
 
         loadingData = false;
@@ -159,11 +157,16 @@ public class auditorium_form_screen_controller implements Initializable {
      * Configura el chip con el tiempo restante del draft activo.
      */
     private void setupTtlChip() {
-
-        Timestamp[] ttl = tryReadTtl(currentDraft);
-        if (ttl == null || ttl[0] == null || 
-            ttl[1] == null || ttl_chip_container == null) {
-            
+        if (currentDraft == null
+                || currentDraft.getCreatedAt() == null
+                || currentDraft.getExpiresAt() == null
+                || currentDraft.isExpired()
+                || ttl_chip_container == null) {
+            if (ttl_chip_container != null) {
+                ttl_chip_container.getChildren().clear();
+                ttl_chip_container.setVisible(false);
+                ttl_chip_container.setManaged(false);
+            }
             return;
         }
 
@@ -173,29 +176,35 @@ public class auditorium_form_screen_controller implements Initializable {
         ttlChip = new TtlChip();
         ttlChip.setOnExpired(this::handleDraftExpired);
         ttl_chip_container.getChildren().setAll(ttlChip);
-        ttlChip.start(ttl[0], ttl[1]);
+        ttlChip.start(currentDraft.getCreatedAt(), currentDraft.getExpiresAt());
 
         expiredListener = this::handleDraftExpired;
         ReservationNotificationHandler.addOnDraftExpired(expiredListener);
     }
 
-    private static Timestamp[] tryReadTtl(AuditoriumDraftRequest req) {
-        if (req == null) return null;
+    private void hydrateCurrentDraft() {
         try {
-            java.lang.reflect.Method m1 
-                    = req.getClass().getMethod("getCreatedAt");
-            
-            java.lang.reflect.Method m2 
-                    = req.getClass().getMethod("getExpiresAt");
-            
-            Object a = m1.invoke(req);
-            Object b = m2.invoke(req);
-            if (a instanceof Timestamp && b instanceof Timestamp) {
-                return new Timestamp[] { (Timestamp) a, (Timestamp) b };
+            if (Session.getInstance().getClient() == null
+                    || Session.getInstance().getClient().getClient() == null) {
+                return;
             }
-        } catch (Exception ignored) {
+
+            int idClient = Session.getInstance().getClient().getClient()
+                    .getIdClient();
+
+            Response resp = AuditoriumDraftService
+                    .getAuditoriumDraftByClientId(idClient);
+
+            if (resp != null
+                    && resp.isSuccess()
+                    && resp.getData() instanceof AuditoriumDraftRequest) {
+                currentDraft = (AuditoriumDraftRequest) resp.getData();
+            }
+        } catch (Exception e) {
+            System.out.println(
+                    "No se pudo hidratar el draft de auditorio: "
+                    + e.getMessage());
         }
-        return null;
     }
 
     /**
@@ -204,7 +213,8 @@ public class auditorium_form_screen_controller implements Initializable {
     private void handleDraftExpired() {
         teardownTtlChip();
 
-        DraftContainer.getInstance().setDraftResponse(null);
+        DraftContainer.getInstance().clearAll();
+        DraftContainer.getInstance().setFlowType("AUDITORIUM");
 
         PopUp.warning(
                 "Reserva vencida",
