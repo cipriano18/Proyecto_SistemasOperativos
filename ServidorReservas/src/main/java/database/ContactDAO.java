@@ -7,80 +7,174 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import model.Contact;
 
+/**
+ * Gestiona las operaciones relacionadas con contactos.
+ */
 public class ContactDAO {
 
-    // Inserta un contacto y retorna el ID generado, -1 si falla
+    /**
+     * Inserta un contacto y retorna el ID generado.
+     *
+     * @param contact contacto a insertar
+     *
+     * @return ID generado o -1 si ocurre un error
+     */
     public static int insertContact(Contact contact) {
-        String sql = "INSERT INTO AUD_Contacts (type, contact_value) VALUES (?, ?)";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        String sql = "INSERT INTO AUD_Contacts "
+                + "(type, contact_value) "
+                + "VALUES (?, ?)";
+
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(
+                        sql,
+                        Statement.RETURN_GENERATED_KEYS
+                )
+        ) {
 
             ps.setString(1, contact.getType());
             ps.setString(2, contact.getContactValue());
+
             ps.executeUpdate();
 
             ResultSet rs = ps.getGeneratedKeys();
+
             if (rs.next()) {
                 return rs.getInt(1);
             }
+
         } catch (SQLException e) {
-            System.out.println(" Error al insertar contacto: " + e.getMessage());
+
+            System.out.println(
+                    "Error al insertar contacto: "
+                    + e.getMessage()
+            );
         }
+
         return -1;
     }
 
-    // Vincular contacto con administrador
-    public static boolean insertCXA(int idAdmin, int idContact) {
-        String sql = "INSERT INTO AUD_CXA (id_admin, id_contact) VALUES (?, ?)";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+    /**
+     * Vincula un contacto con un administrador.
+     *
+     * @param idAdmin identificador del administrador
+     * @param idContact identificador del contacto
+     *
+     * @return true si la relación fue creada
+     */
+    public static boolean insertCXA(
+            int idAdmin,
+            int idContact
+    ) {
+
+        String sql = "INSERT INTO AUD_CXA "
+                + "(id_admin, id_contact) "
+                + "VALUES (?, ?)";
+
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             ps.setInt(1, idAdmin);
             ps.setInt(2, idContact);
+
             ps.executeUpdate();
+
             return true;
 
         } catch (SQLException e) {
-            System.out.println("Error al insertar CXA: " + e.getMessage());
+
+            System.out.println(
+                    "Error al insertar CXA: "
+                    + e.getMessage()
+            );
+
             return false;
         }
     }
 
-    // Vincular contacto con cliente
-public static boolean insertCXC(int idClient, int idContact) {
+    /**
+     * Vincula un contacto con un cliente.
+     *
+     * @param idClient identificador del cliente
+     * @param idContact identificador del contacto
+     *
+     * @return true si la relación fue creada
+     */
+    public static boolean insertCXC(
+            int idClient,
+            int idContact
+    ) {
 
-    String sql = "INSERT INTO AUD_CXC (id_client, id_contact) VALUES (?, ?)";
+        String sql = "INSERT INTO AUD_CXC "
+                + "(id_client, id_contact) "
+                + "VALUES (?, ?)";
 
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
-        ps.setInt(1, idClient);
-        ps.setInt(2, idContact);
+            ps.setInt(1, idClient);
+            ps.setInt(2, idContact);
 
-        int rows = ps.executeUpdate();
-        return rows > 0;
+            int rows = ps.executeUpdate();
 
-    } catch (SQLException e) {
-        System.out.println("Error al insertar CXC: " + e.getMessage());
-        e.printStackTrace();
-        return false;
+            return rows > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Error al insertar CXC: "
+                    + e.getMessage()
+            );
+
+            e.printStackTrace();
+
+            return false;
+        }
     }
-}
-  
-    // actualizar un contacto
+
+    /**
+     * Actualiza la información de un contacto.
+     *
+     * @param contact contacto con datos actualizados
+     *
+     * @return true si la actualización fue exitosa
+     */
     public static boolean updateContact(Contact contact) {
 
         if (contact.getIdContact() <= 0) {
-            System.out.println("Error: ID inválido");
+
+            System.out.println(
+                    "Error: ID inválido"
+            );
+
             return false;
         }
 
-        if (contact.getType() == null || contact.getContactValue() == null) {
-            System.out.println("Error: Datos incompletos");
+        if (
+                contact.getType() == null
+                || contact.getContactValue() == null
+        ) {
+
+            System.out.println(
+                    "Error: Datos incompletos"
+            );
+
             return false;
         }
 
-        String sql = "UPDATE AUD_Contacts SET type = ?, contact_value = ? WHERE id_contact = ?";
+        String sql = "UPDATE AUD_Contacts "
+                + "SET type = ?, contact_value = ? "
+                + "WHERE id_contact = ?";
 
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             ps.setString(1, contact.getType());
             ps.setString(2, contact.getContactValue());
@@ -89,101 +183,207 @@ public static boolean insertCXC(int idClient, int idContact) {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.out.println("Error al actualizar contacto: " + e.getMessage());
+
+            System.out.println(
+                    "Error al actualizar contacto: "
+                    + e.getMessage()
+            );
+
             return false;
         }
     }
+
+    /**
+     * Obtiene el contacto asociado a un administrador.
+     *
+     * @param idAdmin identificador del administrador
+     *
+     * @return contacto encontrado o null
+     */
     public static Contact getContactByAdminId(int idAdmin) {
 
-    String sql = "SELECT c.* FROM AUD_Contacts c " +
-                 "INNER JOIN AUD_CXA x ON c.id_contact = x.id_contact " +
-                 "WHERE x.id_admin = ?";
+        String sql = "SELECT c.* "
+                + "FROM AUD_Contacts c "
+                + "INNER JOIN AUD_CXA x "
+                + "ON c.id_contact = x.id_contact "
+                + "WHERE x.id_admin = ?";
 
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
-        ps.setInt(1, idAdmin);
-        ResultSet rs = ps.executeQuery();
+            ps.setInt(1, idAdmin);
 
-        if (rs.next()) {
-            Contact contact = new Contact();
-            contact.setIdContact(rs.getInt("id_contact"));
-            contact.setType(rs.getString("type"));
-            contact.setContactValue(rs.getString("contact_value"));
-            return contact;
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+
+                Contact contact = new Contact();
+
+                contact.setIdContact(
+                        rs.getInt("id_contact")
+                );
+
+                contact.setType(
+                        rs.getString("type")
+                );
+
+                contact.setContactValue(
+                        rs.getString("contact_value")
+                );
+
+                return contact;
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Error obteniendo contacto: "
+                    + e.getMessage()
+            );
         }
 
-    } catch (SQLException e) {
-        System.out.println("Error obteniendo contacto: " + e.getMessage());
+        return null;
     }
 
-    return null;
-}
-    // Eliminar contacto de cliente en cascada (CXC + AUD_Contacts)
+    /**
+     * Elimina el contacto asociado a un cliente.
+     *
+     * @param idClient identificador del cliente
+     *
+     * @return true si el contacto fue eliminado
+     */
     public static boolean deleteContactByClientId(int idClient) {
-        try (Connection conn = DBConnection.getConnection()) {
 
-            // 1. Obtener el id_contact antes de eliminar
+        try (
+                Connection conn = DBConnection.getConnection()
+        ) {
+
             int idContact = -1;
-            String getContact = "SELECT id_contact FROM AUD_CXC WHERE id_client = ?";
-            try (PreparedStatement ps = conn.prepareStatement(getContact)) {
+
+            String getContact = "SELECT id_contact "
+                    + "FROM AUD_CXC "
+                    + "WHERE id_client = ?";
+
+            try (
+                    PreparedStatement ps =
+                    conn.prepareStatement(getContact)
+            ) {
+
                 ps.setInt(1, idClient);
+
                 ResultSet rs = ps.executeQuery();
+
                 if (rs.next()) {
                     idContact = rs.getInt("id_contact");
                 }
             }
 
             if (idContact == -1) {
-                System.out.println("No se encontró contacto para el cliente: " + idClient);
+
+                System.out.println(
+                        "No se encontró contacto "
+                        + "para el cliente: "
+                        + idClient
+                );
+
                 return false;
             }
 
-            // 2. Eliminar de AUD_CXC primero 
-            String deleteCXC = "DELETE FROM AUD_CXC WHERE id_client = ?";
-            try (PreparedStatement ps = conn.prepareStatement(deleteCXC)) {
+            String deleteCXC = "DELETE FROM AUD_CXC "
+                    + "WHERE id_client = ?";
+
+            try (
+                    PreparedStatement ps =
+                    conn.prepareStatement(deleteCXC)
+            ) {
+
                 ps.setInt(1, idClient);
+
                 ps.executeUpdate();
             }
 
-            // 3. Eliminar de AUD_Contacts 
-            String deleteContact = "DELETE FROM AUD_Contacts WHERE id_contact = ?";
-            try (PreparedStatement ps = conn.prepareStatement(deleteContact)) {
+            String deleteContact = "DELETE "
+                    + "FROM AUD_Contacts "
+                    + "WHERE id_contact = ?";
+
+            try (
+                    PreparedStatement ps =
+                    conn.prepareStatement(deleteContact)
+            ) {
+
                 ps.setInt(1, idContact);
+
                 ps.executeUpdate();
             }
 
             return true;
 
         } catch (SQLException e) {
-            System.out.println("Error al eliminar contacto de cliente: " + e.getMessage());
+
+            System.out.println(
+                    "Error al eliminar contacto "
+                    + "de cliente: "
+                    + e.getMessage()
+            );
+
             return false;
         }
     }
+
+    /**
+     * Obtiene el contacto asociado a un cliente.
+     *
+     * @param idClient identificador del cliente
+     *
+     * @return contacto encontrado o null
+     */
     public static Contact getContactByClientId(int idClient) {
 
-    String sql = "SELECT c.* FROM AUD_Contacts c " +
-                 "INNER JOIN AUD_CXC x ON c.id_contact = x.id_contact " +
-                 "WHERE x.id_client = ?";
+        String sql = "SELECT c.* "
+                + "FROM AUD_Contacts c "
+                + "INNER JOIN AUD_CXC x "
+                + "ON c.id_contact = x.id_contact "
+                + "WHERE x.id_client = ?";
 
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
-        ps.setInt(1, idClient);
-        ResultSet rs = ps.executeQuery();
+            ps.setInt(1, idClient);
 
-        if (rs.next()) {
-            Contact contact = new Contact();
-            contact.setIdContact(rs.getInt("id_contact"));
-            contact.setType(rs.getString("type"));
-            contact.setContactValue(rs.getString("contact_value"));
-            return contact;
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+
+                Contact contact = new Contact();
+
+                contact.setIdContact(
+                        rs.getInt("id_contact")
+                );
+
+                contact.setType(
+                        rs.getString("type")
+                );
+
+                contact.setContactValue(
+                        rs.getString("contact_value")
+                );
+
+                return contact;
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Error obteniendo contacto "
+                    + "del cliente: "
+                    + e.getMessage()
+            );
         }
 
-    } catch (SQLException e) {
-        System.out.println("Error obteniendo contacto del cliente: " + e.getMessage());
+        return null;
     }
-
-    return null;
-}
 }

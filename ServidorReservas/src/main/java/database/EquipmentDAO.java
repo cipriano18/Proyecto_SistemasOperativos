@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package database;
 
 import java.sql.Connection;
@@ -14,167 +10,347 @@ import java.util.List;
 import model.Equipment;
 
 /**
- *
- * @author Cipriano
+ * Gestiona las operaciones relacionadas con equipos.
  */
 public class EquipmentDAO {
 
-    // Obtener todos los equipos
+    /**
+     * Obtiene todos los equipos registrados.
+     *
+     * @return lista de equipos
+     */
     public static List<Equipment> getAllEquipment() {
+
         List<Equipment> list = new ArrayList<>();
-        String sql = "SELECT id_equipment, name, available_quantity FROM AUD_Equipment ORDER BY id_equipment ASC";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        String sql = "SELECT id_equipment, name, "
+                + "available_quantity "
+                + "FROM AUD_Equipment "
+                + "ORDER BY id_equipment ASC";
+
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
+
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
+
                 list.add(new Equipment(
                         rs.getInt("id_equipment"),
                         rs.getString("name"),
                         rs.getInt("available_quantity")
                 ));
             }
+
         } catch (SQLException e) {
-            System.out.println("Error al obtener equipos: " + e.getMessage());
+
+            System.out.println(
+                    "Error al obtener equipos: "
+                    + e.getMessage()
+            );
         }
+
         return list;
     }
 
-    // Obtener equipo por nombre
+    /**
+     * Obtiene un equipo mediante su nombre.
+     *
+     * @param name nombre del equipo
+     *
+     * @return equipo encontrado o null
+     */
     public static Equipment getEquipmentByName(String name) {
-        String sql = "SELECT id_equipment, name, available_quantity FROM AUD_Equipment WHERE name = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        String sql = "SELECT id_equipment, name, "
+                + "available_quantity "
+                + "FROM AUD_Equipment "
+                + "WHERE name = ?";
+
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
+
             ps.setString(1, name);
+
             ResultSet rs = ps.executeQuery();
+
             if (rs.next()) {
+
                 return new Equipment(
                         rs.getInt("id_equipment"),
                         rs.getString("name"),
                         rs.getInt("available_quantity")
                 );
             }
+
         } catch (SQLException e) {
-            System.out.println("Error al obtener equipo por nombre: " + e.getMessage());
+
+            System.out.println(
+                    "Error al obtener equipo "
+                    + "por nombre: "
+                    + e.getMessage()
+            );
         }
+
         return null;
     }
 
+    /**
+     * Obtiene un equipo mediante su identificador.
+     *
+     * @param idEquipment identificador del equipo
+     *
+     * @return equipo encontrado o null
+     */
     public static Equipment getEquipmentById(int idEquipment) {
 
-        String sql = "SELECT id_equipment, name, available_quantity FROM AUD_Equipment WHERE id_equipment = ?";
+        String sql = "SELECT id_equipment, name, "
+                + "available_quantity "
+                + "FROM AUD_Equipment "
+                + "WHERE id_equipment = ?";
 
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             ps.setInt(1, idEquipment);
 
-            try (ResultSet rs = ps.executeQuery()) {
+            try (
+                    ResultSet rs = ps.executeQuery()
+            ) {
 
                 if (rs.next()) {
+
                     Equipment equipment = new Equipment();
 
-                    equipment.setIdEquipment(rs.getInt("id_equipment"));
-                    equipment.setName(rs.getString("name"));
-                    equipment.setTotalQuantity(rs.getInt("available_quantity"));
+                    equipment.setIdEquipment(
+                            rs.getInt("id_equipment")
+                    );
+
+                    equipment.setName(
+                            rs.getString("name")
+                    );
+
+                    equipment.setTotalQuantity(
+                            rs.getInt("available_quantity")
+                    );
 
                     return equipment;
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al obtener equipo por id: " + e.getMessage());
+
+            System.out.println(
+                    "Error al obtener equipo "
+                    + "por id: "
+                    + e.getMessage()
+            );
+
             e.printStackTrace();
         }
 
         return null;
     }
-    // Obtener todos los equipos disponibles por fecha y sección
-    // Retorna el total DISPONIBLE en totalQuantity (no el total original)
-public static List<Equipment> getAvailableEquipmentByDateAndSection(Date reservationDate, int idSection) {
 
-    List<Equipment> equipmentList = new ArrayList<>();
+    /**
+     * Obtiene los equipos disponibles por fecha y sección.
+     *
+     * @param reservationDate fecha de la reserva
+     * @param idSection identificador de la sección
+     *
+     * @return lista de equipos disponibles
+     */
+    public static List<Equipment>
+            getAvailableEquipmentByDateAndSection(
+                    Date reservationDate,
+                    int idSection
+            ) {
 
-    String sql =
-            "SELECT e.id_equipment, e.name, " +
-            "       (e.available_quantity - COALESCE(res.reserved_quantity, 0)) AS total_available " +
-            "FROM AUD_Equipment e " +
-            "LEFT JOIN ( " +
-            "    SELECT rxe.id_equipment, SUM(rxe.quantity) AS reserved_quantity " +
-            "    FROM AUD_RXE rxe " +
-            "    INNER JOIN AUD_Reservations r " +
-            "        ON rxe.id_reservation = r.id_reservation " +
-            "    WHERE r.reservation_date = ? " +
-            "      AND r.id_section = ? " +
-            "    GROUP BY rxe.id_equipment " +
-            ") res ON e.id_equipment = res.id_equipment " +
-            "WHERE (e.available_quantity - COALESCE(res.reserved_quantity, 0)) > 0 " +
-            "ORDER BY e.name";
+        List<Equipment> equipmentList =
+                new ArrayList<>();
 
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT e.id_equipment, e.name, "
+                + "(e.available_quantity "
+                + "- COALESCE(res.reserved_quantity, 0)) "
+                + "AS total_available "
+                + "FROM AUD_Equipment e "
+                + "LEFT JOIN ( "
+                + "SELECT rxe.id_equipment, "
+                + "SUM(rxe.quantity) AS reserved_quantity "
+                + "FROM AUD_RXE rxe "
+                + "INNER JOIN AUD_Reservations r "
+                + "ON rxe.id_reservation = r.id_reservation "
+                + "WHERE r.reservation_date = ? "
+                + "AND r.id_section = ? "
+                + "GROUP BY rxe.id_equipment "
+                + ") res "
+                + "ON e.id_equipment = res.id_equipment "
+                + "WHERE (e.available_quantity "
+                + "- COALESCE(res.reserved_quantity, 0)) > 0 "
+                + "ORDER BY e.name";
 
-        ps.setDate(1, reservationDate);
-        ps.setInt(2, idSection);
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
-        ResultSet rs = ps.executeQuery();
+            ps.setDate(1, reservationDate);
+            ps.setInt(2, idSection);
 
-        while (rs.next()) {
+            ResultSet rs = ps.executeQuery();
 
-            Equipment equipment = new Equipment();
-            equipment.setIdEquipment(rs.getInt("id_equipment"));
-            equipment.setName(rs.getString("name"));
+            while (rs.next()) {
 
-            // Aquí guardamos el DISPONIBLE en totalQuantity
-            equipment.setTotalQuantity(rs.getInt("total_available"));
+                Equipment equipment = new Equipment();
 
-            equipmentList.add(equipment);
+                equipment.setIdEquipment(
+                        rs.getInt("id_equipment")
+                );
+
+                equipment.setName(
+                        rs.getString("name")
+                );
+
+                equipment.setTotalQuantity(
+                        rs.getInt("total_available")
+                );
+
+                equipmentList.add(equipment);
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Error al obtener equipos "
+                    + "disponibles: "
+                    + e.getMessage()
+            );
         }
 
-    } catch (SQLException e) {
-        System.out.println("Error al obtener equipos disponibles: " + e.getMessage());
+        return equipmentList;
     }
 
-    return equipmentList;
-}
+    /**
+     * Crea un nuevo equipo.
+     *
+     * @param equipment equipo a registrar
+     *
+     * @return true si el equipo fue creado
+     */
+    public static boolean createEquipment(
+            Equipment equipment
+    ) {
 
-    // Crear equipo
-    public static boolean createEquipment(Equipment equipment) {
-        String sql = "INSERT INTO AUD_Equipment (name, available_quantity) VALUES (?, ?)";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "INSERT INTO AUD_Equipment "
+                + "(name, available_quantity) "
+                + "VALUES (?, ?)";
+
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
+
             ps.setString(1, equipment.getName());
-            ps.setInt(2, equipment.getTotalQuantity());
+
+            ps.setInt(
+                    2,
+                    equipment.getTotalQuantity()
+            );
+
             int rows = ps.executeUpdate();
+
             return rows > 0;
+
         } catch (SQLException e) {
-            System.out.println("Error al crear equipo: " + e.getMessage());
+
+            System.out.println(
+                    "Error al crear equipo: "
+                    + e.getMessage()
+            );
+
             return false;
         }
     }
 
-    // Actualizar equipo
-    public static boolean updateEquipment(Equipment equipment) {
-        String sql = "UPDATE AUD_Equipment SET name = ?, available_quantity = ? WHERE id_equipment = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+    /**
+     * Actualiza la información de un equipo.
+     *
+     * @param equipment equipo actualizado
+     *
+     * @return true si la actualización fue exitosa
+     */
+    public static boolean updateEquipment(
+            Equipment equipment
+    ) {
+
+        String sql = "UPDATE AUD_Equipment "
+                + "SET name = ?, "
+                + "available_quantity = ? "
+                + "WHERE id_equipment = ?";
+
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
+
             ps.setString(1, equipment.getName());
-            ps.setInt(2, equipment.getTotalQuantity());
-            ps.setInt(3, equipment.getIdEquipment());
+
+            ps.setInt(
+                    2,
+                    equipment.getTotalQuantity()
+            );
+
+            ps.setInt(
+                    3,
+                    equipment.getIdEquipment()
+            );
+
             int rows = ps.executeUpdate();
+
             return rows > 0;
+
         } catch (SQLException e) {
-            System.out.println("Error al actualizar equipo: " + e.getMessage());
+
+            System.out.println(
+                    "Error al actualizar equipo: "
+                    + e.getMessage()
+            );
+
             return false;
         }
     }
 
+    /**
+     * Elimina un equipo de la base de datos.
+     *
+     * @param idEquipment identificador del equipo
+     *
+     * @return true si el equipo fue eliminado
+     */
     public static boolean deleteEquipment(int idEquipment) {
 
-        String sql = "DELETE FROM AUD_Equipment WHERE id_equipment = ?";
+        String sql = "DELETE FROM AUD_Equipment "
+                + "WHERE id_equipment = ?";
 
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             ps.setInt(1, idEquipment);
 
             return ps.executeUpdate() > 0;
 
         } catch (Exception e) {
+
             e.printStackTrace();
+
             return false;
         }
     }

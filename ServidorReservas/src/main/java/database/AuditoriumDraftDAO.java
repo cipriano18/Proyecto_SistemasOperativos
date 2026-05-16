@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package database;
 
 import draft.AuditoriumDraft;
@@ -21,61 +17,117 @@ import model.RXE;
 import model.Reservation;
 
 /**
- *
- * @author Reyner
+ * Gestiona las operaciones relacionadas con drafts de auditorio.
  */
 public class AuditoriumDraftDAO {
-     private static final long TTL_MILLIS = 10 * 60 * 1000L;
+    private static final long TTL_MILLIS = 10 * 60 * 1000L;
 
-    private static final Map<String, Semaphore> auditoriumDraftSemaphores = new ConcurrentHashMap<>();
+    private static final Map<String, Semaphore> auditoriumDraftSemaphores =
+            new ConcurrentHashMap<>();
 
-    // Obtener o crear semáforo por fecha + sección para evitar dos drafts simultáneos
-    private static Semaphore getAuditoriumDraftSemaphore(Date reservationDate, int idSection) {
+    /**
+     * Obtiene o crea un semáforo para una fecha y sección.
+     *
+     * @param reservationDate fecha de la reserva
+     * @param idSection identificador de la sección
+     *
+     * @return semáforo asociado a la fecha y sección
+     */
+    private static Semaphore getAuditoriumDraftSemaphore(
+            Date reservationDate,
+            int idSection
+    ) {
+
         String key = reservationDate.toString() + "|" + idSection;
-        return auditoriumDraftSemaphores.computeIfAbsent(key, k -> new Semaphore(1, true));
-    }
-    // Obtener drafts activos de auditorio por mes y año para mostrarlos como bloqueados en el calendario
-    public static List<CalendarBlock> getBlockedAuditoriumDraftsByMonth(int month, int year, int idClient) {
 
-     cleanupExpiredDraftsAndCount();
+        return auditoriumDraftSemaphores.computeIfAbsent(
+                key,
+                k -> new Semaphore(1, true)
+        );
+    }
+
+    /**
+     * Obtiene los drafts activos de auditorio por mes y año.
+     *
+     * @param month mes de consulta
+     * @param year año de consulta
+     * @param idClient identificador del cliente
+     *
+     * @return lista de bloques del calendario
+     */
+    public static List<CalendarBlock> getBlockedAuditoriumDraftsByMonth(
+            int month,
+            int year,
+            int idClient
+    ) {
+
+        cleanupExpiredDraftsAndCount();
 
         List<CalendarBlock> blocks = new java.util.ArrayList<>();
 
-        String sql =
-                "SELECT d.reservation_date, d.id_section, d.id_client " +
-                "FROM AUD_ReservationDrafts d " +
-                "INNER JOIN AUD_AuditoriumDrafts ad " +
-                "ON d.id_draft = ad.id_draft " +
-                "WHERE MONTH(d.reservation_date) = ? " +
-                "AND YEAR(d.reservation_date) = ? " +
-                "AND d.expires_at > NOW() " +
-                "ORDER BY d.reservation_date, d.id_section";
+        String sql = "SELECT d.reservation_date, d.id_section, "
+                + "d.id_client "
+                + "FROM AUD_ReservationDrafts d "
+                + "INNER JOIN AUD_AuditoriumDrafts ad "
+                + "ON d.id_draft = ad.id_draft "
+                + "WHERE MONTH(d.reservation_date) = ? "
+                + "AND YEAR(d.reservation_date) = ? "
+                + "AND d.expires_at > NOW() "
+                + "ORDER BY d.reservation_date, d.id_section";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             ps.setInt(1, month);
             ps.setInt(2, year);
+
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
+
                 CalendarBlock block = new CalendarBlock();
-                block.setReservationDate(rs.getDate("reservation_date"));
-                block.setIdSection(rs.getInt("id_section"));
-                block.setStatus(rs.getInt("id_client") == idClient ? "OWN_DRAFT" : "BLOCKED");
+
+                block.setReservationDate(
+                        rs.getDate("reservation_date")
+                );
+
+                block.setIdSection(
+                        rs.getInt("id_section")
+                );
+
+                block.setStatus(
+                        rs.getInt("id_client") == idClient
+                                ? "OWN_DRAFT"
+                                : "BLOCKED"
+                );
 
                 blocks.add(block);
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al obtener drafts bloqueados de auditorio: " + e.getMessage());
+
+            System.out.println(
+                    "Error al obtener drafts bloqueados "
+                    + "de auditorio: "
+                    + e.getMessage()
+            );
         }
 
         return blocks;
     }
 
-    // Crear una reserva temporal de auditorio
-    public static AuditoriumDraftRequest createDraft(AuditoriumDraftRequest request) {
+    /**
+     * Crea una reserva temporal de auditorio.
+     *
+     * @param request datos del draft de auditorio
+     *
+     * @return draft creado o draft existente
+     */
+    public static AuditoriumDraftRequest createDraft(
+            AuditoriumDraftRequest request
+    ) {
 
         if (request == null || request.getReservation() == null) {
             return null;
@@ -83,9 +135,11 @@ public class AuditoriumDraftDAO {
 
         Reservation reservation = request.getReservation();
 
-        if (request.getIdClient() <= 0 ||
-                reservation.getIdSection() <= 0 ||
-                reservation.getReservationDate() == null) {
+        if (
+                request.getIdClient() <= 0
+                || reservation.getIdSection() <= 0
+                || reservation.getReservationDate() == null
+        ) {
             return null;
         }
 
@@ -94,47 +148,60 @@ public class AuditoriumDraftDAO {
                 reservation.getIdSection()
         );
 
-        String insertDraftSql =
-                "INSERT INTO AUD_ReservationDrafts " +
-                "(id_client, id_section, reservation_date, created_at, expires_at) " +
-                "VALUES (?, ?, ?, ?, ?)";
+        String insertDraftSql = "INSERT INTO AUD_ReservationDrafts "
+                + "(id_client, id_section, reservation_date, "
+                + "created_at, expires_at) "
+                + "VALUES (?, ?, ?, ?, ?)";
 
         String insertAuditoriumDraftSql =
-                "INSERT INTO AUD_AuditoriumDrafts " +
-                "(id_draft, event_name, attendees_count, observations) " +
-                "VALUES (?, ?, ?, ?)";
+                "INSERT INTO AUD_AuditoriumDrafts "
+                + "(id_draft, event_name, attendees_count, "
+                + "observations) "
+                + "VALUES (?, ?, ?, ?)";
 
-        String insertRDXESql =
-                "INSERT INTO AUD_RDXE (id_draft, id_equipment, quantity) " +
-                "VALUES (?, ?, ?)";
+        String insertRDXESql = "INSERT INTO AUD_RDXE "
+                + "(id_draft, id_equipment, quantity) "
+                + "VALUES (?, ?, ?)";
 
         try {
+
             semaphore.acquire();
 
-           cleanupExpiredDraftsAndCount();
+            cleanupExpiredDraftsAndCount();
 
             if (existsAuditoriumReservationByDateAndSection(
                     reservation.getReservationDate(),
-                    reservation.getIdSection())) {
+                    reservation.getIdSection()
+            )) {
                 return null;
             }
 
-            AuditoriumDraftRequest existingDraft = getDraftBySectionAndDate(
-                    reservation.getReservationDate(),
-                    reservation.getIdSection()
-            );
+            AuditoriumDraftRequest existingDraft =
+                    getDraftBySectionAndDate(
+                            reservation.getReservationDate(),
+                            reservation.getIdSection()
+                    );
 
             if (existingDraft != null) {
+
                 if (existingDraft.getIdClient() == request.getIdClient()) {
                     return existingDraft;
                 }
+
                 return null;
             }
 
-            try (Connection conn = DBConnection.getConnection();
-                 PreparedStatement psDraft = conn.prepareStatement(insertDraftSql, PreparedStatement.RETURN_GENERATED_KEYS);
-                 PreparedStatement psAuditoriumDraft = conn.prepareStatement(insertAuditoriumDraftSql);
-                 PreparedStatement psRDXE = conn.prepareStatement(insertRDXESql)) {
+            try (
+                    Connection conn = DBConnection.getConnection();
+                    PreparedStatement psDraft = conn.prepareStatement(
+                            insertDraftSql,
+                            PreparedStatement.RETURN_GENERATED_KEYS
+                    );
+                    PreparedStatement psAuditoriumDraft =
+                    conn.prepareStatement(insertAuditoriumDraftSql);
+                    PreparedStatement psRDXE =
+                    conn.prepareStatement(insertRDXESql)
+            ) {
 
                 conn.setAutoCommit(false);
 
@@ -152,7 +219,11 @@ public class AuditoriumDraftDAO {
 
                 int idDraft;
 
-                try (ResultSet generatedKeys = psDraft.getGeneratedKeys()) {
+                try (
+                        ResultSet generatedKeys =
+                        psDraft.getGeneratedKeys()
+                ) {
+
                     if (generatedKeys.next()) {
                         idDraft = generatedKeys.getInt(1);
                     } else {
@@ -161,25 +232,41 @@ public class AuditoriumDraftDAO {
                     }
                 }
 
-                AuditoriumDraft auditoriumDraft = request.getAuditoriumDraft();
+                AuditoriumDraft auditoriumDraft =
+                        request.getAuditoriumDraft();
+
                 if (auditoriumDraft == null) {
+
                     auditoriumDraft = new AuditoriumDraft();
                     auditoriumDraft.setEventName("");
                     auditoriumDraft.setAttendeesCount(0);
                     auditoriumDraft.setObservations("");
                 }
+
                 auditoriumDraft.setIdDraft(idDraft);
 
                 psAuditoriumDraft.setInt(1, idDraft);
-                psAuditoriumDraft.setString(2, auditoriumDraft.getEventName());
-                psAuditoriumDraft.setInt(3, auditoriumDraft.getAttendeesCount());
-                psAuditoriumDraft.setString(4, auditoriumDraft.getObservations());
+                psAuditoriumDraft.setString(
+                        2,
+                        auditoriumDraft.getEventName()
+                );
+                psAuditoriumDraft.setInt(
+                        3,
+                        auditoriumDraft.getAttendeesCount()
+                );
+                psAuditoriumDraft.setString(
+                        4,
+                        auditoriumDraft.getObservations()
+                );
+
                 psAuditoriumDraft.executeUpdate();
 
                 List<RXE> equipmentList = request.getEquipmentList();
 
                 if (equipmentList != null && !equipmentList.isEmpty()) {
+
                     for (RXE item : equipmentList) {
+
                         psRDXE.setInt(1, idDraft);
                         psRDXE.setInt(2, item.getIdEquipment());
                         psRDXE.setInt(3, item.getQuantity());
@@ -196,79 +283,154 @@ public class AuditoriumDraftDAO {
             }
 
         } catch (InterruptedException e) {
+
             Thread.currentThread().interrupt();
+
             return null;
 
         } catch (SQLException e) {
-            System.out.println("Error al crear draft de auditorio: " + e.getMessage());
+
+            System.out.println(
+                    "Error al crear draft de auditorio: "
+                    + e.getMessage()
+            );
+
             return null;
 
         } finally {
+
             semaphore.release();
         }
     }
-// Validar si ya existe una reserva real de auditorio para la misma fecha y sección
-    private static boolean existsAuditoriumReservationByDateAndSection(Date reservationDate, int idSection) {
-        String sql =
-                "SELECT COUNT(*) AS total " +
-                "FROM AUD_AuditoriumReservations ar " +
-                "INNER JOIN AUD_Reservations r ON ar.id_reservation = r.id_reservation " +
-                "WHERE r.reservation_date = ? AND r.id_section = ?";
+    
+    /**
+     * Valida si existe una reserva real para la fecha y sección.
+     *
+     * @param reservationDate fecha de la reserva
+     * @param idSection identificador de la sección
+     *
+     * @return true si existe una reserva real
+     */    
+    private static boolean existsAuditoriumReservationByDateAndSection(
+            Date reservationDate,
+            int idSection
+    ) {
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT COUNT(*) AS total "
+                + "FROM AUD_AuditoriumReservations ar "
+                + "INNER JOIN AUD_Reservations r "
+                + "ON ar.id_reservation = r.id_reservation "
+                + "WHERE r.reservation_date = ? "
+                + "AND r.id_section = ?";
+
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             ps.setDate(1, reservationDate);
             ps.setInt(2, idSection);
 
-            try (ResultSet rs = ps.executeQuery()) {
+            try (
+                    ResultSet rs = ps.executeQuery()
+            ) {
+
                 if (rs.next()) {
                     return rs.getInt("total") > 0;
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al validar reserva real de auditorio: " + e.getMessage());
+
+            System.out.println(
+                    "Error al validar reserva real "
+                    + "de auditorio: "
+                    + e.getMessage()
+            );
         }
 
         return false;
     }
-      // Validar si ya existe un draft activo de auditorio para la misma fecha y sección
-    private static boolean existsActiveAuditoriumDraftByDateAndSection(Date reservationDate, int idSection) {
-        String sql =
-                "SELECT COUNT(*) AS total " +
-                "FROM AUD_AuditoriumDrafts ad " +
-                "INNER JOIN AUD_ReservationDrafts d ON ad.id_draft = d.id_draft " +
-                "WHERE d.reservation_date = ? " +
-                "AND d.id_section = ? " +
-                "AND d.expires_at > NOW()";
+    
+    /**
+     * Valida si existe un draft activo para la fecha y sección.
+     *
+     * @param reservationDate fecha del draft
+     * @param idSection identificador de la sección
+     *
+     * @return true si existe un draft activo
+     */    
+    private static boolean existsActiveAuditoriumDraftByDateAndSection(
+            Date reservationDate,
+            int idSection
+    ) {
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT COUNT(*) AS total "
+                + "FROM AUD_AuditoriumDrafts ad "
+                + "INNER JOIN AUD_ReservationDrafts d "
+                + "ON ad.id_draft = d.id_draft "
+                + "WHERE d.reservation_date = ? "
+                + "AND d.id_section = ? "
+                + "AND d.expires_at > NOW()";
+
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             ps.setDate(1, reservationDate);
             ps.setInt(2, idSection);
 
-            try (ResultSet rs = ps.executeQuery()) {
+            try (
+                    ResultSet rs = ps.executeQuery()
+            ) {
+
                 if (rs.next()) {
                     return rs.getInt("total") > 0;
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al validar draft activo de auditorio: " + e.getMessage());
+
+            System.out.println(
+                    "Error al validar draft activo "
+                    + "de auditorio: "
+                    + e.getMessage()
+            );
         }
 
         return false;
     }
-    // Obtener la cantidad total disponible de un equipo
-    private static int getEquipmentAvailableQuantity(Connection conn, int idEquipment) throws SQLException {
-        String sql = "SELECT available_quantity FROM AUD_Equipment WHERE id_equipment = ?";
+    
+    /**
+     * Obtiene la cantidad disponible de un equipo.
+     *
+     * @param conn conexión activa
+     * @param idEquipment identificador del equipo
+     *
+     * @return cantidad disponible del equipo
+     *
+     * @throws SQLException si ocurre un error SQL
+     */    
+    private static int getEquipmentAvailableQuantity(
+            Connection conn,
+            int idEquipment
+    ) throws SQLException {
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT available_quantity "
+                + "FROM AUD_Equipment "
+                + "WHERE id_equipment = ?";
+
+        try (
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
+
             ps.setInt(1, idEquipment);
 
-            try (ResultSet rs = ps.executeQuery()) {
+            try (
+                    ResultSet rs = ps.executeQuery()
+            ) {
+
                 if (rs.next()) {
                     return rs.getInt("available_quantity");
                 }
@@ -277,44 +439,70 @@ public class AuditoriumDraftDAO {
 
         return 0;
     }
-    // Actualizar un draft de auditorio existente
-    public static boolean updateDraft(AuditoriumDraftRequest request) {
+    
 
-        if (request == null || request.getIdDraft() <= 0 || request.getAuditoriumDraft() == null) {
+    /**
+     * Actualiza un draft de auditorio existente.
+     *
+     * @param request datos actualizados del draft
+     *
+     * @return true si la actualización fue exitosa
+     */
+    public static boolean updateDraft(
+            AuditoriumDraftRequest request
+    ) {
+
+        if (
+                request == null
+                || request.getIdDraft() <= 0
+                || request.getAuditoriumDraft() == null
+        ) {
             return false;
         }
 
         AuditoriumDraft auditoriumDraft = request.getAuditoriumDraft();
 
-        // Validación para que no exceda la cantidad del auditorio
         if (auditoriumDraft.getAttendeesCount() > 200) {
-            System.out.println("Error: El auditorio solo permite máximo 200 personas");
+
+            System.out.println(
+                    "Error: El auditorio solo permite "
+                    + "máximo 200 personas"
+            );
+
             return false;
         }
 
-        String checkDraftSql =
-                "SELECT expires_at FROM AUD_ReservationDrafts WHERE id_draft = ?";
+        String checkDraftSql = "SELECT expires_at "
+                + "FROM AUD_ReservationDrafts "
+                + "WHERE id_draft = ?";
 
         String updateAuditoriumSql =
-                "UPDATE AUD_AuditoriumDrafts " +
-                "SET event_name = ?, attendees_count = ?, observations = ? " +
-                "WHERE id_draft = ?";
+                "UPDATE AUD_AuditoriumDrafts "
+                + "SET event_name = ?, attendees_count = ?, "
+                + "observations = ? "
+                + "WHERE id_draft = ?";
 
-        String deleteRDXESql =
-                "DELETE FROM AUD_RDXE WHERE id_draft = ?";
+        String deleteRDXESql = "DELETE FROM AUD_RDXE "
+                + "WHERE id_draft = ?";
 
-        String insertRDXESql =
-                "INSERT INTO AUD_RDXE (id_draft, id_equipment, quantity) VALUES (?, ?, ?)";
+        String insertRDXESql = "INSERT INTO AUD_RDXE "
+                + "(id_draft, id_equipment, quantity) "
+                + "VALUES (?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement psCheck = conn.prepareStatement(checkDraftSql);
-             PreparedStatement psUpdate = conn.prepareStatement(updateAuditoriumSql);
-             PreparedStatement psDeleteRDXE = conn.prepareStatement(deleteRDXESql);
-             PreparedStatement psInsertRDXE = conn.prepareStatement(insertRDXESql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement psCheck =
+                conn.prepareStatement(checkDraftSql);
+                PreparedStatement psUpdate =
+                conn.prepareStatement(updateAuditoriumSql);
+                PreparedStatement psDeleteRDXE =
+                conn.prepareStatement(deleteRDXESql);
+                PreparedStatement psInsertRDXE =
+                conn.prepareStatement(insertRDXESql)
+        ) {
 
             conn.setAutoCommit(false);
 
-            // 1. Verificar que el draft exista y no esté expirado
             psCheck.setInt(1, request.getIdDraft());
             ResultSet rs = psCheck.executeQuery();
 
@@ -330,7 +518,6 @@ public class AuditoriumDraftDAO {
                 return false;
             }
 
-            // 2. Actualizar datos del auditorio
             psUpdate.setString(1, auditoriumDraft.getEventName());
             psUpdate.setInt(2, auditoriumDraft.getAttendeesCount());
             psUpdate.setString(3, auditoriumDraft.getObservations());
@@ -338,26 +525,40 @@ public class AuditoriumDraftDAO {
 
             psUpdate.executeUpdate();
 
-            // 3. Reemplazar equipos
             psDeleteRDXE.setInt(1, request.getIdDraft());
             psDeleteRDXE.executeUpdate();
 
             List<RXE> equipmentList = request.getEquipmentList();
 
             if (equipmentList != null && !equipmentList.isEmpty()) {
+
                 for (RXE item : equipmentList) {
 
-                    if (item.getIdEquipment() <= 0 || item.getQuantity() <= 0) {
+                    if (
+                            item.getIdEquipment() <= 0
+                            || item.getQuantity() <= 0
+                    ) {
                         conn.rollback();
                         return false;
                     }
 
-                    int availableQuantity = getEquipmentAvailableQuantity(conn, item.getIdEquipment());
+                    int availableQuantity =
+                            getEquipmentAvailableQuantity(
+                                    conn,
+                                    item.getIdEquipment()
+                            );
 
                     if (availableQuantity < item.getQuantity()) {
-                        System.out.println("Error: cantidad solicitada mayor al inventario disponible del equipo "
-                                + item.getIdEquipment());
+
+                        System.out.println(
+                                "Error: cantidad solicitada "
+                                + "mayor al inventario "
+                                + "disponible del equipo "
+                                + item.getIdEquipment()
+                        );
+
                         conn.rollback();
+
                         return false;
                     }
 
@@ -369,90 +570,165 @@ public class AuditoriumDraftDAO {
             }
 
             conn.commit();
+
             return true;
 
         } catch (SQLException e) {
-            System.out.println("Error al actualizar draft de auditorio: " + e.getMessage());
+
+            System.out.println(
+                    "Error al actualizar draft "
+                    + "de auditorio: "
+                    + e.getMessage()
+            );
+
             return false;
         }
     }
     
-    // Eliminar un draft de auditorio.
-    // Al eliminar de AUD_ReservationDrafts, también se elimina en cascada:
-    // AUD_AuditoriumDrafts y AUD_RDXE.
+    /**
+     * Elimina un draft de auditorio.
+     *
+     * @param idDraft identificador del draft
+     *
+     * @return true si la eliminación fue exitosa
+     */
     public static boolean deleteDraft(int idDraft) {
 
         if (idDraft <= 0) {
             return false;
         }
 
-        String sql = "DELETE FROM AUD_ReservationDrafts WHERE id_draft = ?";
+        String sql = "DELETE FROM AUD_ReservationDrafts "
+                + "WHERE id_draft = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
             ps.setInt(1, idDraft);
+
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.out.println("Error al eliminar draft de auditorio: " + e.getMessage());
+
+            System.out.println(
+                    "Error al eliminar draft "
+                    + "de auditorio: "
+                    + e.getMessage()
+            );
+
             return false;
         }
     }
     
-    // Obtener un draft de auditorio completo por ID
+    /**
+     * Obtiene un draft de auditorio completo por ID.
+     *
+     * @param idDraft identificador del draft
+     *
+     * @return draft encontrado o null
+     */
     public static AuditoriumDraftRequest getDraftById(int idDraft) {
 
         if (idDraft <= 0) {
             return null;
         }
 
-        String draftSql =
-                "SELECT d.id_draft, d.id_client, d.id_section, d.reservation_date, " +
-                "       ad.id_auditorium_draft, ad.event_name, ad.attendees_count, ad.observations " +
-                "FROM AUD_ReservationDrafts d " +
-                "INNER JOIN AUD_AuditoriumDrafts ad ON d.id_draft = ad.id_draft " +
-                "WHERE d.id_draft = ? AND d.expires_at > NOW()";
+        String draftSql = "SELECT d.id_draft, d.id_client, "
+                + "d.id_section, d.reservation_date, "
+                + "ad.id_auditorium_draft, ad.event_name, "
+                + "ad.attendees_count, ad.observations "
+                + "FROM AUD_ReservationDrafts d "
+                + "INNER JOIN AUD_AuditoriumDrafts ad "
+                + "ON d.id_draft = ad.id_draft "
+                + "WHERE d.id_draft = ? "
+                + "AND d.expires_at > NOW()";
 
-        String equipmentSql =
-                "SELECT id_equipment, quantity " +
-                "FROM AUD_RDXE " +
-                "WHERE id_draft = ?";
+        String equipmentSql = "SELECT id_equipment, quantity "
+                + "FROM AUD_RDXE "
+                + "WHERE id_draft = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement psDraft = conn.prepareStatement(draftSql);
-             PreparedStatement psEquipment = conn.prepareStatement(equipmentSql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement psDraft =
+                conn.prepareStatement(draftSql);
+                PreparedStatement psEquipment =
+                conn.prepareStatement(equipmentSql)
+        ) {
 
             psDraft.setInt(1, idDraft);
 
-            try (ResultSet rs = psDraft.executeQuery()) {
+            try (
+                    ResultSet rs = psDraft.executeQuery()
+            ) {
+
                 if (rs.next()) {
 
                     Reservation reservation = new Reservation();
-                    reservation.setIdSection(rs.getInt("id_section"));
-                    reservation.setReservationDate(rs.getDate("reservation_date"));
 
-                    AuditoriumDraft auditoriumDraft = new AuditoriumDraft();
-                    auditoriumDraft.setIdAuditoriumDraft(rs.getInt("id_auditorium_draft"));
-                    auditoriumDraft.setIdDraft(rs.getInt("id_draft"));
-                    auditoriumDraft.setEventName(rs.getString("event_name"));
-                    auditoriumDraft.setAttendeesCount(rs.getInt("attendees_count"));
-                    auditoriumDraft.setObservations(rs.getString("observations"));
+                    reservation.setIdSection(
+                            rs.getInt("id_section")
+                    );
 
-                    List<RXE> equipmentList = new java.util.ArrayList<>();
+                    reservation.setReservationDate(
+                            rs.getDate("reservation_date")
+                    );
+
+                    AuditoriumDraft auditoriumDraft =
+                            new AuditoriumDraft();
+
+                    auditoriumDraft.setIdAuditoriumDraft(
+                            rs.getInt("id_auditorium_draft")
+                    );
+
+                    auditoriumDraft.setIdDraft(
+                            rs.getInt("id_draft")
+                    );
+
+                    auditoriumDraft.setEventName(
+                            rs.getString("event_name")
+                    );
+
+                    auditoriumDraft.setAttendeesCount(
+                            rs.getInt("attendees_count")
+                    );
+
+                    auditoriumDraft.setObservations(
+                            rs.getString("observations")
+                    );
+
+                    List<RXE> equipmentList =
+                            new java.util.ArrayList<>();
 
                     psEquipment.setInt(1, idDraft);
 
-                    try (ResultSet rsEquipment = psEquipment.executeQuery()) {
+                    try (
+                            ResultSet rsEquipment =
+                            psEquipment.executeQuery()
+                    ) {
+
                         while (rsEquipment.next()) {
+
                             RXE item = new RXE();
-                            item.setIdEquipment(rsEquipment.getInt("id_equipment"));
-                            item.setQuantity(rsEquipment.getInt("quantity"));
+
+                            item.setIdEquipment(
+                                    rsEquipment.getInt(
+                                            "id_equipment"
+                                    )
+                            );
+
+                            item.setQuantity(
+                                    rsEquipment.getInt("quantity")
+                            );
+
                             equipmentList.add(item);
                         }
                     }
 
-                    AuditoriumDraftRequest request = new AuditoriumDraftRequest();
+                    AuditoriumDraftRequest request =
+                            new AuditoriumDraftRequest();
+
                     request.setIdDraft(rs.getInt("id_draft"));
                     request.setIdClient(rs.getInt("id_client"));
                     request.setReservation(reservation);
@@ -464,62 +740,130 @@ public class AuditoriumDraftDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al obtener draft de auditorio por ID: " + e.getMessage());
+
+            System.out.println(
+                    "Error al obtener draft de "
+                    + "auditorio por ID: "
+                    + e.getMessage()
+            );
         }
 
         return null;
     }
+    
+    /**
+     * Obtiene un draft por fecha y sección.
+     *
+     * @param reservationDate fecha de la reserva
+     * @param idSection identificador de la sección
+     *
+     * @return draft encontrado o null
+     */    
+    public static AuditoriumDraftRequest getDraftBySectionAndDate(
+            Date reservationDate,
+            int idSection
+    ) {
 
-    public static AuditoriumDraftRequest getDraftBySectionAndDate(Date reservationDate, int idSection) {
+        String draftSql = "SELECT d.id_draft, d.id_client, "
+                + "d.id_section, d.reservation_date, "
+                + "ad.id_auditorium_draft, ad.event_name, "
+                + "ad.attendees_count, ad.observations "
+                + "FROM AUD_ReservationDrafts d "
+                + "INNER JOIN AUD_AuditoriumDrafts ad "
+                + "ON d.id_draft = ad.id_draft "
+                + "WHERE d.reservation_date = ? "
+                + "AND d.id_section = ? "
+                + "AND d.expires_at > NOW() "
+                + "LIMIT 1";
 
-        String draftSql =
-                "SELECT d.id_draft, d.id_client, d.id_section, d.reservation_date, " +
-                "       ad.id_auditorium_draft, ad.event_name, ad.attendees_count, ad.observations " +
-                "FROM AUD_ReservationDrafts d " +
-                "INNER JOIN AUD_AuditoriumDrafts ad ON d.id_draft = ad.id_draft " +
-                "WHERE d.reservation_date = ? AND d.id_section = ? AND d.expires_at > NOW() " +
-                "LIMIT 1";
+        String equipmentSql = "SELECT id_equipment, quantity "
+                + "FROM AUD_RDXE "
+                + "WHERE id_draft = ?";
 
-        String equipmentSql =
-                "SELECT id_equipment, quantity " +
-                "FROM AUD_RDXE " +
-                "WHERE id_draft = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement psDraft = conn.prepareStatement(draftSql);
-             PreparedStatement psEquipment = conn.prepareStatement(equipmentSql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement psDraft =
+                conn.prepareStatement(draftSql);
+                PreparedStatement psEquipment =
+                conn.prepareStatement(equipmentSql)
+        ) {
 
             psDraft.setDate(1, reservationDate);
             psDraft.setInt(2, idSection);
 
-            try (ResultSet rs = psDraft.executeQuery()) {
+            try (
+                    ResultSet rs = psDraft.executeQuery()
+            ) {
+
                 if (rs.next()) {
 
                     Reservation reservation = new Reservation();
-                    reservation.setIdSection(rs.getInt("id_section"));
-                    reservation.setReservationDate(rs.getDate("reservation_date"));
 
-                    AuditoriumDraft auditoriumDraft = new AuditoriumDraft();
-                    auditoriumDraft.setIdAuditoriumDraft(rs.getInt("id_auditorium_draft"));
-                    auditoriumDraft.setIdDraft(rs.getInt("id_draft"));
-                    auditoriumDraft.setEventName(rs.getString("event_name"));
-                    auditoriumDraft.setAttendeesCount(rs.getInt("attendees_count"));
-                    auditoriumDraft.setObservations(rs.getString("observations"));
+                    reservation.setIdSection(
+                            rs.getInt("id_section")
+                    );
 
-                    List<RXE> equipmentList = new java.util.ArrayList<>();
+                    reservation.setReservationDate(
+                            rs.getDate("reservation_date")
+                    );
 
-                    psEquipment.setInt(1, rs.getInt("id_draft"));
+                    AuditoriumDraft auditoriumDraft =
+                            new AuditoriumDraft();
 
-                    try (ResultSet rsEquipment = psEquipment.executeQuery()) {
+                    auditoriumDraft.setIdAuditoriumDraft(
+                            rs.getInt("id_auditorium_draft")
+                    );
+
+                    auditoriumDraft.setIdDraft(
+                            rs.getInt("id_draft")
+                    );
+
+                    auditoriumDraft.setEventName(
+                            rs.getString("event_name")
+                    );
+
+                    auditoriumDraft.setAttendeesCount(
+                            rs.getInt("attendees_count")
+                    );
+
+                    auditoriumDraft.setObservations(
+                            rs.getString("observations")
+                    );
+
+                    List<RXE> equipmentList =
+                            new java.util.ArrayList<>();
+
+                    psEquipment.setInt(
+                            1,
+                            rs.getInt("id_draft")
+                    );
+
+                    try (
+                            ResultSet rsEquipment =
+                            psEquipment.executeQuery()
+                    ) {
+
                         while (rsEquipment.next()) {
+
                             RXE item = new RXE();
-                            item.setIdEquipment(rsEquipment.getInt("id_equipment"));
-                            item.setQuantity(rsEquipment.getInt("quantity"));
+
+                            item.setIdEquipment(
+                                    rsEquipment.getInt(
+                                            "id_equipment"
+                                    )
+                            );
+
+                            item.setQuantity(
+                                    rsEquipment.getInt("quantity")
+                            );
+
                             equipmentList.add(item);
                         }
                     }
 
-                    AuditoriumDraftRequest request = new AuditoriumDraftRequest();
+                    AuditoriumDraftRequest request =
+                            new AuditoriumDraftRequest();
+
                     request.setIdDraft(rs.getInt("id_draft"));
                     request.setIdClient(rs.getInt("id_client"));
                     request.setReservation(reservation);
@@ -531,65 +875,129 @@ public class AuditoriumDraftDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al obtener draft de auditorio por fecha y sección: " + e.getMessage());
+
+            System.out.println(
+                    "Error al obtener draft de auditorio "
+                    + "por fecha y sección: "
+                    + e.getMessage()
+            );
         }
 
         return null;
     }
-
+    
+    /**
+     * Obtiene el último draft activo de un cliente.
+     *
+     * @param idClient identificador del cliente
+     *
+     * @return draft encontrado o null
+     */
     public static AuditoriumDraftRequest getDraftByClientId(int idClient) {
 
         if (idClient <= 0) {
             return null;
         }
 
-        String draftSql =
-                "SELECT d.id_draft, d.id_client, d.id_section, d.reservation_date, " +
-                "       ad.id_auditorium_draft, ad.event_name, ad.attendees_count, ad.observations " +
-                "FROM AUD_ReservationDrafts d " +
-                "INNER JOIN AUD_AuditoriumDrafts ad ON d.id_draft = ad.id_draft " +
-                "WHERE d.id_client = ? AND d.expires_at > NOW() " +
-                "ORDER BY d.created_at DESC LIMIT 1";
+        String draftSql = "SELECT d.id_draft, d.id_client, "
+                + "d.id_section, d.reservation_date, "
+                + "ad.id_auditorium_draft, ad.event_name, "
+                + "ad.attendees_count, ad.observations "
+                + "FROM AUD_ReservationDrafts d "
+                + "INNER JOIN AUD_AuditoriumDrafts ad "
+                + "ON d.id_draft = ad.id_draft "
+                + "WHERE d.id_client = ? "
+                + "AND d.expires_at > NOW() "
+                + "ORDER BY d.created_at DESC "
+                + "LIMIT 1";
 
-        String equipmentSql =
-                "SELECT id_equipment, quantity " +
-                "FROM AUD_RDXE " +
-                "WHERE id_draft = ?";
+        String equipmentSql = "SELECT id_equipment, quantity "
+                + "FROM AUD_RDXE "
+                + "WHERE id_draft = ?";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement psDraft = conn.prepareStatement(draftSql);
-             PreparedStatement psEquipment = conn.prepareStatement(equipmentSql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement psDraft =
+                conn.prepareStatement(draftSql);
+                PreparedStatement psEquipment =
+                conn.prepareStatement(equipmentSql)
+        ) {
 
             psDraft.setInt(1, idClient);
 
-            try (ResultSet rs = psDraft.executeQuery()) {
+            try (
+                    ResultSet rs = psDraft.executeQuery()
+            ) {
+
                 if (rs.next()) {
 
                     Reservation reservation = new Reservation();
-                    reservation.setIdSection(rs.getInt("id_section"));
-                    reservation.setReservationDate(rs.getDate("reservation_date"));
 
-                    AuditoriumDraft auditoriumDraft = new AuditoriumDraft();
-                    auditoriumDraft.setIdAuditoriumDraft(rs.getInt("id_auditorium_draft"));
-                    auditoriumDraft.setIdDraft(rs.getInt("id_draft"));
-                    auditoriumDraft.setEventName(rs.getString("event_name"));
-                    auditoriumDraft.setAttendeesCount(rs.getInt("attendees_count"));
-                    auditoriumDraft.setObservations(rs.getString("observations"));
+                    reservation.setIdSection(
+                            rs.getInt("id_section")
+                    );
 
-                    List<RXE> equipmentList = new java.util.ArrayList<>();
+                    reservation.setReservationDate(
+                            rs.getDate("reservation_date")
+                    );
 
-                    psEquipment.setInt(1, rs.getInt("id_draft"));
+                    AuditoriumDraft auditoriumDraft =
+                            new AuditoriumDraft();
 
-                    try (ResultSet rsEquipment = psEquipment.executeQuery()) {
+                    auditoriumDraft.setIdAuditoriumDraft(
+                            rs.getInt("id_auditorium_draft")
+                    );
+
+                    auditoriumDraft.setIdDraft(
+                            rs.getInt("id_draft")
+                    );
+
+                    auditoriumDraft.setEventName(
+                            rs.getString("event_name")
+                    );
+
+                    auditoriumDraft.setAttendeesCount(
+                            rs.getInt("attendees_count")
+                    );
+
+                    auditoriumDraft.setObservations(
+                            rs.getString("observations")
+                    );
+
+                    List<RXE> equipmentList =
+                            new java.util.ArrayList<>();
+
+                    psEquipment.setInt(
+                            1,
+                            rs.getInt("id_draft")
+                    );
+
+                    try (
+                            ResultSet rsEquipment =
+                            psEquipment.executeQuery()
+                    ) {
+
                         while (rsEquipment.next()) {
+
                             RXE item = new RXE();
-                            item.setIdEquipment(rsEquipment.getInt("id_equipment"));
-                            item.setQuantity(rsEquipment.getInt("quantity"));
+
+                            item.setIdEquipment(
+                                    rsEquipment.getInt(
+                                            "id_equipment"
+                                    )
+                            );
+
+                            item.setQuantity(
+                                    rsEquipment.getInt("quantity")
+                            );
+
                             equipmentList.add(item);
                         }
                     }
 
-                    AuditoriumDraftRequest request = new AuditoriumDraftRequest();
+                    AuditoriumDraftRequest request =
+                            new AuditoriumDraftRequest();
+
                     request.setIdDraft(rs.getInt("id_draft"));
                     request.setIdClient(rs.getInt("id_client"));
                     request.setReservation(reservation);
@@ -601,14 +1009,25 @@ public class AuditoriumDraftDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al obtener draft de auditorio por cliente: " + e.getMessage());
+
+            System.out.println(
+                    "Error al obtener draft de "
+                    + "auditorio por cliente: "
+                    + e.getMessage()
+            );
         }
 
         return null;
     }
     
-    // Confirmar un draft de auditorio.
-    // Convierte la reserva temporal en reserva real y luego elimina el draft.
+    /**
+     * Confirma un draft y lo convierte en reserva real.
+     *
+     * @param idDraft identificador del draft
+     * @param idClient identificador del cliente
+     *
+     * @return true si la confirmación fue exitosa
+     */
     public static boolean confirmDraft(int idDraft, int idClient) {
 
         AuditoriumDraftRequest draftRequest = getDraftById(idDraft);
@@ -622,7 +1041,8 @@ public class AuditoriumDraftDAO {
         }
 
         Reservation reservation = draftRequest.getReservation();
-        AuditoriumDraft auditoriumDraft = draftRequest.getAuditoriumDraft();
+        AuditoriumDraft auditoriumDraft =
+                draftRequest.getAuditoriumDraft();
         List<RXE> equipmentList = draftRequest.getEquipmentList();
 
         if (reservation == null || auditoriumDraft == null) {
@@ -635,29 +1055,46 @@ public class AuditoriumDraftDAO {
 
         if (existsAuditoriumReservationByDateAndSection(
                 reservation.getReservationDate(),
-                reservation.getIdSection())) {
+                reservation.getIdSection()
+        )) {
             return false;
         }
 
         String insertReservationSql =
-                "INSERT INTO AUD_Reservations (id_section, reservation_date) VALUES (?, ?)";
+                "INSERT INTO AUD_Reservations "
+                + "(id_section, reservation_date) "
+                + "VALUES (?, ?)";
 
-        String insertRXCSql =
-                "INSERT INTO AUD_RXC (id_reservation, id_client) VALUES (?, ?)";
+        String insertRXCSql = "INSERT INTO AUD_RXC "
+                + "(id_reservation, id_client) "
+                + "VALUES (?, ?)";
 
         String insertAuditoriumReservationSql =
-                "INSERT INTO AUD_AuditoriumReservations " +
-                "(id_reservation, event_name, attendees_count, observations) " +
-                "VALUES (?, ?, ?, ?)";
+                "INSERT INTO AUD_AuditoriumReservations "
+                + "(id_reservation, event_name, "
+                + "attendees_count, observations) "
+                + "VALUES (?, ?, ?, ?)";
 
-        String insertRXESql =
-                "INSERT INTO AUD_RXE (id_reservation, id_equipment, quantity) VALUES (?, ?, ?)";
+        String insertRXESql = "INSERT INTO AUD_RXE "
+                + "(id_reservation, id_equipment, quantity) "
+                + "VALUES (?, ?, ?)";
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement psReservation = conn.prepareStatement(insertReservationSql, PreparedStatement.RETURN_GENERATED_KEYS);
-             PreparedStatement psRXC = conn.prepareStatement(insertRXCSql);
-             PreparedStatement psAuditoriumReservation = conn.prepareStatement(insertAuditoriumReservationSql);
-             PreparedStatement psRXE = conn.prepareStatement(insertRXESql)) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement psReservation =
+                conn.prepareStatement(
+                        insertReservationSql,
+                        PreparedStatement.RETURN_GENERATED_KEYS
+                );
+                PreparedStatement psRXC =
+                conn.prepareStatement(insertRXCSql);
+                PreparedStatement psAuditoriumReservation =
+                conn.prepareStatement(
+                        insertAuditoriumReservationSql
+                );
+                PreparedStatement psRXE =
+                conn.prepareStatement(insertRXESql)
+        ) {
 
             conn.setAutoCommit(false);
 
@@ -667,7 +1104,11 @@ public class AuditoriumDraftDAO {
 
             int idReservation;
 
-            try (ResultSet generatedKeys = psReservation.getGeneratedKeys()) {
+            try (
+                    ResultSet generatedKeys =
+                    psReservation.getGeneratedKeys()
+            ) {
+
                 if (generatedKeys.next()) {
                     idReservation = generatedKeys.getInt(1);
                 } else {
@@ -681,16 +1122,35 @@ public class AuditoriumDraftDAO {
             psRXC.executeUpdate();
 
             psAuditoriumReservation.setInt(1, idReservation);
-            psAuditoriumReservation.setString(2, auditoriumDraft.getEventName());
-            psAuditoriumReservation.setInt(3, auditoriumDraft.getAttendeesCount());
-            psAuditoriumReservation.setString(4, auditoriumDraft.getObservations());
+            psAuditoriumReservation.setString(
+                    2,
+                    auditoriumDraft.getEventName()
+            );
+            psAuditoriumReservation.setInt(
+                    3,
+                    auditoriumDraft.getAttendeesCount()
+            );
+            psAuditoriumReservation.setString(
+                    4,
+                    auditoriumDraft.getObservations()
+            );
             psAuditoriumReservation.executeUpdate();
 
             if (equipmentList != null && !equipmentList.isEmpty()) {
-                for (RXE item : equipmentList) {
-                    int availableQuantity = getEquipmentAvailableQuantity(conn, item.getIdEquipment());
 
-                    if (item.getIdEquipment() <= 0 || item.getQuantity() <= 0 || availableQuantity < item.getQuantity()) {
+                for (RXE item : equipmentList) {
+
+                    int availableQuantity =
+                            getEquipmentAvailableQuantity(
+                                    conn,
+                                    item.getIdEquipment()
+                            );
+
+                    if (
+                            item.getIdEquipment() <= 0
+                            || item.getQuantity() <= 0
+                            || availableQuantity < item.getQuantity()
+                    ) {
                         conn.rollback();
                         return false;
                     }
@@ -705,65 +1165,108 @@ public class AuditoriumDraftDAO {
             conn.commit();
 
             deleteDraft(idDraft);
+
             return true;
 
         } catch (SQLException e) {
-            System.out.println("Error al confirmar draft de auditorio: " + e.getMessage());
+
+            System.out.println(
+                    "Error al confirmar draft "
+                    + "de auditorio: "
+                    + e.getMessage()
+            );
+
             return false;
         }
     }
+    
+    /**
+     * Obtiene los bloques de drafts vencidos.
+     *
+     * @return lista de bloques vencidos
+     */    
     public static List<CalendarBlock> getExpiredDraftBlocks() {
 
-    List<CalendarBlock> blocks = new java.util.ArrayList<>();
+        List<CalendarBlock> blocks = new java.util.ArrayList<>();
 
-    String sql =
-            "SELECT d.reservation_date, d.id_section " +
-            "FROM AUD_ReservationDrafts d " +
-            "INNER JOIN AUD_AuditoriumDrafts ad " +
-            "ON d.id_draft = ad.id_draft " +
-            "WHERE d.expires_at <= NOW()";
+        String sql = "SELECT d.reservation_date, d.id_section "
+                + "FROM AUD_ReservationDrafts d "
+                + "INNER JOIN AUD_AuditoriumDrafts ad "
+                + "ON d.id_draft = ad.id_draft "
+                + "WHERE d.expires_at <= NOW()";
 
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
 
-        while (rs.next()) {
-            CalendarBlock block = new CalendarBlock();
-            block.setReservationDate(rs.getDate("reservation_date"));
-            block.setIdSection(rs.getInt("id_section"));
-            block.setStatus("EXPIRED_AUDITORIUM_DRAFT");
+            while (rs.next()) {
 
-            blocks.add(block);
+                CalendarBlock block = new CalendarBlock();
+
+                block.setReservationDate(
+                        rs.getDate("reservation_date")
+                );
+
+                block.setIdSection(
+                        rs.getInt("id_section")
+                );
+
+                block.setStatus("EXPIRED_AUDITORIUM_DRAFT");
+
+                blocks.add(block);
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Error al obtener drafts vencidos "
+                    + "de auditorio: "
+                    + e.getMessage()
+            );
         }
 
-    } catch (SQLException e) {
-        System.out.println("Error al obtener drafts vencidos de auditorio: " + e.getMessage());
+        return blocks;
     }
+    
+    /**
+     * Elimina los drafts vencidos de auditorio.
+     *
+     * @return cantidad de drafts eliminados
+     */    
+    public static int cleanupExpiredDraftsAndCount() {
 
-    return blocks;
-}
+        String sql = "DELETE d "
+                + "FROM AUD_ReservationDrafts d "
+                + "INNER JOIN AUD_AuditoriumDrafts ad "
+                + "ON d.id_draft = ad.id_draft "
+                + "WHERE d.expires_at <= NOW()";
 
-public static int cleanupExpiredDraftsAndCount() {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)
+        ) {
 
-    String sql =
-            "DELETE d " +
-            "FROM AUD_ReservationDrafts d " +
-            "INNER JOIN AUD_AuditoriumDrafts ad " +
-            "ON d.id_draft = ad.id_draft " +
-            "WHERE d.expires_at <= NOW()";
+            int deleted = ps.executeUpdate();
 
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+            System.out.println(
+                    "Drafts de auditorio expirados "
+                    + "eliminados: "
+                    + deleted
+            );
 
-        int deleted = ps.executeUpdate();
+            return deleted;
 
-        System.out.println("Drafts de auditorio expirados eliminados: " + deleted);
+        } catch (SQLException e) {
 
-        return deleted;
+            System.out.println(
+                    "Error al limpiar drafts vencidos "
+                    + "de auditorio: "
+                    + e.getMessage()
+            );
 
-    } catch (SQLException e) {
-        System.out.println("Error al limpiar drafts vencidos de auditorio: " + e.getMessage());
-        return 0;
+            return 0;
+        }
     }
-}
 }

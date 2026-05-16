@@ -13,7 +13,11 @@ public class Person implements Serializable {
     protected String fSurname;
     protected String mSurname;
     protected String identityCard;
-
+    /**
+    * Crea una persona vacía.
+    */
+    public Person() {
+    }
     /**
      * Crea una persona con sus datos personales principales.
      *
