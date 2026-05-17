@@ -4,7 +4,6 @@ import com.auditorio.clientereservas.App;
 import components.DeviceCard;
 import components.ListDeviceCard;
 import components.PopUp;
-import components.TtlChip;
 import draft.AuditoriumDraft;
 import dto.AuditoriumDraftRequest;
 import java.io.IOException;
@@ -30,13 +29,13 @@ import javafx.scene.layout.VBox;
 import model.Equipment;
 import model.RXE;
 import model.Reservation;
-import network.ReservationNotificationHandler;
 import service.AuditoriumDraftService;
 import service.EquipmentService;
 import service.Response;
 import session.Session;
 import utils.DraftContainer;
-
+import components.TtlChip;
+import network.ReservationNotificationHandler;
 /**
  * Controlador del formulario para completar una reserva de auditorio.
  */
@@ -79,7 +78,7 @@ public class auditorium_form_screen_controller implements Initializable {
 
     private TtlChip ttlChip;
     private Runnable expiredListener;
-
+    
     /**
      * Carga el draft actual, los datos base y el estado visual del formulario.
      *
@@ -156,12 +155,36 @@ public class auditorium_form_screen_controller implements Initializable {
     /**
      * Configura el chip con el tiempo restante del draft activo.
      */
-    private void setupTtlChip() {
-        if (currentDraft == null
-                || currentDraft.getCreatedAt() == null
-                || currentDraft.getExpiresAt() == null
-                || currentDraft.isExpired()
-                || ttl_chip_container == null) {
+   private void setupTtlChip() {
+
+    System.out.println(
+            "currentDraft: "
+            + currentDraft
+    );
+
+    if (currentDraft != null) {
+
+        System.out.println(
+                "createdAt: "
+                + currentDraft.getCreatedAt()
+        );
+
+        System.out.println(
+                "expiresAt: "
+                + currentDraft.getExpiresAt()
+        );
+
+        System.out.println(
+                "isExpired: "
+                + currentDraft.isExpired()
+        );
+    }
+
+    if (currentDraft == null
+            || currentDraft.getCreatedAt() == null
+            || currentDraft.getExpiresAt() == null
+            || currentDraft.isExpired()
+            || ttl_chip_container == null) {
             if (ttl_chip_container != null) {
                 ttl_chip_container.getChildren().clear();
                 ttl_chip_container.setVisible(false);
@@ -424,14 +447,23 @@ public class auditorium_form_screen_controller implements Initializable {
         vb_added_devices.getChildren().clear();
 
         for (RXE item : currentDraft.getEquipmentList()) {
+List<Equipment> filtered = availableEquipmentList.stream()
+        .filter(eq -> eq.getIdEquipment() == item.getIdEquipment())
+        .collect(Collectors.toList());
+System.out.println(
+        "Equipo draft ID: "
+        + item.getIdEquipment()
+);
 
-            List<Equipment> filtered = availableEquipmentList.stream()
-                    .filter(eq -> eq.getIdEquipment() == item.getIdEquipment())
-                    .collect(Collectors.toList());
-
-            if (filtered.isEmpty()) {
-                continue;
-            }
+System.out.println(
+        "Equipos disponibles: "
+        + availableEquipmentList.stream()
+                .map(Equipment::getIdEquipment)
+                .collect(Collectors.toList())
+);
+if (filtered.isEmpty()) {
+    continue;
+}
 
             ListDeviceCard card = new ListDeviceCard(filtered);
 
@@ -471,10 +503,11 @@ public class auditorium_form_screen_controller implements Initializable {
                 refreshAuditoriumDraftInServer();
             });
 
-            VBox.setMargin(card, new Insets(0, 0, 10, 0));
-            vb_added_devices.getChildren().add(card);
+VBox.setMargin(card, new Insets(0, 0, 10, 0));
+vb_added_devices.getChildren().add(card);
 
-            card.setSelectedQuantity(item.getQuantity());
+card.setSelectedEquipment(filtered.get(0));
+card.setSelectedQuantity(item.getQuantity());
         }
 
         if (!vb_added_devices.getChildren().isEmpty()) {

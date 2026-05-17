@@ -203,7 +203,18 @@ public class ListDeviceCard extends HBox {
     public void setOnQuantityChange(Runnable action) {
         this.onQuantityChange = action;
     }
+/**
+ * Establece el equipo seleccionado en el selector.
+ *
+ * @param equipment equipo a seleccionar
+ */
+public void setSelectedEquipment(Equipment equipment) {
+    if (equipment == null) {
+        return;
+    }
 
+    chbDeviceType.getSelectionModel().select(equipment);
+}
     /**
      * Establece una cantidad seleccionada en el selector.
      *
