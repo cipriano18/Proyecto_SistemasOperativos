@@ -119,7 +119,7 @@ public class Validator {
         }
 
         return email.matches(
-                "^[^\\\\s@]+@[^\\\\s@]+\\\\.[^\\\\s@]+$"
+                "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
         );
     }
 
@@ -159,7 +159,7 @@ public class Validator {
         }
 
         return fName.matches(
-                "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\\\s]{2,50}$"
+                "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$"
         );
     }
 
@@ -179,7 +179,7 @@ public class Validator {
         }
 
         return fSurname.matches(
-                "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\\\s]{2,50}$"
+                "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$"
         );
     }
 
@@ -199,7 +199,7 @@ public class Validator {
         }
 
         return mSurname.matches(
-                "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\\\s]{2,50}$"
+                "^[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]{2,50}$"
         );
     }
 
