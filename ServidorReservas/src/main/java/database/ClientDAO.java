@@ -18,12 +18,11 @@ public class ClientDAO {
      * Crea un cliente en la base de datos.
      *
      * @param client cliente a registrar
-     *
      * @return true si el cliente fue creado correctamente
      */
     public static boolean createClient(Client client) {
 
-        String sql = "INSERT INTO AUD_Clients "
+        String sql = "INSERT INTO aud_clients "
                 + "(id_user, f_name, m_name, f_surname, "
                 + "m_surname, identity_card) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
@@ -59,7 +58,6 @@ public class ClientDAO {
      * Obtiene un cliente mediante el identificador de usuario.
      *
      * @param idUser identificador del usuario
-     *
      * @return cliente encontrado o null
      */
     public static Client getClientByUserId(int idUser) {
@@ -69,7 +67,7 @@ public class ClientDAO {
         String sql = "SELECT id_client, id_user, f_name, "
                 + "m_name, f_surname, m_surname, "
                 + "identity_card "
-                + "FROM AUD_Clients "
+                + "FROM aud_clients "
                 + "WHERE id_user = ?";
 
         try (
@@ -109,12 +107,11 @@ public class ClientDAO {
      * Actualiza la información de un cliente.
      *
      * @param client cliente con los datos actualizados
-     *
      * @return true si el cliente fue actualizado
      */
     public static boolean updateClient(Client client) {
 
-        String sql = "UPDATE AUD_Clients SET "
+        String sql = "UPDATE aud_clients SET "
                 + "f_name = ?, m_name = ?, "
                 + "f_surname = ?, m_surname = ?, "
                 + "identity_card = ? "
@@ -151,12 +148,11 @@ public class ClientDAO {
      * Elimina un cliente de la base de datos.
      *
      * @param idClient identificador del cliente
-     *
      * @return true si el cliente fue eliminado
      */
     public static boolean deleteClientCascade(int idClient) {
 
-        String sql = "DELETE FROM AUD_Clients "
+        String sql = "DELETE FROM aud_clients "
                 + "WHERE id_client = ?";
 
         try (
@@ -185,7 +181,6 @@ public class ClientDAO {
      * Obtiene un cliente completo con usuario y contacto.
      *
      * @param idClient identificador del cliente
-     *
      * @return datos completos del cliente o null
      */
     public static ClientRequest getFullClientById(int idClient) {
@@ -198,12 +193,12 @@ public class ClientDAO {
                 + "co.id_contact, "
                 + "co.type AS contact_type, "
                 + "co.contact_value "
-                + "FROM AUD_Clients c "
-                + "INNER JOIN AUD_Users u "
+                + "FROM aud_clients c "
+                + "INNER JOIN aud_users u "
                 + "ON c.id_user = u.id_user "
-                + "LEFT JOIN AUD_CXC cxc "
+                + "LEFT JOIN aud_cxc cxc "
                 + "ON c.id_client = cxc.id_client "
-                + "LEFT JOIN AUD_Contacts co "
+                + "LEFT JOIN aud_contacts co "
                 + "ON cxc.id_contact = co.id_contact "
                 + "WHERE c.id_client = ?";
 
@@ -237,17 +232,9 @@ public class ClientDAO {
 
                 Contact contact = new Contact();
 
-                contact.setIdContact(
-                        rs.getInt("id_contact")
-                );
-
-                contact.setType(
-                        rs.getString("contact_type")
-                );
-
-                contact.setContactValue(
-                        rs.getString("contact_value")
-                );
+                contact.setIdContact(rs.getInt("id_contact"));
+                contact.setType(rs.getString("contact_type"));
+                contact.setContactValue(rs.getString("contact_value"));
 
                 ClientRequest clientRequest = new ClientRequest();
 
@@ -273,17 +260,14 @@ public class ClientDAO {
      * Obtiene un cliente mediante su cédula.
      *
      * @param identityCard cédula del cliente
-     *
      * @return cliente encontrado o null
      */
-    public static Client getClientByIdentityCard(
-            String identityCard
-    ) {
+    public static Client getClientByIdentityCard(String identityCard) {
 
         String sql = "SELECT id_client, id_user, f_name, "
                 + "m_name, f_surname, m_surname, "
                 + "identity_card "
-                + "FROM AUD_Clients "
+                + "FROM aud_clients "
                 + "WHERE identity_card = ?";
 
         try (
