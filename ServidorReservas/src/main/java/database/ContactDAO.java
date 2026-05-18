@@ -21,7 +21,7 @@ public class ContactDAO {
      */
     public static int insertContact(Contact contact) {
 
-        String sql = "INSERT INTO AUD_Contacts "
+        String sql = "INSERT INTO aud_contacts "
                 + "(type, contact_value) "
                 + "VALUES (?, ?)";
 
@@ -68,7 +68,7 @@ public class ContactDAO {
             int idContact
     ) {
 
-        String sql = "INSERT INTO AUD_CXA "
+        String sql = "INSERT INTO aud_cxa "
                 + "(id_admin, id_contact) "
                 + "VALUES (?, ?)";
 
@@ -108,7 +108,7 @@ public class ContactDAO {
             int idContact
     ) {
 
-        String sql = "INSERT INTO AUD_CXC "
+        String sql = "INSERT INTO aud_cxc "
                 + "(id_client, id_contact) "
                 + "VALUES (?, ?)";
 
@@ -167,7 +167,7 @@ public class ContactDAO {
             return false;
         }
 
-        String sql = "UPDATE AUD_Contacts "
+        String sql = "UPDATE aud_contacts "
                 + "SET type = ?, contact_value = ? "
                 + "WHERE id_contact = ?";
 
@@ -203,8 +203,8 @@ public class ContactDAO {
     public static Contact getContactByAdminId(int idAdmin) {
 
         String sql = "SELECT c.* "
-                + "FROM AUD_Contacts c "
-                + "INNER JOIN AUD_CXA x "
+                + "FROM aud_contacts c "
+                + "INNER JOIN aud_cxa x "
                 + "ON c.id_contact = x.id_contact "
                 + "WHERE x.id_admin = ?";
 
@@ -263,7 +263,7 @@ public class ContactDAO {
             int idContact = -1;
 
             String getContact = "SELECT id_contact "
-                    + "FROM AUD_CXC "
+                    + "FROM aud_cxc "
                     + "WHERE id_client = ?";
 
             try (
@@ -291,7 +291,7 @@ public class ContactDAO {
                 return false;
             }
 
-            String deleteCXC = "DELETE FROM AUD_CXC "
+            String deleteCXC = "DELETE FROM aud_cxc "
                     + "WHERE id_client = ?";
 
             try (
@@ -305,7 +305,7 @@ public class ContactDAO {
             }
 
             String deleteContact = "DELETE "
-                    + "FROM AUD_Contacts "
+                    + "FROM aud_contacts "
                     + "WHERE id_contact = ?";
 
             try (
@@ -342,8 +342,8 @@ public class ContactDAO {
     public static Contact getContactByClientId(int idClient) {
 
         String sql = "SELECT c.* "
-                + "FROM AUD_Contacts c "
-                + "INNER JOIN AUD_CXC x "
+                + "FROM aud_contacts c "
+                + "INNER JOIN aud_cxc x "
                 + "ON c.id_contact = x.id_contact "
                 + "WHERE x.id_client = ?";
 

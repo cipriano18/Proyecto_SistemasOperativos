@@ -36,8 +36,8 @@ public class AuditoriumReservationDAO {
         List<CalendarBlock> blocks = new ArrayList<>();
 
         String sql = "SELECT r.reservation_date, r.id_section "
-                + "FROM AUD_AuditoriumReservations ar "
-                + "INNER JOIN AUD_Reservations r "
+                + "FROM aud_auditoriumreservations ar "
+                + "INNER JOIN aud_reservations r "
                 + "ON ar.id_reservation = r.id_reservation "
                 + "WHERE MONTH(r.reservation_date) = ? "
                 + "AND YEAR(r.reservation_date) = ? "
@@ -156,12 +156,12 @@ public class AuditoriumReservationDAO {
                 + "ar.id_auditorium_reservation, "
                 + "ar.event_name, ar.attendees_count, "
                 + "ar.observations "
-                + "FROM AUD_Reservations r "
-                + "INNER JOIN AUD_RXC rxc "
+                + "FROM aud_reservations r "
+                + "INNER JOIN aud_rxc rxc "
                 + "ON r.id_reservation = rxc.id_reservation "
-                + "INNER JOIN AUD_Clients c "
+                + "INNER JOIN aud_clients c "
                 + "ON rxc.id_client = c.id_client "
-                + "INNER JOIN AUD_AuditoriumReservations ar "
+                + "INNER JOIN aud_auditoriumreservations ar "
                 + "ON r.id_reservation = ar.id_reservation "
                 + "WHERE r.id_reservation = ?";
 
@@ -261,10 +261,10 @@ public class AuditoriumReservationDAO {
                 + "r.reservation_date, r.id_section, "
                 + "rxc.id_client, ar.event_name, "
                 + "ar.attendees_count, ar.observations "
-                + "FROM AUD_Reservations r "
-                + "INNER JOIN AUD_RXC rxc "
+                + "FROM aud_reservations r "
+                + "INNER JOIN aud_rxc rxc "
                 + "ON r.id_reservation = rxc.id_reservation "
-                + "INNER JOIN AUD_AuditoriumReservations ar "
+                + "INNER JOIN aud_auditoriumreservations ar "
                 + "ON r.id_reservation = ar.id_reservation "
                 + "WHERE r.id_reservation = ?";
 
@@ -352,10 +352,10 @@ public class AuditoriumReservationDAO {
                 new ArrayList<>();
 
         String sql = "SELECT r.id_reservation "
-                + "FROM AUD_Reservations r "
-                + "INNER JOIN AUD_RXC rxc "
+                + "FROM aud_reservations r "
+                + "INNER JOIN aud_rxc rxc "
                 + "ON r.id_reservation = rxc.id_reservation "
-                + "INNER JOIN AUD_AuditoriumReservations ar "
+                + "INNER JOIN aud_auditoriumreservations ar "
                 + "ON r.id_reservation = ar.id_reservation "
                 + "WHERE rxc.id_client = ? "
                 + "AND r.reservation_date >= CURDATE() "
@@ -412,10 +412,10 @@ public class AuditoriumReservationDAO {
                 new ArrayList<>();
 
         String sql = "SELECT r.id_reservation "
-                + "FROM AUD_Reservations r "
-                + "INNER JOIN AUD_RXC rxc "
+                + "FROM aud_reservations r "
+                + "INNER JOIN aud_rxc rxc "
                 + "ON r.id_reservation = rxc.id_reservation "
-                + "INNER JOIN AUD_AuditoriumReservations ar "
+                + "INNER JOIN aud_auditoriumreservations ar "
                 + "ON r.id_reservation = ar.id_reservation "
                 + "WHERE MONTH(r.reservation_date) = ? "
                 + "AND YEAR(r.reservation_date) = ? "
@@ -474,10 +474,10 @@ public class AuditoriumReservationDAO {
     ) {
 
         String sql = "DELETE r "
-                + "FROM AUD_Reservations r "
-                + "INNER JOIN AUD_RXC rxc "
+                + "FROM aud_reservations r "
+                + "INNER JOIN aud_rxc rxc "
                 + "ON r.id_reservation = rxc.id_reservation "
-                + "INNER JOIN AUD_AuditoriumReservations ar "
+                + "INNER JOIN aud_auditoriumreservations ar "
                 + "ON r.id_reservation = ar.id_reservation "
                 + "WHERE r.id_reservation = ? "
                 + "AND rxc.id_client = ?";
@@ -516,10 +516,10 @@ public class AuditoriumReservationDAO {
     ) {
 
         String sql = "DELETE r "
-                + "FROM AUD_Reservations r "
-                + "INNER JOIN AUD_RXC rxc "
+                + "FROM aud_reservations r "
+                + "INNER JOIN aud_rxc rxc "
                 + "ON r.id_reservation = rxc.id_reservation "
-                + "INNER JOIN AUD_AuditoriumReservations ar "
+                + "INNER JOIN aud_auditoriumreservations ar "
                 + "ON r.id_reservation = ar.id_reservation "
                 + "WHERE rxc.id_client = ?";
 

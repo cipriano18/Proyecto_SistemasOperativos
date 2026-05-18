@@ -29,7 +29,7 @@ public class AdminDAO {
         String sql = "SELECT id_admin, id_user, f_name, "
                 + "m_name, f_surname, m_surname, "
                 + "identity_card "
-                + "FROM AUD_Administrators "
+                + "FROM aud_administrators "
                 + "ORDER BY id_admin ASC";
 
         try (
@@ -76,7 +76,7 @@ public class AdminDAO {
         String sql = "SELECT id_admin, id_user, f_name, "
                 + "m_name, f_surname, m_surname, "
                 + "identity_card "
-                + "FROM AUD_Administrators "
+                + "FROM aud_administrators"
                 + "WHERE id_admin = ?";
 
         try (
@@ -125,7 +125,7 @@ public class AdminDAO {
         String sql = "SELECT id_admin, id_user, "
                 + "f_name, m_name, f_surname, "
                 + "m_surname, identity_card "
-                + "FROM AUD_Administrators "
+                + "FROM aud_administrators "
                 + "WHERE id_user = ?";
 
         try (
@@ -176,7 +176,7 @@ public class AdminDAO {
         String sql = "SELECT id_admin, id_user, "
                 + "f_name, m_name, f_surname, "
                 + "m_surname, identity_card "
-                + "FROM AUD_Administrators "
+                + "FROM aud_administrators "
                 + "WHERE identity_card = ?";
 
         try (
@@ -231,7 +231,7 @@ public class AdminDAO {
             conn.setAutoCommit(false);
 
             String sqlAdmin = "INSERT INTO "
-                    + "AUD_Administrators "
+                    + "aud_administrators "
                     + "(id_user, f_name, m_name, "
                     + "f_surname, m_surname, "
                     + "identity_card) "
@@ -316,7 +316,7 @@ public class AdminDAO {
             return false;
         }
 
-        String sql = "UPDATE AUD_Administrators "
+        String sql = "UPDATE aud_administrators "
                 + "SET f_name = ?, m_name = ?, "
                 + "f_surname = ?, m_surname = ? "
                 + "WHERE id_admin = ?";
@@ -367,7 +367,7 @@ public class AdminDAO {
                 + "co.id_contact, "
                 + "co.type AS contact_type, "
                 + "co.contact_value "
-                + "FROM AUD_Administrators a "
+                + "FROM aud_administrators a "
                 + "INNER JOIN AUD_Users u "
                 + "ON a.id_user = u.id_user "
                 + "LEFT JOIN AUD_CXA cxa "
@@ -452,7 +452,7 @@ public class AdminDAO {
     ) {
 
         String getAdminSql = "SELECT id_user "
-                + "FROM AUD_Administrators "
+                + "FROM aud_administrators "
                 + "WHERE id_admin = ?";
 
         String getContactsSql = "SELECT id_contact "
