@@ -126,182 +126,167 @@ public class AuditoriumDraftDAO {
      * @return draft creado o draft existente
      */
     public static AuditoriumDraftRequest createDraft(
-            AuditoriumDraftRequest request
-    ) {
+        AuditoriumDraftRequest request
+) {
 
-        if (request == null || request.getReservation() == null) {
-            return null;
-        }
+    if (request == null || request.getReservation() == null) {
+        return null;
+    }
 
-        Reservation reservation = request.getReservation();
+    Reservation reservation = request.getReservation();
 
-        if (
-                request.getIdClient() <= 0
-                || reservation.getIdSection() <= 0
-                || reservation.getReservationDate() == null
-        ) {
-            return null;
-        }
+    if (request.getIdClient() <= 0
+            || reservation.getIdSection() <= 0
+            || reservation.getReservationDate() == null) {
+        return null;
+    }
 
-        Semaphore semaphore = getAuditoriumDraftSemaphore(
+    Semaphore semaphore = getAuditoriumDraftSemaphore(
+            reservation.getReservationDate(),
+            reservation.getIdSection()
+    );
+
+    String insertDraftSql = "INSERT INTO AUD_ReservationDrafts "
+            + "(id_client, id_section, reservation_date, "
+            + "created_at, expires_at) "
+            + "VALUES (?, ?, ?, ?, ?)";
+
+    String insertAuditoriumDraftSql =
+            "INSERT INTO AUD_AuditoriumDrafts "
+            + "(id_draft, event_name, attendees_count, "
+            + "observations) "
+            + "VALUES (?, ?, ?, ?)";
+
+    String insertRDXESql = "INSERT INTO AUD_RDXE "
+            + "(id_draft, id_equipment, quantity) "
+            + "VALUES (?, ?, ?)";
+
+    try {
+        semaphore.acquire();
+
+        cleanupExpiredDraftsAndCount();
+
+        if (existsAuditoriumReservationByDateAndSection(
                 reservation.getReservationDate(),
                 reservation.getIdSection()
-        );
+        )) {
+            return null;
+        }
 
-        String insertDraftSql = "INSERT INTO AUD_ReservationDrafts "
-                + "(id_client, id_section, reservation_date, "
-                + "created_at, expires_at) "
-                + "VALUES (?, ?, ?, ?, ?)";
-
-        String insertAuditoriumDraftSql =
-                "INSERT INTO AUD_AuditoriumDrafts "
-                + "(id_draft, event_name, attendees_count, "
-                + "observations) "
-                + "VALUES (?, ?, ?, ?)";
-
-        String insertRDXESql = "INSERT INTO AUD_RDXE "
-                + "(id_draft, id_equipment, quantity) "
-                + "VALUES (?, ?, ?)";
-
-        try {
-
-            semaphore.acquire();
-
-            cleanupExpiredDraftsAndCount();
-
-            if (existsAuditoriumReservationByDateAndSection(
-                    reservation.getReservationDate(),
-                    reservation.getIdSection()
-            )) {
-                return null;
-            }
-
-            AuditoriumDraftRequest existingDraft =
-                    getDraftBySectionAndDate(
-                            reservation.getReservationDate(),
-                            reservation.getIdSection()
-                    );
-
-            if (existingDraft != null) {
-
-                if (existingDraft.getIdClient() == request.getIdClient()) {
-                    return existingDraft;
-                }
-
-                return null;
-            }
-
-            try (
-                    Connection conn = DBConnection.getConnection();
-                    PreparedStatement psDraft = conn.prepareStatement(
-                            insertDraftSql,
-                            PreparedStatement.RETURN_GENERATED_KEYS
-                    );
-                    PreparedStatement psAuditoriumDraft =
-                    conn.prepareStatement(insertAuditoriumDraftSql);
-                    PreparedStatement psRDXE =
-                    conn.prepareStatement(insertRDXESql)
-            ) {
-
-                conn.setAutoCommit(false);
-
-                long now = System.currentTimeMillis();
-                Timestamp createdAt = new Timestamp(now);
-                Timestamp expiresAt = new Timestamp(now + TTL_MILLIS);
-
-                psDraft.setInt(1, request.getIdClient());
-                psDraft.setInt(2, reservation.getIdSection());
-                psDraft.setDate(3, reservation.getReservationDate());
-                psDraft.setTimestamp(4, createdAt);
-                psDraft.setTimestamp(5, expiresAt);
-
-                psDraft.executeUpdate();
-
-                int idDraft;
-
-                try (
-                        ResultSet generatedKeys =
-                        psDraft.getGeneratedKeys()
-                ) {
-
-                    if (generatedKeys.next()) {
-                        idDraft = generatedKeys.getInt(1);
-                    } else {
-                        conn.rollback();
-                        return null;
-                    }
-                }
-
-                AuditoriumDraft auditoriumDraft =
-                        request.getAuditoriumDraft();
-
-                if (auditoriumDraft == null) {
-
-                    auditoriumDraft = new AuditoriumDraft();
-                    auditoriumDraft.setEventName("");
-                    auditoriumDraft.setAttendeesCount(0);
-                    auditoriumDraft.setObservations("");
-                }
-
-                auditoriumDraft.setIdDraft(idDraft);
-
-                psAuditoriumDraft.setInt(1, idDraft);
-                psAuditoriumDraft.setString(
-                        2,
-                        auditoriumDraft.getEventName()
-                );
-                psAuditoriumDraft.setInt(
-                        3,
-                        auditoriumDraft.getAttendeesCount()
-                );
-                psAuditoriumDraft.setString(
-                        4,
-                        auditoriumDraft.getObservations()
+        AuditoriumDraftRequest existingDraft =
+                getDraftBySectionAndDate(
+                        reservation.getReservationDate(),
+                        reservation.getIdSection()
                 );
 
-                psAuditoriumDraft.executeUpdate();
-
-                List<RXE> equipmentList = request.getEquipmentList();
-
-                if (equipmentList != null && !equipmentList.isEmpty()) {
-
-                    for (RXE item : equipmentList) {
-
-                        psRDXE.setInt(1, idDraft);
-                        psRDXE.setInt(2, item.getIdEquipment());
-                        psRDXE.setInt(3, item.getQuantity());
-                        psRDXE.executeUpdate();
-                    }
-                }
-
-                conn.commit();
-
-                request.setIdDraft(idDraft);
-                request.setAuditoriumDraft(auditoriumDraft);
-
-                return request;
+        if (existingDraft != null) {
+            if (existingDraft.getIdClient() == request.getIdClient()) {
+                return existingDraft;
             }
-
-        } catch (InterruptedException e) {
-
-            Thread.currentThread().interrupt();
 
             return null;
+        }
 
-        } catch (SQLException e) {
+        try (
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement psDraft = conn.prepareStatement(
+                        insertDraftSql,
+                        PreparedStatement.RETURN_GENERATED_KEYS
+                );
+                PreparedStatement psAuditoriumDraft =
+                        conn.prepareStatement(insertAuditoriumDraftSql);
+                PreparedStatement psRDXE =
+                        conn.prepareStatement(insertRDXESql)
+        ) {
+            conn.setAutoCommit(false);
 
-            System.out.println(
-                    "Error al crear draft de auditorio: "
-                    + e.getMessage()
+            long now = System.currentTimeMillis();
+            Timestamp createdAt = new Timestamp(now);
+            Timestamp expiresAt = new Timestamp(now + TTL_MILLIS);
+
+            psDraft.setInt(1, request.getIdClient());
+            psDraft.setInt(2, reservation.getIdSection());
+            psDraft.setDate(3, reservation.getReservationDate());
+            psDraft.setTimestamp(4, createdAt);
+            psDraft.setTimestamp(5, expiresAt);
+
+            psDraft.executeUpdate();
+
+            int idDraft;
+
+            try (ResultSet generatedKeys = psDraft.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    idDraft = generatedKeys.getInt(1);
+                } else {
+                    conn.rollback();
+                    return null;
+                }
+            }
+
+            AuditoriumDraft auditoriumDraft =
+                    request.getAuditoriumDraft();
+
+            if (auditoriumDraft == null) {
+                auditoriumDraft = new AuditoriumDraft();
+                auditoriumDraft.setEventName("");
+                auditoriumDraft.setAttendeesCount(0);
+                auditoriumDraft.setObservations("");
+            }
+
+            auditoriumDraft.setIdDraft(idDraft);
+
+            psAuditoriumDraft.setInt(1, idDraft);
+            psAuditoriumDraft.setString(
+                    2,
+                    auditoriumDraft.getEventName()
+            );
+            psAuditoriumDraft.setInt(
+                    3,
+                    auditoriumDraft.getAttendeesCount()
+            );
+            psAuditoriumDraft.setString(
+                    4,
+                    auditoriumDraft.getObservations()
             );
 
-            return null;
+            psAuditoriumDraft.executeUpdate();
 
-        } finally {
+            List<RXE> equipmentList = request.getEquipmentList();
 
-            semaphore.release();
+            if (equipmentList != null && !equipmentList.isEmpty()) {
+                for (RXE item : equipmentList) {
+                    psRDXE.setInt(1, idDraft);
+                    psRDXE.setInt(2, item.getIdEquipment());
+                    psRDXE.setInt(3, item.getQuantity());
+                    psRDXE.executeUpdate();
+                }
+            }
+
+            conn.commit();
+
+            request.setIdDraft(idDraft);
+            request.setAuditoriumDraft(auditoriumDraft);
+            request.setCreatedAt(createdAt);
+            request.setExpiresAt(expiresAt);
+
+            return request;
         }
+
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        return null;
+
+    } catch (SQLException e) {
+        System.out.println(
+                "Error al crear draft de auditorio: "
+                + e.getMessage()
+        );
+        return null;
+
+    } finally {
+        semaphore.release();
     }
+}
     
     /**
      * Valida si existe una reserva real para la fecha y sección.
@@ -629,127 +614,120 @@ public class AuditoriumDraftDAO {
      *
      * @return draft encontrado o null
      */
-    public static AuditoriumDraftRequest getDraftById(int idDraft) {
+   public static AuditoriumDraftRequest getDraftById(int idDraft) {
 
-        if (idDraft <= 0) {
-            return null;
-        }
-
-        String draftSql = "SELECT d.id_draft, d.id_client, "
-                + "d.id_section, d.reservation_date, "
-                + "ad.id_auditorium_draft, ad.event_name, "
-                + "ad.attendees_count, ad.observations "
-                + "FROM AUD_ReservationDrafts d "
-                + "INNER JOIN AUD_AuditoriumDrafts ad "
-                + "ON d.id_draft = ad.id_draft "
-                + "WHERE d.id_draft = ? "
-                + "AND d.expires_at > NOW()";
-
-        String equipmentSql = "SELECT id_equipment, quantity "
-                + "FROM AUD_RDXE "
-                + "WHERE id_draft = ?";
-
-        try (
-                Connection conn = DBConnection.getConnection();
-                PreparedStatement psDraft =
-                conn.prepareStatement(draftSql);
-                PreparedStatement psEquipment =
-                conn.prepareStatement(equipmentSql)
-        ) {
-
-            psDraft.setInt(1, idDraft);
-
-            try (
-                    ResultSet rs = psDraft.executeQuery()
-            ) {
-
-                if (rs.next()) {
-
-                    Reservation reservation = new Reservation();
-
-                    reservation.setIdSection(
-                            rs.getInt("id_section")
-                    );
-
-                    reservation.setReservationDate(
-                            rs.getDate("reservation_date")
-                    );
-
-                    AuditoriumDraft auditoriumDraft =
-                            new AuditoriumDraft();
-
-                    auditoriumDraft.setIdAuditoriumDraft(
-                            rs.getInt("id_auditorium_draft")
-                    );
-
-                    auditoriumDraft.setIdDraft(
-                            rs.getInt("id_draft")
-                    );
-
-                    auditoriumDraft.setEventName(
-                            rs.getString("event_name")
-                    );
-
-                    auditoriumDraft.setAttendeesCount(
-                            rs.getInt("attendees_count")
-                    );
-
-                    auditoriumDraft.setObservations(
-                            rs.getString("observations")
-                    );
-
-                    List<RXE> equipmentList =
-                            new java.util.ArrayList<>();
-
-                    psEquipment.setInt(1, idDraft);
-
-                    try (
-                            ResultSet rsEquipment =
-                            psEquipment.executeQuery()
-                    ) {
-
-                        while (rsEquipment.next()) {
-
-                            RXE item = new RXE();
-
-                            item.setIdEquipment(
-                                    rsEquipment.getInt(
-                                            "id_equipment"
-                                    )
-                            );
-
-                            item.setQuantity(
-                                    rsEquipment.getInt("quantity")
-                            );
-
-                            equipmentList.add(item);
-                        }
-                    }
-
-                    AuditoriumDraftRequest request =
-                            new AuditoriumDraftRequest();
-
-                    request.setIdDraft(rs.getInt("id_draft"));
-                    request.setIdClient(rs.getInt("id_client"));
-                    request.setReservation(reservation);
-                    request.setAuditoriumDraft(auditoriumDraft);
-                    request.setEquipmentList(equipmentList);
-
-                    return request;
-                }
-            }
-
-        } catch (SQLException e) {
-
-            System.out.println(
-                    "Error al obtener draft de "
-                    + "auditorio por ID: "
-                    + e.getMessage()
-            );
-        }
-
+    if (idDraft <= 0) {
         return null;
     }
+
+    String draftSql = "SELECT d.id_draft, d.id_client, "
+            + "d.id_section, d.reservation_date, "
+            + "d.created_at, d.expires_at, "
+            + "ad.id_auditorium_draft, ad.event_name, "
+            + "ad.attendees_count, ad.observations "
+            + "FROM AUD_ReservationDrafts d "
+            + "INNER JOIN AUD_AuditoriumDrafts ad "
+            + "ON d.id_draft = ad.id_draft "
+            + "WHERE d.id_draft = ? "
+            + "AND d.expires_at > NOW()";
+
+    String equipmentSql = "SELECT id_equipment, quantity "
+            + "FROM AUD_RDXE "
+            + "WHERE id_draft = ?";
+
+    try (
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement psDraft =
+                    conn.prepareStatement(draftSql);
+            PreparedStatement psEquipment =
+                    conn.prepareStatement(equipmentSql)
+    ) {
+
+        psDraft.setInt(1, idDraft);
+
+        try (ResultSet rs = psDraft.executeQuery()) {
+            if (rs.next()) {
+
+                Reservation reservation = new Reservation();
+
+                reservation.setIdSection(
+                        rs.getInt("id_section")
+                );
+
+                reservation.setReservationDate(
+                        rs.getDate("reservation_date")
+                );
+
+                AuditoriumDraft auditoriumDraft =
+                        new AuditoriumDraft();
+
+                auditoriumDraft.setIdAuditoriumDraft(
+                        rs.getInt("id_auditorium_draft")
+                );
+
+                auditoriumDraft.setIdDraft(
+                        rs.getInt("id_draft")
+                );
+
+                auditoriumDraft.setEventName(
+                        rs.getString("event_name")
+                );
+
+                auditoriumDraft.setAttendeesCount(
+                        rs.getInt("attendees_count")
+                );
+
+                auditoriumDraft.setObservations(
+                        rs.getString("observations")
+                );
+
+                List<RXE> equipmentList =
+                        new java.util.ArrayList<>();
+
+                psEquipment.setInt(1, idDraft);
+
+                try (ResultSet rsEquipment =
+                        psEquipment.executeQuery()) {
+
+                    while (rsEquipment.next()) {
+                        RXE item = new RXE();
+
+                        item.setIdEquipment(
+                                rsEquipment.getInt("id_equipment")
+                        );
+
+                        item.setQuantity(
+                                rsEquipment.getInt("quantity")
+                        );
+
+                        equipmentList.add(item);
+                    }
+                }
+
+                AuditoriumDraftRequest request =
+                        new AuditoriumDraftRequest();
+
+                request.setIdDraft(rs.getInt("id_draft"));
+                request.setIdClient(rs.getInt("id_client"));
+                request.setReservation(reservation);
+                request.setAuditoriumDraft(auditoriumDraft);
+                request.setEquipmentList(equipmentList);
+                request.setCreatedAt(rs.getTimestamp("created_at"));
+                request.setExpiresAt(rs.getTimestamp("expires_at"));
+
+                return request;
+            }
+        }
+
+    } catch (SQLException e) {
+        System.out.println(
+                "Error al obtener draft de auditorio por ID: "
+                + e.getMessage()
+        );
+    }
+
+    return null;
+}
     
     /**
      * Obtiene un draft por fecha y sección.
@@ -759,132 +737,126 @@ public class AuditoriumDraftDAO {
      *
      * @return draft encontrado o null
      */    
-    public static AuditoriumDraftRequest getDraftBySectionAndDate(
-            Date reservationDate,
-            int idSection
+   public static AuditoriumDraftRequest getDraftBySectionAndDate(
+        Date reservationDate,
+        int idSection
+) {
+
+    String draftSql = "SELECT d.id_draft, d.id_client, "
+            + "d.id_section, d.reservation_date, "
+            + "d.created_at, d.expires_at, "
+            + "ad.id_auditorium_draft, ad.event_name, "
+            + "ad.attendees_count, ad.observations "
+            + "FROM AUD_ReservationDrafts d "
+            + "INNER JOIN AUD_AuditoriumDrafts ad "
+            + "ON d.id_draft = ad.id_draft "
+            + "WHERE d.reservation_date = ? "
+            + "AND d.id_section = ? "
+            + "AND d.expires_at > NOW() "
+            + "LIMIT 1";
+
+    String equipmentSql = "SELECT id_equipment, quantity "
+            + "FROM AUD_RDXE "
+            + "WHERE id_draft = ?";
+
+    try (
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement psDraft =
+                    conn.prepareStatement(draftSql);
+            PreparedStatement psEquipment =
+                    conn.prepareStatement(equipmentSql)
     ) {
 
-        String draftSql = "SELECT d.id_draft, d.id_client, "
-                + "d.id_section, d.reservation_date, "
-                + "ad.id_auditorium_draft, ad.event_name, "
-                + "ad.attendees_count, ad.observations "
-                + "FROM AUD_ReservationDrafts d "
-                + "INNER JOIN AUD_AuditoriumDrafts ad "
-                + "ON d.id_draft = ad.id_draft "
-                + "WHERE d.reservation_date = ? "
-                + "AND d.id_section = ? "
-                + "AND d.expires_at > NOW() "
-                + "LIMIT 1";
+        psDraft.setDate(1, reservationDate);
+        psDraft.setInt(2, idSection);
 
-        String equipmentSql = "SELECT id_equipment, quantity "
-                + "FROM AUD_RDXE "
-                + "WHERE id_draft = ?";
+        try (ResultSet rs = psDraft.executeQuery()) {
+            if (rs.next()) {
 
-        try (
-                Connection conn = DBConnection.getConnection();
-                PreparedStatement psDraft =
-                conn.prepareStatement(draftSql);
-                PreparedStatement psEquipment =
-                conn.prepareStatement(equipmentSql)
-        ) {
+                Reservation reservation = new Reservation();
 
-            psDraft.setDate(1, reservationDate);
-            psDraft.setInt(2, idSection);
+                reservation.setIdSection(
+                        rs.getInt("id_section")
+                );
 
-            try (
-                    ResultSet rs = psDraft.executeQuery()
-            ) {
+                reservation.setReservationDate(
+                        rs.getDate("reservation_date")
+                );
 
-                if (rs.next()) {
+                AuditoriumDraft auditoriumDraft =
+                        new AuditoriumDraft();
 
-                    Reservation reservation = new Reservation();
+                auditoriumDraft.setIdAuditoriumDraft(
+                        rs.getInt("id_auditorium_draft")
+                );
 
-                    reservation.setIdSection(
-                            rs.getInt("id_section")
-                    );
+                auditoriumDraft.setIdDraft(
+                        rs.getInt("id_draft")
+                );
 
-                    reservation.setReservationDate(
-                            rs.getDate("reservation_date")
-                    );
+                auditoriumDraft.setEventName(
+                        rs.getString("event_name")
+                );
 
-                    AuditoriumDraft auditoriumDraft =
-                            new AuditoriumDraft();
+                auditoriumDraft.setAttendeesCount(
+                        rs.getInt("attendees_count")
+                );
 
-                    auditoriumDraft.setIdAuditoriumDraft(
-                            rs.getInt("id_auditorium_draft")
-                    );
+                auditoriumDraft.setObservations(
+                        rs.getString("observations")
+                );
 
-                    auditoriumDraft.setIdDraft(
-                            rs.getInt("id_draft")
-                    );
+                List<RXE> equipmentList =
+                        new java.util.ArrayList<>();
 
-                    auditoriumDraft.setEventName(
-                            rs.getString("event_name")
-                    );
+                psEquipment.setInt(
+                        1,
+                        rs.getInt("id_draft")
+                );
 
-                    auditoriumDraft.setAttendeesCount(
-                            rs.getInt("attendees_count")
-                    );
+                try (ResultSet rsEquipment =
+                        psEquipment.executeQuery()) {
 
-                    auditoriumDraft.setObservations(
-                            rs.getString("observations")
-                    );
+                    while (rsEquipment.next()) {
+                        RXE item = new RXE();
 
-                    List<RXE> equipmentList =
-                            new java.util.ArrayList<>();
+                        item.setIdEquipment(
+                                rsEquipment.getInt("id_equipment")
+                        );
 
-                    psEquipment.setInt(
-                            1,
-                            rs.getInt("id_draft")
-                    );
+                        item.setQuantity(
+                                rsEquipment.getInt("quantity")
+                        );
 
-                    try (
-                            ResultSet rsEquipment =
-                            psEquipment.executeQuery()
-                    ) {
-
-                        while (rsEquipment.next()) {
-
-                            RXE item = new RXE();
-
-                            item.setIdEquipment(
-                                    rsEquipment.getInt(
-                                            "id_equipment"
-                                    )
-                            );
-
-                            item.setQuantity(
-                                    rsEquipment.getInt("quantity")
-                            );
-
-                            equipmentList.add(item);
-                        }
+                        equipmentList.add(item);
                     }
-
-                    AuditoriumDraftRequest request =
-                            new AuditoriumDraftRequest();
-
-                    request.setIdDraft(rs.getInt("id_draft"));
-                    request.setIdClient(rs.getInt("id_client"));
-                    request.setReservation(reservation);
-                    request.setAuditoriumDraft(auditoriumDraft);
-                    request.setEquipmentList(equipmentList);
-
-                    return request;
                 }
+
+                AuditoriumDraftRequest request =
+                        new AuditoriumDraftRequest();
+
+                request.setIdDraft(rs.getInt("id_draft"));
+                request.setIdClient(rs.getInt("id_client"));
+                request.setReservation(reservation);
+                request.setAuditoriumDraft(auditoriumDraft);
+                request.setEquipmentList(equipmentList);
+                request.setCreatedAt(rs.getTimestamp("created_at"));
+                request.setExpiresAt(rs.getTimestamp("expires_at"));
+
+                return request;
             }
-
-        } catch (SQLException e) {
-
-            System.out.println(
-                    "Error al obtener draft de auditorio "
-                    + "por fecha y sección: "
-                    + e.getMessage()
-            );
         }
 
-        return null;
+    } catch (SQLException e) {
+        System.out.println(
+                "Error al obtener draft de auditorio "
+                + "por fecha y sección: "
+                + e.getMessage()
+        );
     }
+
+    return null;
+}
     
     /**
      * Obtiene el último draft activo de un cliente.
@@ -893,132 +865,125 @@ public class AuditoriumDraftDAO {
      *
      * @return draft encontrado o null
      */
-    public static AuditoriumDraftRequest getDraftByClientId(int idClient) {
+   public static AuditoriumDraftRequest getDraftByClientId(int idClient) {
 
-        if (idClient <= 0) {
-            return null;
-        }
-
-        String draftSql = "SELECT d.id_draft, d.id_client, "
-                + "d.id_section, d.reservation_date, "
-                + "ad.id_auditorium_draft, ad.event_name, "
-                + "ad.attendees_count, ad.observations "
-                + "FROM AUD_ReservationDrafts d "
-                + "INNER JOIN AUD_AuditoriumDrafts ad "
-                + "ON d.id_draft = ad.id_draft "
-                + "WHERE d.id_client = ? "
-                + "AND d.expires_at > NOW() "
-                + "ORDER BY d.created_at DESC "
-                + "LIMIT 1";
-
-        String equipmentSql = "SELECT id_equipment, quantity "
-                + "FROM AUD_RDXE "
-                + "WHERE id_draft = ?";
-
-        try (
-                Connection conn = DBConnection.getConnection();
-                PreparedStatement psDraft =
-                conn.prepareStatement(draftSql);
-                PreparedStatement psEquipment =
-                conn.prepareStatement(equipmentSql)
-        ) {
-
-            psDraft.setInt(1, idClient);
-
-            try (
-                    ResultSet rs = psDraft.executeQuery()
-            ) {
-
-                if (rs.next()) {
-
-                    Reservation reservation = new Reservation();
-
-                    reservation.setIdSection(
-                            rs.getInt("id_section")
-                    );
-
-                    reservation.setReservationDate(
-                            rs.getDate("reservation_date")
-                    );
-
-                    AuditoriumDraft auditoriumDraft =
-                            new AuditoriumDraft();
-
-                    auditoriumDraft.setIdAuditoriumDraft(
-                            rs.getInt("id_auditorium_draft")
-                    );
-
-                    auditoriumDraft.setIdDraft(
-                            rs.getInt("id_draft")
-                    );
-
-                    auditoriumDraft.setEventName(
-                            rs.getString("event_name")
-                    );
-
-                    auditoriumDraft.setAttendeesCount(
-                            rs.getInt("attendees_count")
-                    );
-
-                    auditoriumDraft.setObservations(
-                            rs.getString("observations")
-                    );
-
-                    List<RXE> equipmentList =
-                            new java.util.ArrayList<>();
-
-                    psEquipment.setInt(
-                            1,
-                            rs.getInt("id_draft")
-                    );
-
-                    try (
-                            ResultSet rsEquipment =
-                            psEquipment.executeQuery()
-                    ) {
-
-                        while (rsEquipment.next()) {
-
-                            RXE item = new RXE();
-
-                            item.setIdEquipment(
-                                    rsEquipment.getInt(
-                                            "id_equipment"
-                                    )
-                            );
-
-                            item.setQuantity(
-                                    rsEquipment.getInt("quantity")
-                            );
-
-                            equipmentList.add(item);
-                        }
-                    }
-
-                    AuditoriumDraftRequest request =
-                            new AuditoriumDraftRequest();
-
-                    request.setIdDraft(rs.getInt("id_draft"));
-                    request.setIdClient(rs.getInt("id_client"));
-                    request.setReservation(reservation);
-                    request.setAuditoriumDraft(auditoriumDraft);
-                    request.setEquipmentList(equipmentList);
-
-                    return request;
-                }
-            }
-
-        } catch (SQLException e) {
-
-            System.out.println(
-                    "Error al obtener draft de "
-                    + "auditorio por cliente: "
-                    + e.getMessage()
-            );
-        }
-
+    if (idClient <= 0) {
         return null;
     }
+
+    String draftSql = "SELECT d.id_draft, d.id_client, "
+            + "d.id_section, d.reservation_date, "
+            + "d.created_at, d.expires_at, "
+            + "ad.id_auditorium_draft, ad.event_name, "
+            + "ad.attendees_count, ad.observations "
+            + "FROM AUD_ReservationDrafts d "
+            + "INNER JOIN AUD_AuditoriumDrafts ad "
+            + "ON d.id_draft = ad.id_draft "
+            + "WHERE d.id_client = ? "
+            + "AND d.expires_at > NOW() "
+            + "ORDER BY d.created_at DESC "
+            + "LIMIT 1";
+
+    String equipmentSql = "SELECT id_equipment, quantity "
+            + "FROM AUD_RDXE "
+            + "WHERE id_draft = ?";
+
+    try (
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement psDraft =
+                    conn.prepareStatement(draftSql);
+            PreparedStatement psEquipment =
+                    conn.prepareStatement(equipmentSql)
+    ) {
+
+        psDraft.setInt(1, idClient);
+
+        try (ResultSet rs = psDraft.executeQuery()) {
+            if (rs.next()) {
+
+                Reservation reservation = new Reservation();
+
+                reservation.setIdSection(
+                        rs.getInt("id_section")
+                );
+
+                reservation.setReservationDate(
+                        rs.getDate("reservation_date")
+                );
+
+                AuditoriumDraft auditoriumDraft =
+                        new AuditoriumDraft();
+
+                auditoriumDraft.setIdAuditoriumDraft(
+                        rs.getInt("id_auditorium_draft")
+                );
+
+                auditoriumDraft.setIdDraft(
+                        rs.getInt("id_draft")
+                );
+
+                auditoriumDraft.setEventName(
+                        rs.getString("event_name")
+                );
+
+                auditoriumDraft.setAttendeesCount(
+                        rs.getInt("attendees_count")
+                );
+
+                auditoriumDraft.setObservations(
+                        rs.getString("observations")
+                );
+
+                List<RXE> equipmentList =
+                        new java.util.ArrayList<>();
+
+                psEquipment.setInt(
+                        1,
+                        rs.getInt("id_draft")
+                );
+
+                try (ResultSet rsEquipment =
+                        psEquipment.executeQuery()) {
+
+                    while (rsEquipment.next()) {
+                        RXE item = new RXE();
+
+                        item.setIdEquipment(
+                                rsEquipment.getInt("id_equipment")
+                        );
+
+                        item.setQuantity(
+                                rsEquipment.getInt("quantity")
+                        );
+
+                        equipmentList.add(item);
+                    }
+                }
+
+                AuditoriumDraftRequest request =
+                        new AuditoriumDraftRequest();
+
+                request.setIdDraft(rs.getInt("id_draft"));
+                request.setIdClient(rs.getInt("id_client"));
+                request.setReservation(reservation);
+                request.setAuditoriumDraft(auditoriumDraft);
+                request.setEquipmentList(equipmentList);
+                request.setCreatedAt(rs.getTimestamp("created_at"));
+                request.setExpiresAt(rs.getTimestamp("expires_at"));
+
+                return request;
+            }
+        }
+
+    } catch (SQLException e) {
+        System.out.println(
+                "Error al obtener draft de auditorio por cliente: "
+                + e.getMessage()
+        );
+    }
+
+    return null;
+}
     
     /**
      * Confirma un draft y lo convierte en reserva real.

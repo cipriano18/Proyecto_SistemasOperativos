@@ -75,7 +75,7 @@
             </HBox>
          </children>
       </HBox>
-      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vvalue="0.56" VBox.vgrow="ALWAYS">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
          <content>
             <HBox cache="true" cacheHint="SCALE" minWidth="840.0" prefWidth="940.0">
                <children>
