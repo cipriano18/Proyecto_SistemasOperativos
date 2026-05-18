@@ -13,7 +13,7 @@ public class Server {
     public static Vector<ClientHandler> clients =
             new Vector<>();
 
-    private static final int PORT = 8000;
+    private static final int PORT = 10000;
 
     private static ServerSocket serverSocket;
 
