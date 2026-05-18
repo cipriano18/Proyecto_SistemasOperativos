@@ -2,10 +2,14 @@ package controller;
 
 import database.AuditoriumDraftDAO;
 import database.AuditoriumReservationDAO;
+import database.EquipmentReservationDraftDAO;
+import database.ReservationDAO;
 import draft.AuditoriumDraft;
 import dto.AuditoriumDraftRequest;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import model.CalendarBlock;
 import model.RXE;
 import model.Reservation;
@@ -62,34 +66,114 @@ public class AuditoriumDraftController {
             );
         }
 
-        List<CalendarBlock> result = new ArrayList<>();
+        Map<String, CalendarBlock> mergedBlocks = new LinkedHashMap<>();
 
-        List<CalendarBlock> reserved
-                = AuditoriumReservationDAO
-                        .getReservedAuditoriumBlocksByMonth(
-                                month,
-                                year
-                        );
+        mergeBlocks(
+                mergedBlocks,
+                ReservationDAO.getReservedBlocksByMonth(
+                        month,
+                        year
+                )
+        );
 
-        result.addAll(reserved);
+        mergeBlocks(
+                mergedBlocks,
+                AuditoriumReservationDAO.getReservedAuditoriumBlocksByMonth(
+                        month,
+                        year
+                )
+        );
 
         if (idClient != null) {
-            List<CalendarBlock> blocked
-                    = AuditoriumDraftDAO
-                            .getBlockedAuditoriumDraftsByMonth(
-                                    month,
-                                    year,
-                                    idClient
-                            );
-
-            result.addAll(blocked);
+            mergeBlocks(
+                    mergedBlocks,
+                    EquipmentReservationDraftDAO.getBlockedDraftsByMonth(
+                            month,
+                            year,
+                            idClient
+                    )
+            );
         }
 
         return new Response(
                 true,
                 "Calendario de auditorio obtenido correctamente",
-                result
+                new ArrayList<>(mergedBlocks.values())
         );
+    }
+
+    /**
+     * Fusiona bloques del calendario usando una unica prioridad por estado.
+     *
+     * @param mergedBlocks mapa acumulado indexado por fecha y seccion
+     * @param blocks bloques a integrar
+     */
+    private static void mergeBlocks(
+            Map<String, CalendarBlock> mergedBlocks,
+            List<CalendarBlock> blocks
+    ) {
+
+        if (blocks == null || blocks.isEmpty()) {
+            return;
+        }
+
+        for (CalendarBlock block : blocks) {
+            if (block == null || block.getReservationDate() == null) {
+                continue;
+            }
+
+            String key = buildBlockKey(block);
+            CalendarBlock current = mergedBlocks.get(key);
+
+            if (current == null
+                    || getStatusPriority(block.getStatus())
+                    > getStatusPriority(current.getStatus())) {
+
+                mergedBlocks.put(
+                        key,
+                        new CalendarBlock(
+                                block.getReservationDate(),
+                                block.getIdSection(),
+                                block.getStatus()
+                        )
+                );
+            }
+        }
+    }
+
+    /**
+     * Construye una clave unica para identificar bloques por fecha y seccion.
+     *
+     * @param block bloque a identificar
+     * @return clave compuesta del bloque
+     */
+    private static String buildBlockKey(CalendarBlock block) {
+        return block.getReservationDate()
+                + "|"
+                + block.getIdSection();
+    }
+
+    /**
+     * Define la precedencia visual entre estados del calendario.
+     *
+     * @param status estado del bloque
+     * @return prioridad numerica; mayor valor significa mayor precedencia
+     */
+    private static int getStatusPriority(String status) {
+
+        if ("OWN_DRAFT".equals(status)) {
+            return 3;
+        }
+
+        if ("BLOCKED".equals(status)) {
+            return 2;
+        }
+
+        if ("RESERVED".equals(status)) {
+            return 1;
+        }
+
+        return 0;
     }
 
     /**
