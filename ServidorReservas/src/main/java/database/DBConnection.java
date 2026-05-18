@@ -5,23 +5,25 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Gestiona la conexión con la base de datos.
+ * Gestiona la conexion con la base de datos.
  */
 public class DBConnection {
 
     private static final String URL =
-            "jdbc:mysql://localhost:3306/auditorium";
+            "jdbc:mysql://172.16.9.42:3306/auditorium";
 
-    private static final String USER = "root";
+    private static final String USER = "appuser";
 
-    private static final String PASSWORD = "1234";
+    private static final String PASSWORD = "SistemasOperativos26!";
 
     /**
-     * Obtiene una conexión con la base de datos.
+     * Obtiene una conexion con la base de datos.
      *
-     * @return conexión activa o null si ocurre un error
+     * @return conexion activa
+     *
+     * @throws SQLException si no es posible conectar con la base de datos
      */
-    public static Connection getConnection() {
+    public static Connection getConnection() throws SQLException {
 
         try {
 
@@ -33,12 +35,15 @@ public class DBConnection {
 
         } catch (SQLException e) {
 
-            System.out.println(
-                    "Error de conexión: "
-                    + e.getMessage()
+            throw new SQLException(
+                    "No fue posible conectar a la base de datos en "
+                    + URL
+                    + " con el usuario "
+                    + USER
+                    + ". "
+                    + e.getMessage(),
+                    e
             );
-
-            return null;
         }
     }
 }

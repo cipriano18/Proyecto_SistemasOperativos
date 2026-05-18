@@ -17,20 +17,17 @@ public class UserDAO {
      * Obtiene un usuario mediante su identificador.
      *
      * @param idUser identificador del usuario
-     *
      * @return usuario encontrado o null
      */
     public static User getUserById(int idUser) {
 
-        String sql = "SELECT id_user, id_role, "
-                + "username, password "
-                + "FROM AUD_Users "
+        String sql = "SELECT id_user, id_role, username, password "
+                + "FROM aud_users "
                 + "WHERE id_user = ?";
 
         try (
                 Connection conn = DBConnection.getConnection();
-                PreparedStatement ps =
-                conn.prepareStatement(sql)
+                PreparedStatement ps = conn.prepareStatement(sql)
         ) {
 
             ps.setInt(1, idUser);
@@ -50,8 +47,7 @@ public class UserDAO {
         } catch (SQLException e) {
 
             System.out.println(
-                    "Error al obtener usuario "
-                    + "por ID: "
+                    "Error al obtener usuario por ID: "
                     + e.getMessage()
             );
         }
@@ -63,19 +59,17 @@ public class UserDAO {
      * Inserta un nuevo usuario.
      *
      * @param user usuario a registrar
-     *
-     * @return true si el usuario fue creado
+     * @return true si el usuario fue creado correctamente, false en caso contrario
      */
     public static boolean insertUser(User user) {
 
-        String sql = "INSERT INTO AUD_Users "
+        String sql = "INSERT INTO aud_users "
                 + "(id_role, username, password) "
                 + "VALUES (?, ?, ?)";
 
         try (
                 Connection conn = DBConnection.getConnection();
-                PreparedStatement ps =
-                conn.prepareStatement(sql)
+                PreparedStatement ps = conn.prepareStatement(sql)
         ) {
 
             ps.setInt(1, user.getIdRole());
@@ -98,25 +92,20 @@ public class UserDAO {
     }
 
     /**
-     * Obtiene un usuario mediante su username.
+     * Obtiene un usuario mediante su nombre de usuario.
      *
      * @param username nombre de usuario
-     *
      * @return usuario encontrado o null
      */
-    public static User getUserByUsername(
-            String username
-    ) {
+    public static User getUserByUsername(String username) {
 
-        String sql = "SELECT id_user, id_role, "
-                + "username, password "
-                + "FROM AUD_Users "
+        String sql = "SELECT id_user, id_role, username, password "
+                + "FROM aud_users "
                 + "WHERE username = ?";
 
         try (
                 Connection conn = DBConnection.getConnection();
-                PreparedStatement ps =
-                conn.prepareStatement(sql)
+                PreparedStatement ps = conn.prepareStatement(sql)
         ) {
 
             ps.setString(1, username);
@@ -136,8 +125,7 @@ public class UserDAO {
         } catch (SQLException e) {
 
             System.out.println(
-                    "Error al obtener usuario "
-                    + "por username: "
+                    "Error al obtener usuario por username: "
                     + e.getMessage()
             );
         }
@@ -146,25 +134,23 @@ public class UserDAO {
     }
 
     /**
-     * Obtiene todos los usuarios administradores.
+     * Obtiene todos los usuarios administradores y super administradores.
      *
-     * @return lista de usuarios administradores
+     * @return lista de usuarios con rol administrador o super administrador
      */
     public static List<User> getAllAdminUsers() {
 
         List<User> users = new ArrayList<>();
 
-        String sql = "SELECT id_user, id_role, "
-                + "username, password "
-                + "FROM AUD_Users "
+        String sql = "SELECT id_user, id_role, username, password "
+                + "FROM aud_users "
                 + "WHERE id_role = 2 "
                 + "OR id_role = 1 "
                 + "ORDER BY id_user ASC";
 
         try (
                 Connection conn = DBConnection.getConnection();
-                PreparedStatement ps =
-                conn.prepareStatement(sql)
+                PreparedStatement ps = conn.prepareStatement(sql)
         ) {
 
             ResultSet rs = ps.executeQuery();
@@ -173,21 +159,10 @@ public class UserDAO {
 
                 User user = new User();
 
-                user.setIdUser(
-                        rs.getInt("id_user")
-                );
-
-                user.setIdRole(
-                        rs.getInt("id_role")
-                );
-
-                user.setUsername(
-                        rs.getString("username")
-                );
-
-                user.setPassword(
-                        rs.getString("password")
-                );
+                user.setIdUser(rs.getInt("id_user"));
+                user.setIdRole(rs.getInt("id_role"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
 
                 users.add(user);
             }
@@ -195,8 +170,7 @@ public class UserDAO {
         } catch (SQLException e) {
 
             System.out.println(
-                    "Error al obtener usuarios "
-                    + "administradores: "
+                    "Error al obtener usuarios administradores: "
                     + e.getMessage()
             );
         }
@@ -205,28 +179,24 @@ public class UserDAO {
     }
 
     /**
-     * Actualiza username y password de un usuario.
+     * Actualiza el nombre de usuario y la contraseña de un usuario.
      *
-     * @param user usuario con datos actualizados
-     *
-     * @return true si la actualización fue exitosa
+     * @param user usuario con los datos actualizados
+     * @return true si la actualización fue exitosa, false en caso contrario
      */
     public static boolean updateUser(User user) {
 
-        String sql = "UPDATE AUD_Users "
+        String sql = "UPDATE aud_users "
                 + "SET username = ?, password = ? "
                 + "WHERE id_user = ?";
 
         try (
                 Connection conn = DBConnection.getConnection();
-                PreparedStatement ps =
-                conn.prepareStatement(sql)
+                PreparedStatement ps = conn.prepareStatement(sql)
         ) {
 
             ps.setString(1, user.getUsername());
-
             ps.setString(2, user.getPassword());
-
             ps.setInt(3, user.getIdUser());
 
             ps.executeUpdate();
@@ -249,22 +219,17 @@ public class UserDAO {
      *
      * @param idUser identificador del usuario
      * @param newRole nuevo rol del usuario
-     *
-     * @return true si la actualización fue exitosa
+     * @return true si la actualización fue exitosa, false en caso contrario
      */
-    public static boolean updateUserRole(
-            int idUser,
-            int newRole
-    ) {
+    public static boolean updateUserRole(int idUser, int newRole) {
 
-        String sql = "UPDATE AUD_Users "
+        String sql = "UPDATE aud_users "
                 + "SET id_role = ? "
                 + "WHERE id_user = ?";
 
         try (
                 Connection conn = DBConnection.getConnection();
-                PreparedStatement ps =
-                conn.prepareStatement(sql)
+                PreparedStatement ps = conn.prepareStatement(sql)
         ) {
 
             ps.setInt(1, newRole);
@@ -277,8 +242,7 @@ public class UserDAO {
         } catch (SQLException e) {
 
             System.out.println(
-                    "Error al actualizar rol "
-                    + "de usuario: "
+                    "Error al actualizar rol de usuario: "
                     + e.getMessage()
             );
 
@@ -287,28 +251,25 @@ public class UserDAO {
     }
 
     /**
-     * Valida el login de un usuario.
+     * Valida el inicio de sesión de un usuario.
      *
      * @param username nombre de usuario
      * @param password contraseña del usuario
-     *
-     * @return usuario autenticado o null
+     * @return usuario autenticado o null si las credenciales son incorrectas
      */
     public static User validateLogin(
             String username,
             String password
     ) {
 
-        String sql = "SELECT id_user, username, "
-                + "password, id_role "
-                + "FROM AUD_Users "
+        String sql = "SELECT id_user, username, password, id_role "
+                + "FROM aud_users "
                 + "WHERE username = ? "
                 + "AND password = ?";
 
         try (
                 Connection conn = DBConnection.getConnection();
-                PreparedStatement ps =
-                conn.prepareStatement(sql)
+                PreparedStatement ps = conn.prepareStatement(sql)
         ) {
 
             ps.setString(1, username);
@@ -320,21 +281,10 @@ public class UserDAO {
 
                 User user = new User();
 
-                user.setIdUser(
-                        rs.getInt("id_user")
-                );
-
-                user.setUsername(
-                        rs.getString("username")
-                );
-
-                user.setPassword(
-                        rs.getString("password")
-                );
-
-                user.setIdRole(
-                        rs.getInt("id_role")
-                );
+                user.setIdUser(rs.getInt("id_user"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setIdRole(rs.getInt("id_role"));
 
                 return user;
             }
@@ -354,18 +304,16 @@ public class UserDAO {
      * Elimina un usuario de la base de datos.
      *
      * @param idUser identificador del usuario
-     *
-     * @return true si el usuario fue eliminado
+     * @return true si el usuario fue eliminado, false en caso contrario
      */
     public static boolean deleteUser(int idUser) {
 
-        String sql = "DELETE FROM AUD_Users "
+        String sql = "DELETE FROM aud_users "
                 + "WHERE id_user = ?";
 
         try (
                 Connection conn = DBConnection.getConnection();
-                PreparedStatement ps =
-                conn.prepareStatement(sql)
+                PreparedStatement ps = conn.prepareStatement(sql)
         ) {
 
             ps.setInt(1, idUser);

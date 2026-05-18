@@ -10,8 +10,9 @@ import java.net.Socket;
  */
 public class ServerConnection {
 
-    private static final String HOST = "10.35.142.88";
-    private static final int PORT = 8000;
+    //private static final String HOST = "10.35.142.88";
+    private static final String HOST = "172.17.44.224";
+    private static final int PORT = 10000;
 
     private Socket socket;
     private ObjectOutputStream objectOutput;
