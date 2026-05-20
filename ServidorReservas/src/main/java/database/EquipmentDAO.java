@@ -25,7 +25,7 @@ public class EquipmentDAO {
 
         String sql = "SELECT id_equipment, name, "
                 + "available_quantity "
-                + "FROM AUD_Equipment "
+                + "FROM aud_equipment "
                 + "ORDER BY id_equipment ASC";
 
         try (
@@ -66,7 +66,7 @@ public class EquipmentDAO {
 
         String sql = "SELECT id_equipment, name, "
                 + "available_quantity "
-                + "FROM AUD_Equipment "
+                + "FROM aud_equipment "
                 + "WHERE name = ?";
 
         try (
@@ -110,7 +110,7 @@ public class EquipmentDAO {
 
         String sql = "SELECT id_equipment, name, "
                 + "available_quantity "
-                + "FROM AUD_Equipment "
+                + "FROM aud_equipment "
                 + "WHERE id_equipment = ?";
 
         try (
@@ -179,12 +179,12 @@ public class EquipmentDAO {
                 + "(e.available_quantity "
                 + "- COALESCE(res.reserved_quantity, 0)) "
                 + "AS total_available "
-                + "FROM AUD_Equipment e "
+                + "FROM aud_equipment e "
                 + "LEFT JOIN ( "
                 + "SELECT rxe.id_equipment, "
                 + "SUM(rxe.quantity) AS reserved_quantity "
-                + "FROM AUD_RXE rxe "
-                + "INNER JOIN AUD_Reservations r "
+                + "FROM aud_rxe rxe "
+                + "INNER JOIN aud_reservations r "
                 + "ON rxe.id_reservation = r.id_reservation "
                 + "WHERE r.reservation_date = ? "
                 + "AND r.id_section = ? "
@@ -247,7 +247,7 @@ public class EquipmentDAO {
             Equipment equipment
     ) {
 
-        String sql = "INSERT INTO AUD_Equipment "
+        String sql = "INSERT INTO aud_equipment "
                 + "(name, available_quantity) "
                 + "VALUES (?, ?)";
 
@@ -289,7 +289,7 @@ public class EquipmentDAO {
             Equipment equipment
     ) {
 
-        String sql = "UPDATE AUD_Equipment "
+        String sql = "UPDATE aud_equipment "
                 + "SET name = ?, "
                 + "available_quantity = ? "
                 + "WHERE id_equipment = ?";
@@ -335,7 +335,7 @@ public class EquipmentDAO {
      */
     public static boolean deleteEquipment(int idEquipment) {
 
-        String sql = "DELETE FROM AUD_Equipment "
+        String sql = "DELETE FROM aud_equipment "
                 + "WHERE id_equipment = ?";
 
         try (

@@ -61,20 +61,20 @@ public class ReservationDAO {
         String sql =
                 "SELECT r.reservation_date, "
                 + "r.id_section "
-                + "FROM AUD_Reservations r "
+                + "FROM aud_reservations r "
                 + "WHERE MONTH(r.reservation_date) = ? "
                 + "AND YEAR(r.reservation_date) = ? "
                 + "GROUP BY r.reservation_date, "
                 + "r.id_section "
                 + "HAVING NOT EXISTS ( "
                 + "SELECT 1 "
-                + "FROM AUD_Equipment e "
+                + "FROM aud_equipment e "
                 + "WHERE ( "
                 + "e.available_quantity "
                 + "- COALESCE(( "
                 + "SELECT SUM(rxe.quantity) "
-                + "FROM AUD_RXE rxe "
-                + "INNER JOIN AUD_Reservations r2 "
+                + "FROM aud_rxe rxe "
+                + "INNER JOIN aud_reservations r2 "
                 + "ON rxe.id_reservation = "
                 + "r2.id_reservation "
                 + "WHERE rxe.id_equipment = "
@@ -146,17 +146,17 @@ public class ReservationDAO {
     ) {
 
         String insertReservationSql =
-                "INSERT INTO AUD_Reservations "
+                "INSERT INTO aud_reservations "
                 + "(id_section, reservation_date) "
                 + "VALUES (?, ?)";
 
         String insertRXCSql =
-                "INSERT INTO AUD_RXC "
+                "INSERT INTO aud_rxc "
                 + "(id_reservation, id_client) "
                 + "VALUES (?, ?)";
 
         String insertRXESql =
-                "INSERT INTO AUD_RXE "
+                "INSERT INTO aud_rxe "
                 + "(id_reservation, id_equipment, "
                 + "quantity) "
                 + "VALUES (?, ?, ?)";
@@ -326,18 +326,18 @@ public class ReservationDAO {
                 + "rxc.id_client, "
                 + "CONCAT(c.f_name, ' ', "
                 + "c.f_surname) AS client_name "
-                + "FROM AUD_Reservations r "
-                + "INNER JOIN AUD_RXC rxc "
+                + "FROM aud_reservations r "
+                + "INNER JOIN aud_rxc rxc "
                 + "ON r.id_reservation = "
                 + "rxc.id_reservation "
-                + "INNER JOIN AUD_Clients c "
+                + "INNER JOIN aud_clients c "
                 + "ON rxc.id_client = c.id_client "
                 + "WHERE r.id_reservation = ?";
 
         String equipmentSql =
                 "SELECT id_rxe, id_reservation, "
                 + "id_equipment, quantity "
-                + "FROM AUD_RXE "
+                + "FROM aud_rxe "
                 + "WHERE id_reservation = ?";
 
         try (
@@ -454,12 +454,12 @@ public class ReservationDAO {
 
         String sql =
                 "SELECT r.id_reservation "
-                + "FROM AUD_Reservations r "
-                + "INNER JOIN AUD_RXC rxc "
+                + "FROM aud_reservations r "
+                + "INNER JOIN aud_rxc rxc "
                 + "ON r.id_reservation = "
                 + "rxc.id_reservation "
                 + "LEFT JOIN "
-                + "AUD_AuditoriumReservations ar "
+                + "aud_auditoriumreservations ar "
                 + "ON r.id_reservation = "
                 + "ar.id_reservation "
                 + "WHERE rxc.id_client = ? "
@@ -526,12 +526,12 @@ public class ReservationDAO {
 
         String sql =
                 "SELECT r.id_reservation "
-                + "FROM AUD_Reservations r "
-                + "INNER JOIN AUD_RXC rxc "
+                + "FROM aud_reservations r "
+                + "INNER JOIN aud_rxc rxc "
                 + "ON r.id_reservation = "
                 + "rxc.id_reservation "
                 + "LEFT JOIN "
-                + "AUD_AuditoriumReservations ar "
+                + "aud_auditoriumreservations ar "
                 + "ON r.id_reservation = "
                 + "ar.id_reservation "
                 + "WHERE MONTH(r.reservation_date) = ? "
@@ -603,15 +603,15 @@ public class ReservationDAO {
                 "SELECT e.available_quantity "
                 + "- COALESCE(( "
                 + "SELECT SUM(rxe.quantity) "
-                + "FROM AUD_RXE rxe "
-                + "INNER JOIN AUD_Reservations r "
+                + "FROM aud_rxe rxe "
+                + "INNER JOIN aud_reservations r "
                 + "ON rxe.id_reservation = "
                 + "r.id_reservation "
                 + "WHERE rxe.id_equipment = ? "
                 + "AND r.reservation_date = ? "
                 + "AND r.id_section = ? "
                 + "), 0) AS available_quantity "
-                + "FROM AUD_Equipment e "
+                + "FROM aud_equipment e "
                 + "WHERE e.id_equipment = ?";
 
         try (
@@ -664,7 +664,7 @@ public class ReservationDAO {
 
         String sql =
                 "SELECT COUNT(*) AS total "
-                + "FROM AUD_RXC "
+                + "FROM aud_rxc "
                 + "WHERE id_reservation = ? "
                 + "AND id_client = ?";
 
@@ -722,8 +722,8 @@ public class ReservationDAO {
                 "SELECT e.available_quantity "
                 + "- COALESCE(( "
                 + "SELECT SUM(rxe.quantity) "
-                + "FROM AUD_RXE rxe "
-                + "INNER JOIN AUD_Reservations r "
+                + "FROM aud_rxe rxe "
+                + "INNER JOIN aud_reservations r "
                 + "ON rxe.id_reservation = "
                 + "r.id_reservation "
                 + "WHERE rxe.id_equipment = ? "
@@ -731,7 +731,7 @@ public class ReservationDAO {
                 + "AND r.id_section = ? "
                 + "AND r.id_reservation <> ? "
                 + "), 0) AS available_quantity "
-                + "FROM AUD_Equipment e "
+                + "FROM aud_equipment e "
                 + "WHERE e.id_equipment = ?";
 
         try (
@@ -785,17 +785,17 @@ public class ReservationDAO {
     ) {
 
         String updateReservationSql =
-                "UPDATE AUD_Reservations "
+                "UPDATE aud_reservations "
                 + "SET id_section = ?, "
                 + "reservation_date = ? "
                 + "WHERE id_reservation = ?";
 
         String deleteRXESql =
-                "DELETE FROM AUD_RXE "
+                "DELETE FROM aud_rxe "
                 + "WHERE id_reservation = ?";
 
         String insertRXESql =
-                "INSERT INTO AUD_RXE "
+                "INSERT INTO aud_rxe "
                 + "(id_reservation, id_equipment, "
                 + "quantity) "
                 + "VALUES (?, ?, ?)";
@@ -962,10 +962,10 @@ public class ReservationDAO {
     ) {
 
         String deleteReservationsSql =
-                "DELETE FROM AUD_Reservations "
+                "DELETE FROM aud_reservations "
                 + "WHERE id_reservation IN ( "
                 + "SELECT id_reservation "
-                + "FROM AUD_RXC "
+                + "FROM aud_rxc "
                 + "WHERE id_client = ? "
                 + ")";
 
@@ -1016,7 +1016,7 @@ public class ReservationDAO {
     ) {
 
         String deleteSql =
-                "DELETE FROM AUD_Reservations "
+                "DELETE FROM aud_reservations "
                 + "WHERE id_reservation = ?";
 
         try (

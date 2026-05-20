@@ -418,7 +418,7 @@ public class AuditoriumDraftDAO {
     ) throws SQLException {
 
         String sql = "SELECT available_quantity "
-                + "FROM AUD_Equipment "
+                + "FROM aud_equipment "
                 + "WHERE id_equipment = ?";
 
         try (

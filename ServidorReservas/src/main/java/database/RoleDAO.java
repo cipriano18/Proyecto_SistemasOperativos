@@ -23,7 +23,7 @@ public class RoleDAO {
         List<Role> roles = new ArrayList<>();
 
         String sql = "SELECT id_role, name "
-                + "FROM AUD_Roles "
+                + "FROM aud_roles "
                 + "ORDER BY id_role ASC";
 
         try (
@@ -61,7 +61,7 @@ public class RoleDAO {
     public static Role getRoleById(int idRole) {
 
         String sql = "SELECT id_role, name "
-                + "FROM AUD_Roles "
+                + "FROM aud_roles "
                 + "WHERE id_role = ?";
 
         try (

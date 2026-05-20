@@ -96,7 +96,7 @@ public class AuditoriumReservationDAO {
         List<RXE> equipmentList = new ArrayList<>();
 
         String sql = "SELECT id_equipment, quantity "
-                + "FROM AUD_RXE "
+                + "FROM aud_rxe "
                 + "WHERE id_reservation = ?";
 
         try (

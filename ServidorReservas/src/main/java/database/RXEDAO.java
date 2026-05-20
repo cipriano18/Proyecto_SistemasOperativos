@@ -24,7 +24,7 @@ public class RXEDAO {
 
         String sql = "SELECT id_rxe, id_reservation, "
                 + "id_equipment, quantity "
-                + "FROM AUD_RXE";
+                + "FROM aud_rxe";
 
         try (
                 Connection conn = DBConnection.getConnection();
@@ -69,7 +69,7 @@ public class RXEDAO {
 
         String sql = "SELECT id_rxe, id_reservation, "
                 + "id_equipment, quantity "
-                + "FROM AUD_RXE "
+                + "FROM aud_rxe "
                 + "WHERE id_reservation = ?";
 
         try (
@@ -114,7 +114,7 @@ public class RXEDAO {
 
         String sql = "SELECT id_rxe, id_reservation, "
                 + "id_equipment, quantity "
-                + "FROM AUD_RXE "
+                + "FROM aud_rxe "
                 + "WHERE id_rxe = ?";
 
         try (
@@ -156,7 +156,7 @@ public class RXEDAO {
      */
     public static boolean createRXE(RXE rxe) {
 
-        String sql = "INSERT INTO AUD_RXE "
+        String sql = "INSERT INTO aud_rxe "
                 + "(id_reservation, id_equipment, quantity) "
                 + "VALUES (?, ?, ?)";
 

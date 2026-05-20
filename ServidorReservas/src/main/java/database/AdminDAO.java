@@ -368,11 +368,11 @@ public class AdminDAO {
                 + "co.type AS contact_type, "
                 + "co.contact_value "
                 + "FROM aud_administrators a "
-                + "INNER JOIN AUD_Users u "
+                + "INNER JOIN aud_users u "
                 + "ON a.id_user = u.id_user "
-                + "LEFT JOIN AUD_CXA cxa "
+                + "LEFT JOIN aud_cxa cxa "
                 + "ON a.id_admin = cxa.id_admin "
-                + "LEFT JOIN AUD_Contacts co "
+                + "LEFT JOIN aud_contacts co "
                 + "ON cxa.id_contact = co.id_contact "
                 + "WHERE a.id_admin = ?";
 
@@ -456,15 +456,15 @@ public class AdminDAO {
                 + "WHERE id_admin = ?";
 
         String getContactsSql = "SELECT id_contact "
-                + "FROM AUD_CXA "
+                + "FROM aud_cxa "
                 + "WHERE id_admin = ?";
 
         String deleteContactSql = "DELETE "
-                + "FROM AUD_Contacts "
+                + "FROM aud_contacts "
                 + "WHERE id_contact = ?";
 
         String deleteUserSql = "DELETE "
-                + "FROM AUD_Users "
+                + "FROM aud_users "
                 + "WHERE id_user = ?";
 
         Connection conn = null;

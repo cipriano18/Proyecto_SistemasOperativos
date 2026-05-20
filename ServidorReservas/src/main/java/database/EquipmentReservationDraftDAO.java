@@ -75,7 +75,7 @@ public class EquipmentReservationDraftDAO {
 
         String sql = "SELECT reservation_date, "
                 + "id_section, id_client "
-                + "FROM AUD_ReservationDrafts "
+                + "FROM aud_reservationdrafts "
                 + "WHERE MONTH(reservation_date) = ? "
                 + "AND YEAR(reservation_date) = ? "
                 + "AND expires_at > NOW() "
@@ -155,7 +155,7 @@ public class EquipmentReservationDraftDAO {
                 );
 
         String insertDraftSql =
-                "INSERT INTO AUD_ReservationDrafts "
+                "INSERT INTO aud_reservationdrafts "
                 + "(id_client, id_section, "
                 + "reservation_date, created_at, "
                 + "expires_at) "
@@ -315,11 +315,11 @@ public class EquipmentReservationDraftDAO {
                 );
 
         String deleteDetailsSql =
-                "DELETE FROM AUD_RDXE "
+                "DELETE FROM aud_rdxe "
                 + "WHERE id_draft = ?";
 
         String insertDetailSql =
-                "INSERT INTO AUD_RDXE "
+                "INSERT INTO aud_rdxe "
                 + "(id_draft, id_equipment, quantity) "
                 + "VALUES (?, ?, ?)";
 
@@ -447,7 +447,7 @@ public class EquipmentReservationDraftDAO {
         String sql = "SELECT id_draft, id_client, "
                 + "id_section, reservation_date, "
                 + "created_at, expires_at "
-                + "FROM AUD_ReservationDrafts "
+                + "FROM aud_reservationdrafts "
                 + "WHERE id_draft = ?";
 
         try (
@@ -509,7 +509,7 @@ public class EquipmentReservationDraftDAO {
         String sql = "SELECT id_draft, id_client, "
                 + "id_section, reservation_date, "
                 + "created_at, expires_at "
-                + "FROM AUD_ReservationDrafts "
+                + "FROM aud_reservationdrafts "
                 + "WHERE id_client = ? "
                 + "ORDER BY created_at DESC "
                 + "LIMIT 1";
@@ -572,7 +572,7 @@ public class EquipmentReservationDraftDAO {
         String sql = "SELECT id_draft, id_client, "
                 + "id_section, reservation_date, "
                 + "created_at, expires_at "
-                + "FROM AUD_ReservationDrafts "
+                + "FROM aud_reservationdrafts "
                 + "WHERE reservation_date = ? "
                 + "AND id_section = ? "
                 + "LIMIT 1";
@@ -631,7 +631,7 @@ public class EquipmentReservationDraftDAO {
             return false;
         }
 
-        String sql = "DELETE FROM AUD_ReservationDrafts "
+        String sql = "DELETE FROM aud_reservationdrafts "
                 + "WHERE id_draft = ?";
 
         try (
@@ -660,7 +660,7 @@ public class EquipmentReservationDraftDAO {
      */
     public static void cleanupExpiredDrafts() {
 
-        String sql = "DELETE FROM AUD_ReservationDrafts "
+        String sql = "DELETE FROM aud_reservationdrafts "
                 + "WHERE expires_at <= NOW()";
 
         try (
@@ -748,7 +748,7 @@ public class EquipmentReservationDraftDAO {
                 new ArrayList<>();
 
         String sql = "SELECT id_equipment, quantity "
-                + "FROM AUD_RDXE "
+                + "FROM aud_rdxe "
                 + "WHERE id_draft = ?";
 
         try (
@@ -790,7 +790,7 @@ public class EquipmentReservationDraftDAO {
      */
     public static int cleanupExpiredDraftsAndCount() {
 
-        String sql = "DELETE FROM AUD_ReservationDrafts "
+        String sql = "DELETE FROM aud_reservationdrafts "
                 + "WHERE expires_at <= NOW()";
 
         System.out.println("entro en delete ");
@@ -843,7 +843,7 @@ public class EquipmentReservationDraftDAO {
                 new ArrayList<>();
 
         String sql = "SELECT reservation_date, id_section "
-                + "FROM AUD_ReservationDrafts "
+                + "FROM aud_reservationdrafts "
                 + "WHERE expires_at <= NOW()";
 
         try (
